@@ -1,0 +1,139 @@
+<!doctype html>
+<!-- Development-only page comparing house-style directions. Not part of the production build. -->
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>House style directions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Fraunces:opsz,wght@9..144,400..800&family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@400..700&display=swap"
+    />
+  </head>
+  <body class="govuk-template__body">
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <h1 class="govuk-heading-xl">House style directions</h1>
+        <p class="govuk-body-l">
+          Three directions for <i>What's on UK roads</i>, using the real components and data. All three keep GOV.UK
+          Frontend's accessible behaviour, the yellow focus state, and black, white and pink.
+        </p>
+        <nav class="dirs-nav" aria-label="Directions">
+          <a class="govuk-link" href="#editorial">A. Editorial</a>
+          <a class="govuk-link" href="#plate">B. Number plate</a>
+          <a class="govuk-link" href="#panel">C. Instrument panel</a>
+        </nav>
+      </main>
+    </div>
+
+    <section class="dir dir--editorial" id="editorial" aria-labelledby="editorial-title">
+      <div class="dir__intro govuk-width-container">
+        <h2 class="dir__name" id="editorial-title">A. Editorial</h2>
+        <ul class="dir__notes">
+          <li>A magazine long-read: warm paper, a serif display face (Fraunces), Inter for reading.</li>
+          <li>Pink works like a highlighter pen: under key figures and links, never as small text on paper.</li>
+          <li>Best for: the story page. Calm, trustworthy, lots of room for annotations.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="dir dir--plate" id="plate" aria-labelledby="plate-title">
+      <div class="dir__intro govuk-width-container">
+        <h2 class="dir__name" id="plate-title">B. Number plate</h2>
+        <ul class="dir__notes">
+          <li>Bold and automotive: a wide, heavy grotesque (Archivo Expanded) for headings and figures.</li>
+          <li>Model names as front number-plate chips; pink as a racing stripe.</li>
+          <li>Best for: personality and social sharing. Loud, so it needs restraint on long pages.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="dir dir--panel" id="panel" aria-labelledby="panel-title">
+      <div class="dir__intro govuk-width-container">
+        <h2 class="dir__name" id="panel-title">C. Instrument panel</h2>
+        <ul class="dir__notes">
+          <li>Swiss and technical: Space Grotesk, IBM Plex Mono for every figure, a fine grid and small-caps labels.</li>
+          <li>Pink as a single signal light: the one thing to look at.</li>
+          <li>Best for: Explore and data-heavy pages. Precise, dense, very readable numbers.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- The same specimen is cloned into every direction. -->
+    <template id="specimen">
+      <div class="spec">
+        <header class="spec__header">
+          <div class="govuk-width-container spec__header-inner">
+            <a href="#" class="spec__brand">
+              <svg class="spec__logo" viewBox="0 0 512 512" aria-hidden="true">
+                <rect class="spec__logo-bg" width="512" height="512" />
+                <path class="spec__logo-verge" d="M146 418 236 118M366 418 276 118" />
+                <path class="spec__logo-line" d="M248 418h16l-2-62h-12zM250 318h12l-1.5-46h-9zM252 240h8l-1-32h-6zM253.5 182h5l-.7-20h-3.6z" />
+              </svg>
+              <span class="spec__wordmark">What's on <span class="spec__wordmark-em">UK roads</span></span>
+            </a>
+            <nav class="spec__nav" aria-label="Pages (specimen)">
+              <a class="spec__nav-link" href="#" aria-current="page">Explore</a>
+              <a class="spec__nav-link" href="#">Insights</a>
+              <a class="spec__nav-link" href="#">Story</a>
+            </nav>
+          </div>
+        </header>
+
+        <div class="govuk-width-container spec__body">
+          <p class="spec__kicker">How Britain's driveway changed, 2014–2026</p>
+          <h3 class="spec__title">34.9 million cars, and the story of each one</h3>
+          <p class="spec__lede">
+            Diesel peaked in 2018. Small SUVs took over. Classics moved into garages. Here's what's really on UK
+            roads.
+          </p>
+
+          <div class="spec__grid">
+            <div class="spec__form">
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s spec__label" data-for="search">Find a car</label>
+                <div class="govuk-hint spec__hint">Type a make or model, for example Fiesta or Tesla Model 3</div>
+                <input class="govuk-input spec__input" data-id="search" type="text" value="Ford Escort" />
+              </div>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s spec__label" data-for="variant">Variant</label>
+                <select class="govuk-select spec__input" data-id="variant">
+                  <option>All variants (1,604)</option>
+                </select>
+              </div>
+              <a class="spec__button" href="#">Read the story</a>
+            </div>
+
+            <ul class="spec__tiles">
+              <li class="spec__tile"><span class="spec__tile-value" data-stat="licensed"></span><span class="spec__tile-label">cars licensed</span></li>
+              <li class="spec__tile"><span class="spec__tile-value" data-stat="electric"></span><span class="spec__tile-label">battery electric</span></li>
+              <li class="spec__tile"><span class="spec__tile-value" data-stat="diesel"></span><span class="spec__tile-label">diesel, from a 40.1% peak</span></li>
+            </ul>
+          </div>
+
+          <figure class="spec__figure">
+            <figcaption class="spec__caption">
+              <span class="spec__plate">FORD ESCORT</span> licensed cars by fuel type, and off the road
+            </figcaption>
+            <div class="wuk-chart spec__chart"></div>
+          </figure>
+
+          <aside class="spec__callout">
+            <p class="spec__callout-figure" data-stat="escort-sorn"></p>
+            <p class="spec__callout-text">
+              Ford Escorts are declared off the road for every one still licensed. Every winter more go into storage,
+              and every spring some come back out.
+            </p>
+            <p class="spec__source">Example of a sourced annotation style · Source: DfT VEH0120</p>
+          </aside>
+
+          <ol class="wuk-movers spec__movers"></ol>
+        </div>
+      </div>
+    </template>
+
+    <script type="module" src="./directions.js"></script>
+  </body>
+</html>
