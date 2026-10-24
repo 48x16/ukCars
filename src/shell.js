@@ -5,7 +5,7 @@ import '@fontsource-variable/inter-tight';
 import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-600.css';
 import './styles/main.scss';
-import { createElement, WifiOff } from 'lucide';
+import { ArrowUp, createElement, WifiOff } from 'lucide';
 
 function watchConnection() {
   const badge = document.getElementById('offline');
@@ -18,7 +18,18 @@ function watchConnection() {
   update();
 }
 
+// Without JavaScript the link is always shown; with it, only once the header has scrolled away.
+function backToTop() {
+  const box = document.querySelector('.wuk-back-to-top');
+  if (!box) return;
+  box.querySelector('.wuk-back-to-top__icon').append(createElement(ArrowUp, { 'aria-hidden': 'true' }));
+  new IntersectionObserver(([entry]) => {
+    box.hidden = entry.isIntersecting;
+  }).observe(document.getElementById('top'));
+}
+
 watchConnection();
+backToTop();
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch((err) => console.error('Service worker not registered', err));

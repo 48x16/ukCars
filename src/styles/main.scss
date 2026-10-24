@@ -167,6 +167,56 @@ body {
   }
 }
 
+// Sticks to the bottom of the screen while the page scrolls, and rests at the end of the content.
+.wuk-back-to-top {
+  position: sticky;
+  bottom: govuk-spacing(3);
+  display: flex;
+  justify-content: flex-end;
+  margin-top: govuk-spacing(6);
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A black circle with a white arrow; the link's name is visually hidden text.
+.wuk-back-to-top__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--wuk-paper);
+  background: var(--wuk-ink);
+  border-radius: 50%;
+  pointer-events: auto;
+
+  &:link,
+  &:visited,
+  &:hover {
+    color: var(--wuk-paper);
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 3px var(--wuk-paper), 0 0 0 5px var(--wuk-pink);
+  }
+
+  &:focus {
+    outline: 3px solid transparent;
+    color: var(--wuk-ink);
+    background: var(--wuk-focus);
+    box-shadow: 0 0 0 3px var(--wuk-ink);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
+  }
+}
+
 .wuk-header__wordmark {
   font-family: var(--wuk-display);
   font-size: 28px;

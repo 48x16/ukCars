@@ -50,6 +50,18 @@ test('lets you follow one make through the rankings with the keyboard', async ({
   await expect(page.locator('.wuk-slope')).not.toHaveClass(/wuk-slope--focus/);
 });
 
+test('shows a back to top link once the header has scrolled away', async ({ page }) => {
+  await open(page);
+  const link = page.getByRole('link', { name: 'Back to top' });
+  await expect(link).toBeHidden();
+  await page.getByRole('heading', { name: 'Garage queens' }).scrollIntoViewIfNeeded();
+  await expect(link).toBeInViewport();
+  await link.click();
+  await expect(page).toHaveURL(/#top$/);
+  await expect(page.locator('#top')).toBeInViewport();
+  await expect(link).toBeHidden();
+});
+
 test('has no WCAG 2.2 AA violations (axe)', async ({ page }) => {
   await open(page);
   for (const summary of await page.locator('.govuk-details__summary').all()) await summary.click();
