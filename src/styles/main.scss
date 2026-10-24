@@ -2255,3 +2255,13 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
   width: 100%;
   min-width: 0;
 }
+
+// Petrol and diesel: where a litre goes.
+.wuk-fill--duty { color: #fff; background: var(--wuk-ink); }
+.wuk-fill--vat { color: #fff; background: var(--wuk-pink); }
+.wuk-fill--rest { color: #111; background: #d4d4d4; }
+
+.wuk-tank {
+  margin-top: 0;
+  margin-bottom: govuk-spacing(5);
+}

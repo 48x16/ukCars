@@ -56,6 +56,9 @@ jobs:
       - name: Plug-in vehicles and public chargers by council
         run: npm run electric
 
+      - name: Weekly pump prices (DESNZ)
+        run: npm run fuel-prices
+
       - name: Postcodes for the finder tools
         run: npm run postcodes
 

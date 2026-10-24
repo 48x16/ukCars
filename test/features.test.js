@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { originOf } from '../pipeline/categories.js';
-import { apportion, bavarian, colours, electricCars, origins, outToPlay, seasons } from '../pipeline/features.js';
+import { apportion, bavarian, colours, combustionCars, electricCars, origins, outToPlay, seasons } from '../pipeline/features.js';
 import { colourYears } from '../src/colour-years.js';
 
 const QUARTERS = ['2024 Q3', '2024 Q4', '2025 Q1', '2025 Q2', '2025 Q3', '2025 Q4', '2026 Q1', '2026 Q2'];
@@ -138,5 +138,29 @@ describe('electricCars', () => {
     expect(e.makes[0]).toMatchObject({ make: 'TESLA', electric: 50, share: 1 });
     expect(e.origins.find((o) => o.id === 'american').of100).toBe(83);
     expect(e.mot).toBeNull();
+  });
+});
+
+describe('combustionCars', () => {
+  const file = (make, genModel, variants) => ({ path: `models/${make.toLowerCase()}/${genModel.toLowerCase().replace(/ /g, '-')}.json`, data: { make, genModel, variants } });
+  const series = (values) => ({ from: 0, values });
+  it('counts the petrol and diesel fleet, favourites, strongholds and fallers', () => {
+    const q = Array.from({ length: 21 }, (_, i) => `${2021 + Math.floor(i / 4)} Q${(i % 4) + 1}`);
+    const ramp = (from, to) => q.map((_, i) => Math.round(from + ((to - from) * i) / 20));
+    const files = [
+      file('LAND ROVER', 'LAND ROVER DISCOVERY', [
+        { fuel: 'Diesel', licensed: series(ramp(30_000, 18_000)) },
+        { fuel: 'Petrol', licensed: series(ramp(1_000, 2_000)) },
+      ]),
+      file('FORD', 'FORD FIESTA', [
+        { fuel: 'Petrol', licensed: series(ramp(50_000, 40_000)) },
+        { fuel: 'Diesel', licensed: series(ramp(20_000, 5_000)) },
+      ]),
+    ];
+    const c = combustionCars(files, q, null);
+    expect(c.fleet.diesel.at(-1)).toBe(23_000);
+    expect(c.petrolModels[0]).toMatchObject({ name: 'FORD FIESTA', latest: 40_000, fiveYearsAgo: 50_000 });
+    expect(c.dieselMakes[0]).toMatchObject({ make: 'LAND ROVER', share: 0.9 });
+    expect(c.dieselFallers.map((m) => m.name)).toEqual(['FORD FIESTA', 'LAND ROVER DISCOVERY']); // -75%, then -40%
   });
 });

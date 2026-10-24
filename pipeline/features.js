@@ -301,6 +301,72 @@ export function electricCars(files, quarters, mot) {
 }
 
 /**
+ * Petrol and diesel cars in detail, for the Petrol and diesel page: the fleet, each fuel's
+ * favourite models, the makes most reliant on diesel, the diesels disappearing fastest, and
+ * the MOT by fuel at the same age.
+ */
+export function combustionCars(files, quarters, mot) {
+  const n = quarters.length;
+  const last = n - 1;
+  const yearAgo = Math.max(0, last - 4);
+  const fiveYearsAgo = Math.max(0, last - 20);
+  const fleet = new Map(FUEL_GROUPS.map((g) => [g.id, zeros(n)]));
+  const byMake = new Map();
+  const models = { petrol: [], diesel: [] };
+  for (const { path, data } of files) {
+    const own = new Map(FUEL_GROUPS.map((g) => [g.id, zeros(n)]));
+    for (const v of data.variants) {
+      const group = fuelGroupOf(v.fuel);
+      own.set(group, add(own.get(group), counted(v.licensed, n)));
+    }
+    for (const [group, values] of own) fleet.set(group, add(fleet.get(group), values));
+    const make = bavarianMake(data.make);
+    const t = byMake.get(make) ?? { make, diesel: zeros(n), petrol: zeros(n), all: zeros(n) };
+    t.diesel = add(t.diesel, own.get('diesel'));
+    t.petrol = add(t.petrol, own.get('petrol'));
+    t.all = add(t.all, [...own.values()].reduce((acc, v) => add(acc, v), zeros(n)));
+    byMake.set(make, t);
+    const [, makeSlug, file] = path.split('/');
+    for (const fuel of ['petrol', 'diesel']) {
+      const values = own.get(fuel);
+      if (values[last] > 0 || values[fiveYearsAgo] > 0) {
+        models[fuel].push({
+          name: data.genModel,
+          makeSlug,
+          modelSlug: file.replace(/\.json$/, ''),
+          latest: values[last],
+          yearAgo: values[yearAgo],
+          fiveYearsAgo: values[fiveYearsAgo],
+        });
+      }
+    }
+  }
+  const licensed = [...fleet.values()].reduce((acc, v) => add(acc, v), zeros(n));
+  const top = (list) => [...list].sort((a, b) => b.latest - a.latest).slice(0, 10);
+  const makes = [...byMake.values()].filter((t) => t.all[last] >= 20_000);
+  const share = (t, fuel, i = last) => (t.all[i] ? t[fuel][i] / t.all[i] : 0);
+  const bands = mot?.fuelBands && mot.ageBands ? mot.ageBands.map((b, i) => ({ label: b.label, fuels: Object.fromEntries(Object.entries(mot.fuelBands).map(([fuel, list]) => [fuel, list[i]])) })) : null;
+  return {
+    quarters,
+    yearAgoQuarter: quarters[yearAgo],
+    fiveYearsAgoQuarter: quarters[fiveYearsAgo],
+    fleet: { licensed, petrol: fleet.get('petrol'), diesel: fleet.get('diesel'), hybrid: fleet.get('hybrid') },
+    petrolModels: top(models.petrol),
+    dieselModels: top(models.diesel),
+    dieselMakes: makes
+      .map((t) => ({ make: t.make, share: share(t, 'diesel'), before: share(t, 'diesel', fiveYearsAgo), diesel: t.diesel[last] }))
+      .sort((a, b) => b.share - a.share)
+      .slice(0, 10),
+    dieselFallers: models.diesel
+      .filter((m) => m.fiveYearsAgo >= 10_000)
+      .map((m) => ({ ...m, change: (m.latest - m.fiveYearsAgo) / m.fiveYearsAgo }))
+      .sort((a, b) => a.change - b.change)
+      .slice(0, 10),
+    mot: bands ? { year: mot.year, bands } : null,
+  };
+}
+
+/**
  * The front door's figures: one small file with a headline number and a mini-chart for each
  * section, so the home page doesn't download every section's data.
  */
@@ -336,6 +402,7 @@ export function buildFeatures({ files, insights, mot }) {
     bavarian: bavarian(files, models, quarters, mot),
     origins: origins(models, quarters),
     'electric-cars': electricCars(files, quarters, mot),
+    'petrol-diesel': combustionCars(files, quarters, mot),
   };
   if (mot) out.colours = colours(mot);
   return out;

@@ -24,7 +24,7 @@ function serviceWorker() {
         (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || latinFont.test(f)),
       );
       // HTML pages are emitted after this hook runs, so they're listed by name.
-      const pages = ['explore.html', 'chargers.html', 'insights.html', 'electric.html', 'mot.html', 'features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html'];
+      const pages = ['explore.html', 'chargers.html', 'petrol-diesel.html', 'insights.html', 'electric.html', 'mot.html', 'features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html'];
       const precache = ['./', ...new Set([...pages, ...files, ...PUBLIC_SHELL])].map((f) => (f === './' ? f : `./${f}`));
       const version = createHash('sha256').update(precache.join('\n')).digest('hex').slice(0, 12);
       let source = readFileSync('src/sw.js', 'utf8');
@@ -58,6 +58,7 @@ export default defineConfig({
         origins: 'origins.html',
         colours: 'colours.html',
         chargers: 'chargers.html',
+        'petrol-diesel': 'petrol-diesel.html',
       },
     },
   },

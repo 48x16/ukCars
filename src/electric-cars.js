@@ -2,8 +2,9 @@
 // they're from, and the MOT. Every fact is built from the data.
 
 import { createChart } from './chart.js';
+import { passRate, renderFuelMot } from './fuel-mot.js';
 import { displayName, hidden, renderPictogram } from './feature-charts.js';
-import { el, formatChange, modelLink, renderTable } from './insight-charts.js';
+import { el, formatChange, modelLink } from './insight-charts.js';
 import { quarterEndDate } from './quarters.js';
 
 const $ = (id) => document.getElementById(id);
@@ -11,12 +12,6 @@ const count = new Intl.NumberFormat('en-GB');
 const big = new Intl.NumberFormat('en-GB', { notation: 'compact', compactDisplay: 'long', maximumFractionDigits: 2 });
 const pct0 = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionDigits: 0 });
 const pct1 = new Intl.NumberFormat('en-GB', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
-const FUELS = [
-  { id: 'petrol', label: 'Petrol' },
-  { id: 'diesel', label: 'Diesel' },
-  { id: 'hybrid', label: 'Hybrid' },
-  { id: 'electric', label: 'Battery electric' },
-];
 
 function fill(name, value) {
   for (const node of document.querySelectorAll(`[data-${name}]`)) node.textContent = value;
@@ -96,62 +91,18 @@ function renderOrigins(data) {
 }
 
 function renderMot(data) {
-  const section = $('mot-dots').closest('section');
-  if (!data.mot) {
-    section.hidden = true;
-    return;
-  }
-  fill('mot-year', String(data.mot.year));
-  const fuels = FUELS.filter((f) => data.mot.bands.some((b) => b.fuels[f.id]?.tests));
-  const rate = (o) => (o?.tests ? o.pass / o.tests : null);
-  $('mot-legend').replaceChildren(
-    ...fuels.map((f) => {
-      const item = el('li', 'wuk-legend__item');
-      item.append(el('span', `wuk-mark wuk-mark--${f.id}`), el('span', '', f.label));
-      return item;
-    }),
-  );
-  // Bands with too few electric cars to say much are left out.
-  const bands = data.mot.bands.filter((b) => (b.fuels.electric?.tests ?? 0) >= 1000);
-  const all = bands.flatMap((b) => fuels.map((f) => rate(b.fuels[f.id]))).filter((v) => v !== null);
-  const lo = Math.floor(Math.min(...all) * 20) / 20;
-  const at = (v) => `${((v - lo) / (1 - lo)) * 100}%`;
-  $('mot-dots').replaceChildren(
-    ...bands.map((b) => {
-      const li = el('li', 'wuk-dotrow');
-      const track = el('span', 'wuk-dotrow__track');
-      track.setAttribute('aria-hidden', 'true');
-      for (const f of fuels) {
-        const v = rate(b.fuels[f.id]);
-        if (v === null) continue;
-        const mark = el('span', `wuk-mark wuk-mark--${f.id}`);
-        mark.style.left = at(v);
-        track.append(mark);
-      }
-      li.append(el('span', 'wuk-dotrow__label', b.label), hidden(`: ${fuels.map((f) => `${f.label} ${pct1.format(rate(b.fuels[f.id]) ?? 0)}`).join(', ')}`), track);
-      return li;
-    }),
-  );
-  const scale = el('p', 'govuk-body-s wuk-dotrow-scale', `Scale: ${pct0.format(lo)} to 100% passing first time.`);
-  $('mot-dots').after(scale);
-  const young = bands[0];
-  if (young) {
-    const ev = young.fuels.electric;
-    const petrol = young.fuels.petrol;
-    $('mot-summary').textContent =
-      `At ${young.label}, ${pct1.format(rate(ev))} of battery electric cars passed first time, against ${pct1.format(rate(petrol))} of petrol cars. ` +
-      `They'd also done more miles: ${count.format(ev.meanMiles)} on average, against ${count.format(petrol.meanMiles)}.`;
-  }
-  renderTable($('mot-table'), {
-    caption: `MOT results by fuel and age, ${data.mot.year}`,
-    columns: [
-      { label: 'Age of car', value: (r) => r.band },
-      { label: 'Fuel', value: (r) => r.fuel },
-      { label: 'Tests', value: (r) => count.format(r.o.tests), numeric: true },
-      { label: 'Passed first time', value: (r) => pct1.format(r.o.pass / r.o.tests), numeric: true },
-      { label: 'Average mileage', value: (r) => (r.o.meanMiles === null ? 'Not known' : count.format(r.o.meanMiles)), numeric: true },
-    ],
-    rows: data.mot.bands.flatMap((b) => fuels.filter((f) => b.fuels[f.id]?.tests).map((f) => ({ band: b.label, fuel: f.label, o: b.fuels[f.id] }))),
+  renderFuelMot(data.mot, {
+    fuels: ['petrol', 'diesel', 'hybrid', 'electric'],
+    // Bands with too few electric cars to say much are left out.
+    keepBand: (b) => (b.fuels.electric?.tests ?? 0) >= 1000,
+    summarise: ([young]) => {
+      const ev = young.fuels.electric;
+      const petrol = young.fuels.petrol;
+      return (
+        `At ${young.label}, ${pct1.format(passRate(ev))} of battery electric cars passed first time, against ${pct1.format(passRate(petrol))} of petrol cars. ` +
+        `They'd also done more miles: ${count.format(ev.meanMiles)} on average, against ${count.format(petrol.meanMiles)}.`
+      );
+    },
   });
 }
 
