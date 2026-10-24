@@ -272,6 +272,15 @@ body {
   @include govuk-font($size: 19);
 }
 
+.wuk-stat__sorn {
+  display: block;
+  @include govuk-font($size: 19);
+
+  &:empty {
+    display: none;
+  }
+}
+
 .wuk-stat__change {
   display: block;
   @include govuk-font($size: 16);
@@ -359,10 +368,23 @@ body {
 .wuk-line--electric { stroke: var(--wuk-pink); stroke-width: 3; }
 .wuk-line--other { stroke: var(--wuk-ink-3); stroke-dasharray: 12 3 2 3; stroke-linecap: butt; }
 
+// Off the road (SORN): a pale area with a mid-grey edge (3.65:1 on white), behind the lines.
+.wuk-sorn__area {
+  fill: var(--wuk-wash);
+}
+
+.wuk-sorn__edge {
+  fill: none;
+  stroke: var(--wuk-ink-3);
+  stroke-width: 1.5;
+}
+
 .wuk-dot {
   stroke: var(--wuk-paper);
   stroke-width: 2;
 }
+
+.wuk-dot--sorn { fill: var(--wuk-ink-3); }
 
 .wuk-dot--petrol,
 .wuk-dot--diesel { fill: var(--wuk-ink); }

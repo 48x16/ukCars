@@ -26,6 +26,13 @@ describe('processCsv', () => {
     ]);
   });
 
+  it('keeps SORN counts alongside licensed ones', async () => {
+    const { files } = await processCsv(createReadStream(FIXTURE), { minRows: 1 });
+    const fiesta = files.find((f) => f.data.genModel === 'FORD FIESTA');
+    const zetec = fiesta.data.variants.find((v) => v.model === 'FIESTA ZETEC' && v.fuel === 'Petrol');
+    expect(zetec.sorn).toEqual({ from: 0, values: [1, 1, 1, 1] });
+  });
+
   it('keeps quoted model names intact', async () => {
     const { files } = await processCsv(createReadStream(FIXTURE), { minRows: 1 });
     const merc = files.find((f) => f.data.make === 'MERCEDES-BENZ');
@@ -35,7 +42,7 @@ describe('processCsv', () => {
   it('handles CRLF line endings like the real file', async () => {
     const csv = `${HEADER}\r\nCars,FORD,FORD KA,KA,Petrol,Licensed,1,2,3,4\r\n`;
     const { files } = await processCsv(fromText(csv), { minRows: 1 });
-    expect(files[0].data.variants[0].values).toEqual([4, 3, 2, 1]);
+    expect(files[0].data.variants[0].licensed.values).toEqual([4, 3, 2, 1]);
   });
 
   it('lists every bad row with its line number', async () => {

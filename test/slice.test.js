@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addCounts, createAggregator, parseCount, shortHash, slugify } from '../pipeline/slice.js';
+import { addCounts, compactSeries, createAggregator, parseCount, shortHash, slugify } from '../pipeline/slice.js';
 
 const QUARTERS = ['2015 Q2', '2015 Q1', '2014 Q4', '2014 Q3'];
 const OLDEST_FIRST = ['2014 Q3', '2014 Q4', '2015 Q1', '2015 Q2'];
@@ -26,6 +26,21 @@ describe('parseCount and addCounts', () => {
   });
 });
 
+describe('compactSeries', () => {
+  it('trims leading zeros and records where values start', () => {
+    expect(compactSeries([0, 0, 2, 5])).toEqual({ from: 2, values: [2, 5] });
+  });
+
+  it('treats a leading null as data, not as a zero to trim', () => {
+    expect(compactSeries([0, null, 2, 5])).toEqual({ from: 1, values: [null, 2, 5] });
+  });
+
+  it('turns an all-zero or missing series into null', () => {
+    expect(compactSeries([0, 0, 0])).toBeNull();
+    expect(compactSeries(undefined)).toBeNull();
+  });
+});
+
 describe('slugify', () => {
   it.each([
     ['MERCEDES-BENZ', 'mercedes-benz'],
@@ -41,9 +56,8 @@ describe('slugify', () => {
 });
 
 describe('createAggregator', () => {
-  it('keeps only licensed cars', () => {
+  it('keeps only cars', () => {
     const { files } = slice([
-      car('FORD', 'FORD KA', 'KA', 'Petrol', [1, 1, 1, 1], 'SORN'),
       ['Motorcycles', 'HONDA', 'HONDA CBR', 'CBR600', 'Petrol', 'Licensed', '5', '5', '5', '5'],
       car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [4, 3, 2, 1]),
     ]);
@@ -56,8 +70,29 @@ describe('createAggregator', () => {
       make: 'FORD',
       genModel: 'FORD FIESTA',
       quarters: OLDEST_FIRST,
-      variants: [{ model: 'FIESTA', fuel: 'Petrol', from: 0, values: [1, 2, 3, 4] }],
+      variants: [{ model: 'FIESTA', fuel: 'Petrol', licensed: { from: 0, values: [1, 2, 3, 4] }, sorn: null }],
     });
+  });
+
+  it('keeps licensed and SORN counts for the same variant side by side', () => {
+    const { files } = slice([
+      car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [10, 9, 8, 7]),
+      car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [2, 1, 0, 0], 'SORN'),
+    ]);
+    expect(files[0].data.variants).toEqual([
+      {
+        model: 'FIESTA',
+        fuel: 'Petrol',
+        licensed: { from: 0, values: [7, 8, 9, 10] },
+        sorn: { from: 2, values: [1, 2] },
+      },
+    ]);
+  });
+
+  it('keeps variants that are only off the road', () => {
+    const { files, index } = slice([car('AUSTIN', 'AUSTIN HEALEY', '3000', 'Petrol', [40, 41, 42, 43], 'SORN')]);
+    expect(files[0].data.variants[0]).toMatchObject({ licensed: null, sorn: { from: 0, values: [43, 42, 41, 40] } });
+    expect(index.makes[0]).toMatchObject({ name: 'AUSTIN', latest: 0, sorn: 40 });
   });
 
   it('keeps each Model and fuel as its own variant, sorted', () => {
@@ -78,31 +113,23 @@ describe('createAggregator', () => {
       car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [1, 1, 1, 1]),
       car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [2, '[c]', 2, 2]),
     ]);
-    expect(files[0].data.variants[0].values).toEqual([3, 3, null, 3]);
-  });
-
-  it('trims leading zeros and records where values start', () => {
-    const { files } = slice([car('FORD', 'FORD PUMA', 'PUMA', 'Petrol', [5, 2, 0, 0])]);
-    expect(files[0].data.variants[0]).toMatchObject({ from: 2, values: [2, 5] });
-  });
-
-  it('treats a leading [c] as data, not as a zero to trim', () => {
-    const { files } = slice([car('FORD', 'FORD PUMA', 'PUMA', 'Petrol', [5, 2, '[c]', 0])]);
-    expect(files[0].data.variants[0]).toMatchObject({ from: 1, values: [null, 2, 5] });
+    expect(files[0].data.variants[0].licensed.values).toEqual([3, 3, null, 3]);
   });
 
   it('drops variants that are zero in every quarter, and GenModels left empty', () => {
     const { files, index } = slice([
       car('FORD', 'FORD FOCUS', 'FOCUS OLD', 'Petrol', [0, 0, 0, 0]),
+      car('FORD', 'FORD FOCUS', 'FOCUS OLD', 'Petrol', [0, 0, 0, 0], 'SORN'),
       car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [1, 1, 1, 1]),
     ]);
     expect(files).toHaveLength(1);
     expect(index.makes[0].models.map((m) => m.name)).toEqual(['FORD FIESTA']);
   });
 
-  it('builds an index with latest-quarter totals', () => {
+  it('builds an index with latest-quarter licensed and SORN totals', () => {
     const { index } = slice([
       car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [10, 9, 8, 7]),
+      car('FORD', 'FORD FIESTA', 'FIESTA', 'Petrol', [3, 3, 3, 3], 'SORN'),
       car('FORD', 'FORD FIESTA', 'FIESTA', 'Diesel', [5, 5, 5, 5]),
       car('FORD', 'FORD KA', 'KA', 'Petrol', [0, 0, 4, 4]),
       car('LYNK & CO', 'LYNK & CO 01', '01', 'Petrol', [2, 1, 0, 0]),
@@ -114,12 +141,19 @@ describe('createAggregator', () => {
           name: 'FORD',
           slug: 'ford',
           latest: 15,
+          sorn: 3,
           models: [
-            { name: 'FORD FIESTA', slug: 'ford-fiesta', latest: 15 },
-            { name: 'FORD KA', slug: 'ford-ka', latest: 0 },
+            { name: 'FORD FIESTA', slug: 'ford-fiesta', latest: 15, sorn: 3 },
+            { name: 'FORD KA', slug: 'ford-ka', latest: 0, sorn: 0 },
           ],
         },
-        { name: 'LYNK & CO', slug: 'lynk-and-co', latest: 2, models: [{ name: 'LYNK & CO 01', slug: 'lynk-and-co-01', latest: 2 }] },
+        {
+          name: 'LYNK & CO',
+          slug: 'lynk-and-co',
+          latest: 2,
+          sorn: 0,
+          models: [{ name: 'LYNK & CO 01', slug: 'lynk-and-co-01', latest: 2, sorn: 0 }],
+        },
       ],
     });
   });

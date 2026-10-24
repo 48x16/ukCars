@@ -35,4 +35,3 @@ export const SYMBOLS = ['[c]', '[x]', '[z]'];
 export const MIN_ROWS = 100_000;
 
 export const BODY_TYPE = 'Cars';
-export const LICENCE_STATUS = 'Licensed';

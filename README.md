@@ -49,9 +49,12 @@ for how this maps to Azure DevOps, and the one-time GitHub setup.
 
 ### Data files
 
-- `data/index.json`: every make and model (GenModel), with latest-quarter totals.
+- `data/index.json`: every make and model (GenModel), with latest-quarter licensed and
+  SORN totals.
 - `data/models/<make>/<model>.json`: every variant and fuel for one model, quarters oldest
-  first. Leading zeros are trimmed; `from` says which quarter `values` starts at.
+  first. Each variant has a `licensed` and a `sorn` (declared off the road) series, or
+  `null` when that series is zero throughout. Leading zeros are trimmed; `from` says which
+  quarter `values` starts at.
   Suppressed counts (`[c]`, `[x]`, `[z]`) are `null`, and any total that includes one is `null` too.
 - `data/meta.json`: the quarter range and build details.
 
