@@ -3,6 +3,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { clickNav } from './nav.js';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const noViolations = async (page) => expect((await new AxeBuilder({ page }).withTags(WCAG_AA).analyze()).violations).toEqual([]);
@@ -14,8 +15,8 @@ test('the Tools page and the home page link to every tool', async ({ page }) => 
       await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
     }
   }
-  await page.getByRole('navigation', { name: 'Pages' }).getByRole('link', { name: 'Tools' }).click();
-  await expect(page.getByRole('link', { name: 'Tools' })).toHaveAttribute('aria-current', 'page');
+  await clickNav(page, 'Tools');
+  await expect(page.locator('#nav [aria-current="page"]')).toHaveText('Tools'); // works with the phone menu closed
   await noViolations(page);
 });
 

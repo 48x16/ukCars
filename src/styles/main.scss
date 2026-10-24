@@ -2330,3 +2330,158 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
   width: 100%;
   max-width: 34em;
 }
+
+// The phone menu: a Menu button that shows and hides the links. Only once the script has run
+// (.wuk-js), so without JavaScript the links still show, wrapped.
+.wuk-menu-button {
+  display: none;
+}
+
+@include govuk-media-query($until: tablet) {
+  .wuk-js {
+    .wuk-menu-button {
+      display: inline-flex;
+      align-items: center;
+      gap: govuk-spacing(1);
+      margin-left: auto;
+      padding: govuk-spacing(1) govuk-spacing(2);
+      @include govuk-font($size: 19, $weight: bold);
+      color: var(--wuk-ink);
+      background: none;
+      border: 2px solid var(--wuk-ink);
+      cursor: pointer;
+
+      svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      &[aria-expanded="true"] {
+        color: var(--wuk-paper);
+        background: var(--wuk-pink);
+        border-color: var(--wuk-pink);
+      }
+
+      // Keyboard focus keeps GOV.UK's yellow (users need to see where they are); a tap or
+      // click doesn't flash it.
+      &:focus {
+        outline: none;
+      }
+
+      &:focus-visible {
+        @include govuk-focused-text;
+      }
+    }
+
+    .wuk-nav {
+      display: none;
+      flex-basis: 100%;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .wuk-nav--open {
+      display: flex;
+    }
+
+    .wuk-nav__link {
+      padding: govuk-spacing(2) 0;
+      border-bottom: 1px solid var(--wuk-rule);
+
+      &[aria-current="page"] {
+        border-bottom: 1px solid var(--wuk-rule);
+        box-shadow: inset 4px 0 0 var(--wuk-pink);
+        padding-left: govuk-spacing(2);
+      }
+    }
+  }
+}
+
+// The phone's bottom bar: black, so it reads as the app's own controls, with the current page
+// in pink. Shown on small screens once the script has run.
+.wuk-tabbar {
+  display: none;
+}
+
+@include govuk-media-query($until: tablet) {
+  .wuk-js {
+    .govuk-template__body {
+      padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    }
+
+    .wuk-back-to-top {
+      bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+
+    .wuk-tabbar {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 10;
+      display: block;
+      padding-bottom: env(safe-area-inset-bottom);
+      background: var(--wuk-ink);
+      box-shadow: 0 -1px 0 var(--wuk-ink-2);
+    }
+  }
+}
+
+.wuk-tabbar__list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    flex: 1;
+  }
+}
+
+.wuk-tabbar__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 64px;
+  justify-content: center;
+  font-family: var(--wuk-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: #cfcfcf;
+  text-decoration: none;
+  border-top: 3px solid transparent;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:link,
+  &:visited {
+    color: #cfcfcf;
+  }
+
+  &[aria-current="page"] {
+    color: var(--wuk-paper);
+    border-top-color: var(--wuk-pink);
+
+    svg {
+      color: var(--wuk-pink);
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    color: var(--wuk-ink);
+    background: var(--wuk-focus);
+    outline: none;
+
+    svg {
+      color: var(--wuk-ink);
+    }
+  }
+}

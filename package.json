@@ -2,7 +2,7 @@
   "name": "ukcars",
   "private": true,
   "version": "0.1.0",
-  "description": "What's on UK roads: licensed cars by make, model and fuel type, from DfT vehicle licensing statistics.",
+  "description": "Rev Counter: Britain's cars, by the numbers, from DfT, DVLA and DVSA statistics.",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

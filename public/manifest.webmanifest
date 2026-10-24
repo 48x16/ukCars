@@ -1,7 +1,7 @@
 {
-  "name": "What's on UK roads",
-  "short_name": "UK roads",
-  "description": "How many of each car are licensed in the UK, by make, model and fuel type.",
+  "name": "Rev Counter",
+  "short_name": "Rev Counter",
+  "description": "Britain's cars, by the numbers: every make and model, electric, MOT results, stories and tools, from the official statistics.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,8 +9,23 @@
   "theme_color": "#ffffff",
   "lang": "en-GB",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

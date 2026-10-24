@@ -2,6 +2,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { clickNav } from './nav.js';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -14,9 +15,9 @@ const FEATURES = [
 
 test('the Features index links to every feature, and the header marks it', async ({ page }) => {
   await page.goto('./');
-  await page.getByRole('navigation', { name: 'Pages' }).getByRole('link', { name: 'Features', exact: true }).click();
+  await clickNav(page, 'Features');
   await expect(page).toHaveURL(/features\.html$/);
-  await expect(page.getByRole('link', { name: 'Features', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('#nav [aria-current="page"]')).toHaveText('Features'); // works with the phone menu closed
   for (const f of FEATURES) await expect(page.getByRole('link', { name: f.title, exact: true })).toBeVisible();
   const results = await new AxeBuilder({ page }).withTags(WCAG_AA).analyze();
   expect(results.violations).toEqual([]);

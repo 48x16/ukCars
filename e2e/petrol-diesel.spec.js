@@ -2,12 +2,13 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { clickNav } from './nav.js';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 test('is reachable from the header, and shows every section', async ({ page }) => {
   await page.goto('./');
-  await page.getByRole('navigation', { name: 'Pages' }).getByRole('link', { name: 'Petrol & diesel' }).click();
+  await clickNav(page, 'Petrol & diesel');
   await expect(page).toHaveURL(/petrol-diesel.html$/);
   await expect(page.getByRole('heading', { name: 'Fill her up', level: 1 })).toBeVisible();
   for (const name of ['The rise and fall of diesel', 'Britain’s favourites', 'Diesel strongholds', 'Disappearing diesels', 'At the pump']) {

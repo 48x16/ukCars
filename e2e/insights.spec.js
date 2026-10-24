@@ -2,6 +2,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { clickNav } from './nav.js';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -12,9 +13,9 @@ async function open(page) {
 
 test('is reachable from the header, which marks the current page', async ({ page }) => {
   await page.goto('./');
-  await page.getByRole('navigation', { name: 'Pages' }).getByRole('link', { name: 'Insights' }).click();
+  await clickNav(page, 'Insights');
   await expect(page).toHaveURL(/insights\.html$/);
-  await expect(page.getByRole('link', { name: 'Insights' })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('#nav [aria-current="page"]')).toHaveText('Insights'); // works with the phone menu closed
 });
 
 test('shows the headline figures and every section', async ({ page }) => {
@@ -65,7 +66,8 @@ test('shows a back to top link once the header has scrolled away', async ({ page
 
 test('has no WCAG 2.2 AA violations (axe)', async ({ page }) => {
   await open(page);
-  for (const summary of await page.locator('.govuk-details__summary').all()) await summary.click();
+  // Open every table so axe checks them too (clicking each in turn is flaky on phones, as each reflows the page).
+  await page.locator('details').evaluateAll((all) => all.forEach((d) => (d.open = true)));
   const { violations } = await new AxeBuilder({ page }).withTags(WCAG_AA).analyze();
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length}) ${v.helpUrl}`)).toEqual([]);
 });

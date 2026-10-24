@@ -2,6 +2,7 @@
 
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { clickNav } from './nav.js';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -12,9 +13,9 @@ async function open(page) {
 
 test('is reachable from the header, which marks the current page', async ({ page }) => {
   await page.goto('./insights.html');
-  await page.getByRole('navigation', { name: 'Pages' }).getByRole('link', { name: 'Electric', exact: true }).click();
+  await clickNav(page, 'Electric');
   await expect(page).toHaveURL(/electric\.html$/);
-  await expect(page.getByRole('link', { name: 'Electric', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('#nav [aria-current="page"]')).toHaveText('Electric'); // works with the phone menu closed
 });
 
 test('shows the headline figures, the map and every section', async ({ page }) => {

@@ -31,7 +31,7 @@ test('finds a car and opens it in Explore', async ({ page }) => {
 
 test('the wordmark leads home from every page', async ({ page }) => {
   await page.goto('./mot.html');
-  await page.getByRole('link', { name: 'What’s on UK roads' }).click();
+  await page.getByRole('link', { name: 'Rev Counter' }).click();
   await expect(page.locator('#big-number')).toHaveText(/\d/);
 });
 
@@ -40,4 +40,43 @@ test('has no WCAG 2.2 AA violations (axe)', async ({ page }) => {
   await expect(page.locator('#big-number')).toHaveText(/\d/);
   const results = await new AxeBuilder({ page }).withTags(WCAG_AA).analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('on phones, the links fold behind a Menu button that opens and closes', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'The Menu button is for small screens');
+  await page.goto('./mot.html');
+  const menu = page.getByRole('button', { name: 'Menu' });
+  const nav = page.getByRole('navigation', { name: 'Pages' });
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await expect(nav.getByRole('link', { name: 'Home' })).toBeHidden();
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
+  await expect(nav.getByRole('link', { name: 'MOT', exact: true })).toHaveAttribute('aria-current', 'page');
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu).toBeFocused();
+  await clickNavHome(page);
+});
+
+async function clickNavHome(page) {
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await page.getByRole('navigation', { name: 'Pages' }).getByRole('link', { name: 'Home' }).click();
+  await expect(page.locator('#big-number')).toHaveText(/\d/);
+}
+
+test('on phones, a bottom bar links to the main sections and marks where you are', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'The bottom bar is for small screens');
+  await page.goto('./chargers.html');
+  const bar = page.getByRole('navigation', { name: 'Quick links' });
+  await expect(bar).toBeVisible();
+  await expect(bar.getByRole('link')).toHaveText(['Home', 'Explore', 'Electric', 'Tools', 'Features']);
+  await expect(bar.getByRole('link', { name: 'Tools' })).toHaveAttribute('aria-current', 'page');
+  await bar.getByRole('link', { name: 'Explore' }).click();
+  await expect(page).toHaveURL(/explore\.html/);
+});
+
+test('on desktops, there is no bottom bar', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Desktop only');
+  await page.goto('./');
+  await expect(page.getByRole('navigation', { name: 'Quick links' })).toBeHidden();
 });

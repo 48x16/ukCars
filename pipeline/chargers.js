@@ -19,7 +19,7 @@ const OUT_DIR = join(ROOT, 'public', 'data', 'chargers');
 const API = 'https://api.openchargemap.io/v3';
 export const SOURCE_URL = 'https://openchargemap.org';
 export const TILE = 20_000; // metres
-const USER_AGENT = 'whats-on-uk-roads (github.com/48x16/ukCars)';
+const USER_AGENT = 'rev-counter (github.com/48x16/ukCars)';
 
 /** Access types left out: not somewhere a passing driver can charge. */
 const PRIVATE_USAGE = /^Private - Restricted|^Privately Owned/i;
