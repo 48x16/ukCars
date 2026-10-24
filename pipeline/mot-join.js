@@ -15,17 +15,45 @@ export const MAKE_ALIASES = {
 /** Colours shown by name; the rest are grouped as "Other". */
 export const TOP_COLOURS = 11;
 
-const norm = (s) => s.replace(/[^A-Z0-9]/g, '');
+/**
+ * MOT test class 4 covers small vans, pickups and motorhomes as well as cars, but DVLA's data
+ * here is cars only. A car model's yearly tests come to about 0.85 per car DVLA knows of; a
+ * model with far more tests than that is mostly vehicles that aren't cars (the Ford Transit
+ * Connect: over 1,000 tests per car), so it's set aside rather than ranked as a car.
+ */
+export const MAX_TESTS_PER_CAR = 1.5;
 
-/** Candidate DVLA model names (without the make) for one DVSA model name, best first. */
-export function candidates(make, model) {
-  const words = model.split(/\s+/).filter(Boolean);
+/** Models with fewer initial tests than this aren't listed: too few for a steady pass rate. */
+export const MIN_SITE_TESTS = 500;
+
+// Spaces and hyphens vary ("F-PACE", "F PACE"); "+" doesn't, since "KA" and "KA+" are different cars.
+const norm = (s) => s.replace(/[^A-Z0-9+]/g, '');
+
+/** The name with words dropped from the end, each also tried with SERIES and CLASS. */
+function shortenings(name) {
+  const words = name.split(/\s+/).filter(Boolean);
   const out = [];
   for (let n = words.length; n > 0; n--) {
     const c = words.slice(0, n).join(' ');
     out.push(c, `${c} SERIES`, `${c} CLASS`);
   }
-  const first = words[0] ?? '';
+  return out;
+}
+
+/** Candidate DVLA model names (without the make) for one DVSA model name, best first. */
+export function candidates(make, model) {
+  const out = shortenings(model);
+  // Looser forms, tried only after the name as given:
+  // "POLESTAR 2 EV FWD" -> "2 EV FWD"; "E-GOLF" -> "GOLF"; "GRAND C4 PICASSO" -> "C4 PICASSO";
+  // "IS250" -> "IS", "500X" -> "500", "XK8" -> "XK" (DVLA groups these under one model).
+  const [first = '', ...rest] = model.split(/\s+/).filter(Boolean);
+  const loose = [];
+  if (model.startsWith(`${make} `)) loose.push(model.slice(make.length + 1));
+  if (/^E-/.test(first)) loose.push([first.slice(2), ...rest].join(' '));
+  if (/^GRANDE?$/.test(first) && rest.length) loose.push(rest.join(' '));
+  const code = /^([A-Z]+)\d+[A-Z]?$/.exec(first)?.[1] ?? /^(\d+)[A-Z]+$/.exec(first)?.[1];
+  if (code) loose.push(code);
+  for (const name of loose) out.push(...shortenings(name));
   if (make === 'MERCEDES') {
     // "C", "C220", "C-CLASS", "GLA 200" -> "C CLASS", "GLA CLASS"
     const letters = /^([A-Z]+?)(?:-?CLASS|\d.*)?$/.exec(first)?.[1];
@@ -46,7 +74,11 @@ export function createMatcher(index) {
     const models = new Map();
     for (const m of make.models) {
       const short = m.name.startsWith(`${make.name} `) ? m.name.slice(make.name.length + 1) : m.name;
-      models.set(norm(short), { make: make.name, makeSlug: make.slug, name: m.name, modelSlug: m.slug });
+      const known = (m.latest ?? 0) + (m.sorn ?? 0); // licensed plus declared off the road
+      // Where two names still look the same ("SAAB 95", "SAAB 9-5"), the commoner one wins.
+      const key = norm(short);
+      if ((models.get(key)?.known ?? -1) >= known) continue;
+      models.set(key, { make: make.name, makeSlug: make.slug, name: m.name, modelSlug: m.slug, known });
     }
     makes.set(make.name, { name: make.name, slug: make.slug, models });
   }
@@ -104,7 +136,7 @@ function topColours({ years, series }) {
 }
 
 /** The site's mot.json: the summary's national figures, plus models and makes in DVLA's names. */
-export function joinMot(summary, index) {
+export function joinMot(summary, index, { minTests = MIN_SITE_TESTS } = {}) {
   const match = createMatcher(index);
   const byModel = new Map();
   const byMake = new Map();
@@ -119,9 +151,6 @@ export function joinMot(summary, index) {
       unmatched.push(row);
       continue;
     }
-    const makeRows = byMake.get(found.makeSlug) ?? { name: found.make, makeSlug: found.makeSlug, rows: [] };
-    makeRows.rows.push(row);
-    byMake.set(found.makeSlug, makeRows);
     if (!found.modelSlug) {
       unmatched.push(row);
       continue;
@@ -134,6 +163,23 @@ export function joinMot(summary, index) {
   }
 
   const bandCount = summary.ageBands.length;
+  const combined = [...byModel.values()].map(({ make, name, makeSlug, modelSlug, known, rows }) => ({
+    make,
+    name,
+    makeSlug,
+    modelSlug,
+    known,
+    dvsaNames: rows.length,
+    ...combine(rows, bandCount),
+  }));
+  const notCars = combined.filter((m) => m.tests > m.known * MAX_TESTS_PER_CAR);
+  const cars = combined.filter((m) => m.tests <= m.known * MAX_TESTS_PER_CAR);
+  for (const m of cars) {
+    const make = byMake.get(m.makeSlug) ?? { name: m.make, makeSlug: m.makeSlug, rows: [] };
+    make.rows.push(m);
+    byMake.set(m.makeSlug, make);
+  }
+
   const { models: _, modelsLeftOut, ...national } = summary;
   return {
     ...national,
@@ -146,19 +192,19 @@ export function joinMot(summary, index) {
         .sort((a, b) => b.tests - a.tests)
         .slice(0, 50)
         .map((r) => ({ make: r.make, model: r.model, tests: r.tests })),
+      notCars: notCars
+        .sort((a, b) => b.tests - a.tests)
+        .slice(0, 50)
+        .map((m) => ({ name: m.name, tests: m.tests, known: m.known })),
+      notCarsTests: notCars.reduce((n, m) => n + m.tests, 0),
+      fewTests: cars.filter((m) => m.tests < minTests).length,
     },
     makes: [...byMake.values()]
       .map(({ name, makeSlug, rows }) => ({ name, makeSlug, ...combine(rows, bandCount) }))
       .sort((a, b) => b.tests - a.tests),
-    models: [...byModel.values()]
-      .map(({ make, name, makeSlug, modelSlug, rows }) => ({
-        make,
-        name,
-        makeSlug,
-        modelSlug,
-        dvsaNames: rows.map((r) => r.model),
-        ...combine(rows, bandCount),
-      }))
+    models: cars
+      .filter((m) => m.tests >= minTests)
+      .map(({ known: __, ...m }) => m)
       .sort((a, b) => b.tests - a.tests),
   };
 }

@@ -82,9 +82,9 @@ async function previousLatestQuarter() {
 }
 
 /** The newest yearly MOT summary (written by `npm run mot` and committed), or null. */
-async function latestMotSummary() {
-  const years = (await readdir(MOT_DIR).catch(() => [])).filter((f) => /^d{4}.json$/.test(f)).sort();
-  return years.length ? JSON.parse(await readFile(join(MOT_DIR, years.at(-1)), 'utf8')) : null;
+export async function latestMotSummary(dir = MOT_DIR) {
+  const years = (await readdir(dir).catch(() => [])).filter((f) => /^\d{4}\.json$/.test(f)).sort();
+  return years.length ? JSON.parse(await readFile(join(dir, years.at(-1)), 'utf8')) : null;
 }
 
 async function writeJson(path, data) {

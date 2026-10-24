@@ -64,7 +64,10 @@ const FUELS = {
 export const FUEL_IDS = ['petrol', 'diesel', 'hybrid', 'electric', 'other'];
 export const fuelOf = (code) => FUELS[code] ?? 'other';
 
-/** Splits a CSV line. Quotes are rare in this data, so the quote-aware path only runs when needed. */
+/**
+ * Splits a CSV line. Quotes are rare in this data, so the quote-aware path only runs when needed.
+ * Inside quotes, DVSA escapes a quote as \" (inches: "SWB 88\"") where standard CSV uses "".
+ */
 export function splitCsv(line) {
   if (!line.includes('"')) return line.split(',');
   const fields = [];
@@ -73,7 +76,7 @@ export function splitCsv(line) {
   for (let i = 0; i < line.length; i++) {
     const c = line[i];
     if (quoted) {
-      if (c === '"' && line[i + 1] === '"') {
+      if ((c === '"' || c === '\\') && line[i + 1] === '"') {
         field += '"';
         i++;
       } else if (c === '"') quoted = false;
@@ -104,8 +107,16 @@ const zeros = (n) => new Array(n).fill(0);
 const outcome = () => ({ tests: 0, pass: 0, prs: 0, fail: 0 });
 const RESULT_KEY = { P: 'pass', PRS: 'prs', F: 'fail' };
 
+/**
+ * A copy of a string that doesn't share memory with the text it was cut from. V8 keeps a whole
+ * chunk of the file alive while any slice of it is held, so map keys must be copies, or a year
+ * of free-text model names pins gigabytes.
+ */
+const own = (s) => (' ' + s).slice(1);
+
 function tally(map, key, n = 1) {
-  map.set(key, (map.get(key) ?? 0) + n);
+  const now = map.get(key);
+  map.set(now === undefined ? own(key) : key, (now ?? 0) + n);
 }
 
 function countOutcome(target, key) {
@@ -116,7 +127,8 @@ function countOutcome(target, key) {
 /** Running totals for one year of MOT results. Feed it lines with `header()` then `row()`. */
 export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
   let col;
-  const rows = { read: 0, cars: 0, initial: 0, skipped: 0 };
+  let width;
+  const rows = { read: 0, malformed: 0, cars: 0, initial: 0, skipped: 0 };
   const totals = outcome();
   const ages = Array.from({ length: MAX_AGE + 1 }, () => ({ ...outcome(), miles: 0, milesN: 0 }));
   const months = Array.from({ length: 12 }, outcome);
@@ -129,12 +141,18 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
   function header(fields) {
     const names = fields.map((f) => f.trim().toLowerCase());
     col = Object.fromEntries(COLUMNS.map((c) => [c, names.indexOf(c)]));
+    width = names.length;
     const missing = COLUMNS.filter((c) => col[c] === -1);
     if (missing.length) throw new Error(`MOT file is missing columns: ${missing.join(', ')}`);
   }
 
   function row(f) {
     rows.read++;
+    // A row the parser couldn't split cleanly is counted and left out, not guessed at.
+    if (f.length !== width) {
+      rows.malformed++;
+      return;
+    }
     if (f[col.test_class_id] !== '4') return;
     rows.cars++;
     const key = RESULT_KEY[f[col.test_result]];
@@ -172,7 +190,7 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     const areaName = f[col.postcode_area].trim().toUpperCase();
     if (areaName) {
       let area = areas.get(areaName);
-      if (!area) areas.set(areaName, (area = { ...outcome(), miles: 0, milesN: 0, ages: 0, fuels: new Map() }));
+      if (!area) areas.set(own(areaName), (area = { ...outcome(), miles: 0, milesN: 0, ages: 0, fuels: new Map() }));
       countOutcome(area, key);
       area.ages += age;
       tally(area.fuels, fuel);
@@ -187,8 +205,8 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     const modelKey = `${make}\t${model}`;
     let m = models.get(modelKey);
     if (!m) {
-      m = { make, model, ...outcome(), miles: 0, milesN: 0, ages: 0, bands: AGE_BANDS.map(outcome) };
-      models.set(modelKey, m);
+      m = { make: own(make), model: own(model), ...outcome(), miles: 0, milesN: 0, ages: 0, bands: AGE_BANDS.map(outcome) };
+      models.set(own(modelKey), m);
     }
     countOutcome(m, key);
     m.ages += age;
@@ -247,7 +265,7 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     };
   }
 
-  return { header, row, result };
+  return { header, row, result, progress: () => ({ ...rows }) };
 }
 
 /** Feeds a stream of CSV text into the aggregator. The first line of each stream is its header. */
@@ -299,7 +317,7 @@ async function main() {
     if (entries.length === 0) throw new Error(`No CSV files in ${zipPath}`);
     for (const entry of entries) {
       await addCsvStream(aggregator, await openEntry(zipPath, entry));
-      const { rows } = aggregator.result();
+      const rows = aggregator.progress();
       console.log(`${entry.name}: ${rows.read.toLocaleString('en-GB')} rows so far (${Math.round((Date.now() - started) / 1000)}s)`);
     }
     source ??= zipPath;
@@ -312,6 +330,10 @@ async function main() {
     ...aggregator.result(),
   };
   if (summary.rows.initial === 0) throw new Error('No car MOT tests found');
+  // A handful of odd rows is normal; more than 1 in 10,000 means the format has changed.
+  if (summary.rows.malformed > summary.rows.read / 10_000) {
+    throw new Error(`${summary.rows.malformed} of ${summary.rows.read} rows couldn't be read: has the file format changed?`);
+  }
   const out = arg('--out') ? resolve(arg('--out')) : join(ROOT, 'data', 'mot', `${year}.json`);
   await mkdir(dirname(out), { recursive: true });
   await writeFile(out, JSON.stringify(summary));

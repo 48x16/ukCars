@@ -21,6 +21,10 @@ describe('splitCsv', () => {
     expect(splitCsv('LAND ROVER,"SERIES 1, 80 INCH",GREEN')).toEqual(['LAND ROVER', 'SERIES 1, 80 INCH', 'GREEN']);
     expect(splitCsv('"say ""hi""",x')).toEqual(['say "hi"', 'x']);
   });
+  it("reads DVSA's backslash-escaped quotes", () => {
+    expect(splitCsv('LAND ROVER,"SWB 88\\"",GREEN')).toEqual(['LAND ROVER', 'SWB 88"', 'GREEN']);
+    expect(splitCsv('x,"SERIES 3 88\\" PETROL",y')).toEqual(['x', 'SERIES 3 88" PETROL', 'y']);
+  });
 });
 
 describe('ageInYears', () => {
@@ -39,7 +43,7 @@ describe('MOT aggregator', () => {
   it('counts only initial car tests that passed, failed or were fixed on the spot', async () => {
     const s = await summarise(createReadStream(CSV));
     // 10 rows: a motorbike, a retest, an abandoned test and a bad date are left out.
-    expect(s.rows).toEqual({ read: 10, cars: 9, initial: 6, skipped: 1 });
+    expect(s.rows).toEqual({ read: 10, malformed: 0, cars: 9, initial: 6, skipped: 1 });
     expect(s.totals).toEqual({ tests: 6, pass: 3, prs: 1, fail: 2 });
   });
 
@@ -81,6 +85,13 @@ describe('MOT aggregator', () => {
     expect(s.modelsLeftOut).toBe(6);
   });
 
+  it('counts and leaves out rows with the wrong number of fields', () => {
+    const aggregator = createMotAggregator();
+    aggregator.header(['test_date', 'test_class_id', 'test_type', 'test_result', 'test_mileage', 'postcode_area', 'make', 'model', 'colour', 'fuel_type', 'first_use_date']);
+    aggregator.row(['2025-01-01', '4', 'NT']);
+    expect(aggregator.result().rows).toMatchObject({ read: 1, malformed: 1, cars: 0 });
+  });
+
   it('rejects a file without the expected columns', () => {
     expect(() => createMotAggregator().header(['test_id', 'make'])).toThrow(/missing columns: test_date/);
   });
@@ -104,7 +115,14 @@ describe('joining MOT models to DVLA models', () => {
       { name: 'BMW', slug: 'bmw', models: [{ name: 'BMW 1 SERIES', slug: 'bmw-1-series' }, { name: 'BMW X1', slug: 'bmw-x1' }] },
       { name: 'TESLA', slug: 'tesla', models: [{ name: 'TESLA MODEL 3', slug: 'tesla-model-3' }] },
       { name: 'JAGUAR', slug: 'jaguar', models: [{ name: 'JAGUAR XF SERIES', slug: 'jaguar-xf-series' }] },
-      { name: 'FORD', slug: 'ford', models: [{ name: 'FORD FIESTA', slug: 'ford-fiesta' }] },
+      {
+        name: 'FORD',
+        slug: 'ford',
+        models: [
+          { name: 'FORD FIESTA', slug: 'ford-fiesta', latest: 2, sorn: 1 },
+          { name: 'FORD TRANSIT CONNECT', slug: 'ford-transit-connect', latest: 1, sorn: 0 },
+        ],
+      },
     ],
   };
   const match = createMatcher(index);
@@ -125,6 +143,27 @@ describe('joining MOT models to DVLA models', () => {
     expect(slug('FORD', 'FIESTA ZETEC')).toBe('ford-fiesta');
   });
 
+  it('tries looser forms only after the name as given', () => {
+    const loose = createMatcher({
+      makes: [
+        { name: 'FIAT', slug: 'fiat', models: [{ name: 'FIAT 500', slug: 'fiat-500' }] },
+        { name: 'LEXUS', slug: 'lexus', models: [{ name: 'LEXUS IS', slug: 'lexus-is' }] },
+        { name: 'POLESTAR', slug: 'polestar', models: [{ name: 'POLESTAR 2', slug: 'polestar-2' }] },
+        { name: 'VOLKSWAGEN', slug: 'volkswagen', models: [{ name: 'VOLKSWAGEN GOLF', slug: 'volkswagen-golf' }] },
+        { name: 'CITROEN', slug: 'citroen', models: [{ name: 'CITROEN C4', slug: 'citroen-c4' }, { name: 'CITROEN E-C4', slug: 'citroen-e-c4' }] },
+        { name: 'JAGUAR', slug: 'jaguar', models: [{ name: 'JAGUAR XK SERIES', slug: 'jaguar-xk-series' }] },
+      ],
+    });
+    const s2 = (make, model) => loose(make, model)?.modelSlug;
+    expect(s2('FIAT', '500X')).toBe('fiat-500');
+    expect(s2('LEXUS', 'IS250')).toBe('lexus-is');
+    expect(s2('POLESTAR', 'POLESTAR 2 EV FWD')).toBe('polestar-2');
+    expect(s2('VOLKSWAGEN', 'E-GOLF')).toBe('volkswagen-golf');
+    expect(s2('CITROEN', 'GRAND C4 PICASSO')).toBe('citroen-c4');
+    expect(s2('CITROEN', 'E-C4')).toBe('citroen-e-c4'); // exact beats loose
+    expect(s2('JAGUAR', 'XK8')).toBe('jaguar-xk-series');
+  });
+
   it("knows the make even when it can't match the model, and nothing for unknown makes", () => {
     expect(match('FORD', 'MODEL T')).toMatchObject({ makeSlug: 'ford', modelSlug: null });
     expect(match('DETHLEFFS', 'GLOBEBUS')).toBeNull();
@@ -132,13 +171,22 @@ describe('joining MOT models to DVLA models', () => {
 
   it('combines DVSA names into DVLA models, with test-weighted means', async () => {
     const summary = await summarise(createReadStream(CSV));
-    const site = joinMot(summary, index);
+    const site = joinMot(summary, index, { minTests: 1 });
     const fiesta = site.models.find((m) => m.modelSlug === 'ford-fiesta');
     expect(fiesta).toMatchObject({ tests: 2, pass: 1, fail: 1, meanMiles: Math.round((45000 + 120500) / 2), meanAge: 12.5 });
-    expect(fiesta.dvsaNames.sort()).toEqual(['FIESTA', 'FIESTA ZETEC']);
+    expect(fiesta.dvsaNames).toBe(2); // FIESTA and FIESTA ZETEC
     expect(site.makes.find((m) => m.makeSlug === 'ford').tests).toBe(2);
     expect(site.match.unmatched.map((r) => r.make)).toContain('LAND ROVER');
     expect(site).not.toHaveProperty('models.0.bands.4');
     expect(site.match.testsMatched).toBe(5); // Fiesta x2, C220 D, Tesla, 118D
+  });
+
+  it('sets aside models tested far more often than DVLA has cars: mostly vans', () => {
+    const row = (model, tests) => ({ make: 'FORD', model, tests, pass: tests, prs: 0, fail: 0, meanMiles: 1, meanAge: 5, bands: [] });
+    const summary = { ageBands: [], colours: { years: [], series: [] }, modelsLeftOut: 0, models: [row('FIESTA', 3), row('TRANSIT CONNECT', 900)] };
+    const site = joinMot(summary, index, { minTests: 1 });
+    expect(site.models.map((m) => m.name)).toEqual(['FORD FIESTA']);
+    expect(site.match.notCars).toEqual([{ name: 'FORD TRANSIT CONNECT', tests: 900, known: 1 }]);
+    expect(site.makes.find((m) => m.makeSlug === 'ford').tests).toBe(3);
   });
 });
