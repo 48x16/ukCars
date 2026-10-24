@@ -2265,3 +2265,68 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
   margin-top: 0;
   margin-bottom: govuk-spacing(5);
 }
+
+// Tools
+
+// MOT busy times: a real table, its cells shaded in the map's five greys.
+.wuk-heat {
+  margin-bottom: govuk-spacing(5);
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 6px 4px;
+    text-align: center;
+    border-bottom: 0;
+  }
+}
+
+.wuk-heat__cell {
+  min-width: 2.6em;
+  border: 2px solid var(--wuk-paper);
+}
+
+@each $i, $colour in $wuk-map-steps {
+  .wuk-heat__cell[data-step="#{$i}"] {
+    background: $colour;
+    color: if($i >= 3, #fff, #111);
+  }
+}
+
+// Your car: where your mileage sits.
+.wuk-meter {
+  height: 14px;
+  margin: govuk-spacing(2) 0 govuk-spacing(3);
+  background: var(--wuk-wash);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.wuk-meter__fill {
+  display: block;
+  height: 100%;
+  background: var(--wuk-pink);
+}
+
+.wuk-meter__value {
+  margin: 0;
+}
+
+.wuk-your-chart {
+  --paint: var(--wuk-pink);
+  margin-top: govuk-spacing(3);
+
+  .wuk-mini {
+    height: 90px;
+  }
+}
+
+.wuk-your-chart__note {
+  color: var(--wuk-ink-2);
+}
+
+.wuk-version-select {
+  width: 100%;
+  max-width: 34em;
+}

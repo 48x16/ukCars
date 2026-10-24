@@ -27,6 +27,7 @@ test('shows the headline figures and every section', async ({ page }) => {
     'The electric surge',
     'New arrivals',
     'Lost makes',
+    'Nearly extinct',
     'Supercars and luxury',
     'Hot hatch heroes',
     'Garage queens',

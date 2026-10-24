@@ -2,7 +2,7 @@
 // and show a clear message if the data can't be loaded.
 
 import './shell.js';
-import { ClipboardCheck, Globe, Lightbulb, Palette, Search, Snowflake, Sun, Trophy, Zap } from 'lucide';
+import { Car, ClipboardCheck, Clock, Globe, Lightbulb, Palette, Search, Snowflake, Sun, Trophy, Wrench, Zap } from 'lucide';
 import { loadFeature } from './data.js';
 import { icon } from './feature-charts.js';
 
@@ -16,6 +16,9 @@ const ICONS = {
   lightbulb: Lightbulb,
   zap: Zap,
   clipboard: ClipboardCheck,
+  clock: Clock,
+  car: Car,
+  wrench: Wrench,
 };
 
 export const $ = (id) => document.getElementById(id);

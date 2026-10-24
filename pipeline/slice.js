@@ -1,3 +1,4 @@
+import { isMotorbike } from './categories.js';
 import { BODY_TYPE } from './sources.js';
 
 /** LicenceStatus values in the CSV, and the keys they're stored under. */
@@ -73,6 +74,8 @@ export function createAggregator(quarters) {
           path: `models/${makeSlug}/${genSlug}.json`,
           data: { make, genModel, quarters: oldestFirst, variants },
         });
+        // Motorbikes in the car figures still count in totals, but aren't listed as cars.
+        if (isMotorbike(make, genModel)) continue;
         indexModels.push({
           name: genModel,
           slug: genSlug,

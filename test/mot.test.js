@@ -1,7 +1,7 @@
 import { createReadStream } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { candidates, createMatcher, joinMot } from '../pipeline/mot-join.js';
-import { addCsvStream, ageInYears, createMotAggregator, MAX_AGE, splitCsv } from '../pipeline/mot.js';
+import { addCsvStream, ageInYears, createMotAggregator, MAX_AGE, splitCsv, ukHour, weekdayOf } from '../pipeline/mot.js';
 import { listEntries, openEntry } from '../pipeline/zip.js';
 
 const CSV = 'test/fixtures/mini_mot.csv';
@@ -39,6 +39,24 @@ describe('ageInYears', () => {
   });
 });
 
+describe('clock and calendar', () => {
+  it('turns UTC timestamps into UK clock hours, with British Summer Time', () => {
+    expect(ukHour('2025-01-16T12:11:50.000Z')).toBe(12); // winter: GMT
+    expect(ukHour('2025-07-01T08:30:00.000Z')).toBe(9); // summer: BST
+    expect(ukHour('2025-03-30T00:59:00.000Z')).toBe(0); // just before the clocks go forward
+    expect(ukHour('2025-03-30T01:00:00.000Z')).toBe(2); // just after
+    expect(ukHour('2025-10-26T00:30:00.000Z')).toBe(1); // still BST
+    expect(ukHour('2025-10-26T01:00:00.000Z')).toBe(1); // back to GMT
+    expect(ukHour('2025-06-30T23:30:00.000Z')).toBe(0); // past midnight in the UK
+    expect(ukHour('')).toBeNull();
+  });
+
+  it('gives the day of the week, Monday first', () => {
+    expect(weekdayOf('2025-01-13')).toBe(0); // a Monday
+    expect(weekdayOf('2025-01-19')).toBe(6); // a Sunday
+  });
+});
+
 describe('MOT aggregator', () => {
   it('counts only initial car tests that passed, failed or were fixed on the spot', async () => {
     const s = await summarise(createReadStream(CSV));
@@ -65,6 +83,17 @@ describe('MOT aggregator', () => {
     expect(green.values[s.colours.years.indexOf(1949)]).toBe(1);
     const diesel = s.fuels.series.find((c) => c.name === 'diesel');
     expect(diesel.total).toBe(3);
+  });
+
+  it('counts busy times by area, retests included, and mileage spread by age', async () => {
+    const s = await summarise(createReadStream(CSV));
+    // BN: tests 1, 2 (a fail) and 3 (its retest) and 10, on Thursday 16th, Monday 20th, Tuesday 21st and Sunday 9th.
+    const bn = s.busy.areas.BN;
+    expect(bn.month[0]).toBe(3);
+    expect(bn.month[1]).toBe(1);
+    expect(bn.grid[3 * 24 + 12]).toBe(1); // Thursday at 12:00 (GMT in January)
+    expect(bn.grid.reduce((a, b) => a + b, 0)).toBe(4);
+    expect(s.ageMiles.counts[10][Math.floor(45000 / s.ageMiles.band)]).toBe(1);
   });
 
   it('counts outcomes and mileage by fuel and age band', async () => {
@@ -101,7 +130,7 @@ describe('MOT aggregator', () => {
 
   it('counts and leaves out rows with the wrong number of fields', () => {
     const aggregator = createMotAggregator();
-    aggregator.header(['test_date', 'test_class_id', 'test_type', 'test_result', 'test_mileage', 'postcode_area', 'make', 'model', 'colour', 'fuel_type', 'first_use_date']);
+    aggregator.header(['test_date', 'test_class_id', 'test_type', 'test_result', 'test_mileage', 'postcode_area', 'make', 'model', 'colour', 'fuel_type', 'first_use_date', 'completed_date']);
     aggregator.row(['2025-01-01', '4', 'NT']);
     expect(aggregator.result().rows).toMatchObject({ read: 1, malformed: 1, cars: 0 });
   });

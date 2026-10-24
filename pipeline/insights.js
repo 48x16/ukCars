@@ -3,7 +3,7 @@
 // far below the precision anyone reads, and it stops one cell blanking a national total.
 
 import { expandSeries, FUEL_GROUPS, fuelGroupOf } from '../src/series.js';
-import { ARRIVALS, HOT_HATCHES, LOST, NOT_A_MAKE, SUPERCAR_MAKES } from './categories.js';
+import { ARRIVALS, HOT_HATCHES, isMotorbike, LOST, NOT_A_MAKE, SUPERCAR_MAKES } from './categories.js';
 
 const sum = (values) => values.reduce((a, b) => a + b, 0);
 const add = (a, b) => a.map((v, i) => v + b[i]);
@@ -195,6 +195,33 @@ function hotHatches(files, rules, n) {
   return { items: items.sort((a, b) => b.total - a.total), combined };
 }
 
+/**
+ * Nearly extinct: models with fewer than `maxLeft` still known to DVLA (licensed plus declared
+ * off the road) that had at least `minStart` when the data begins, the biggest falls first.
+ * Hidden counts (1 to 4) are flagged, so the page can say "at least".
+ */
+export function nearlyExtinct(files, { maxLeft = 20, minStart = 25, top = 10 } = {}) {
+  const rows = [];
+  for (const { path, data } of files) {
+    if (/MODEL MISSING|^OTHER /.test(data.genModel) || isMotorbike(data.make, data.genModel)) continue;
+    const n = data.quarters.length;
+    const known = zeros(n);
+    let hidden = false;
+    for (const v of data.variants) {
+      const licensed = expandSeries(v.licensed, n);
+      const sorn = expandSeries(v.sorn, n);
+      for (let i = 0; i < n; i++) known[i] += (licensed[i] ?? 0) + (sorn[i] ?? 0);
+      if (licensed[n - 1] === null || sorn[n - 1] === null) hidden = true;
+    }
+    const now = known[n - 1];
+    if (now > 0 && now < maxLeft && known[0] >= minStart) {
+      const [, makeSlug, file] = path.split('/');
+      rows.push({ name: data.genModel, makeSlug, modelSlug: file.replace(/\.json$/, ''), from: known[0], latest: now, hidden, values: known });
+    }
+  }
+  return rows.sort((a, b) => b.from - a.from || a.latest - b.latest).slice(0, top);
+}
+
 export function buildInsights({ files }, options = {}) {
   const opts = { ...DEFAULTS, ...options };
   const quarters = files[0].data.quarters;
@@ -235,6 +262,7 @@ export function buildInsights({ files }, options = {}) {
     arrivals: arrivals(byMake, quarters, opts.arrivals),
     lost: lostMakes(byMake, quarters, opts.lost),
     hotHatches: hotHatches(files, opts.hotHatches, n),
+    nearlyExtinct: nearlyExtinct(files),
     settings: {
       years: windowQuarters(quarters, opts.years) / 4,
       minBase: opts.minBase,

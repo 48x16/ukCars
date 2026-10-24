@@ -135,7 +135,16 @@ async function main() {
   let joined = null;
   if (mot) {
     joined = joinMot(mot, result.index);
-    await writeJson(join(OUT_DIR, 'mot.json'), joined);
+    // Busy times and mileage spreads are only for the tools, so they get their own files.
+    const { busy, ageMiles, ...site } = joined;
+    await writeJson(join(OUT_DIR, 'mot.json'), site);
+    if (busy) {
+      const geo = JSON.parse(await readFile(join(ROOT, 'data', 'geo', 'gb.json'), 'utf8'));
+      const names = Object.fromEntries(geo.areas.map((a) => [a.area, a.name]));
+      const areas = Object.fromEntries(Object.entries(busy.areas).filter(([area]) => names[area]).map(([area, b]) => [area, { name: names[area], ...b }]));
+      await writeJson(join(OUT_DIR, 'tools', 'mot-times.json'), { year: mot.year, note: busy.note, areas });
+    }
+    if (ageMiles) await writeJson(join(OUT_DIR, 'tools', 'mileage.json'), { year: mot.year, ...ageMiles });
     const share = joined.match.testsMatched / joined.match.testsInModels;
     console.log(`Joined ${mot.year} MOT results: ${(share * 100).toFixed(1)}% of tests matched to a DVLA model`);
   } else {

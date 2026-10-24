@@ -94,6 +94,21 @@ function renderMakeSection(kind, items, data, headline) {
   });
 }
 
+function renderExtinct(data) {
+  const items = data.nearlyExtinct ?? [];
+  const left = (m) => `${m.hidden ? 'At least ' : ''}${count.format(m.latest)} left`;
+  renderMovers($('extinct-list'), items, { startQuarter: data.quarters[0], latestQuarter: data.quarters.at(-1), headline: left });
+  renderTable($('extinct-table'), {
+    caption: `Cars with fewer than 20 left, ${data.quarters.at(-1)}`,
+    columns: [
+      { label: 'Model', value: (m) => m.name },
+      { label: data.quarters[0], value: (m) => count.format(m.from), numeric: true },
+      { label: data.quarters.at(-1), value: (m) => `${m.hidden ? 'At least ' : ''}${count.format(m.latest)}`, numeric: true },
+    ],
+    rows: items,
+  });
+}
+
 function renderHotHatches(data) {
   const { items, combined } = data.hotHatches;
   const first = data.quarters[0];
@@ -179,6 +194,7 @@ async function start() {
 
   renderMakeSection('arrivals', data.arrivals, data, (m) => count.format(m.latest));
   renderMakeSection('lost', data.lost, data);
+  renderExtinct(data);
   renderMakeSection('super', data.supercars, data);
   renderHotHatches(data);
 

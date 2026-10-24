@@ -34,7 +34,45 @@ export const COLUMNS = [
   'colour',
   'fuel_type',
   'first_use_date',
+  'completed_date',
 ];
+
+/** Mileage percentiles by age: 5,000-mile bands up to MAX_MILES, for "is my mileage normal?". */
+export const AGE_MILES_BAND = 5_000;
+
+/**
+ * The UK clock hour (0 to 23) of a UTC timestamp like "2025-01-16T12:11:50.000Z": British
+ * Summer Time runs from 01:00 UTC on the last Sunday of March to 01:00 UTC on the last
+ * Sunday of October. Null if the timestamp isn't usable.
+ */
+const bstCache = new Map();
+export function ukHour(timestamp) {
+  const year = Number(timestamp.slice(0, 4));
+  const utcHour = Number(timestamp.slice(11, 13));
+  if (!(year > 1900) || !(utcHour >= 0 && utcHour < 24) || timestamp[10] !== 'T') return null;
+  let bst = bstCache.get(year);
+  if (!bst) {
+    const lastSunday = (month) => {
+      const end = new Date(Date.UTC(year, month + 1, 0));
+      return Date.UTC(year, month, end.getUTCDate() - end.getUTCDay(), 1);
+    };
+    bstCache.set(year, (bst = [lastSunday(2), lastSunday(9)]));
+  }
+  const t = Date.UTC(year, Number(timestamp.slice(5, 7)) - 1, Number(timestamp.slice(8, 10)), utcHour);
+  return (utcHour + (t >= bst[0] && t < bst[1] ? 1 : 0)) % 24;
+}
+
+/** Day of the week of an ISO date, Monday 0 to Sunday 6. */
+const weekdayCache = new Map();
+export function weekdayOf(date) {
+  let d = weekdayCache.get(date);
+  if (d === undefined) {
+    const t = Date.UTC(Number(date.slice(0, 4)), Number(date.slice(5, 7)) - 1, Number(date.slice(8, 10)));
+    d = Number.isNaN(t) ? null : (new Date(t).getUTCDay() + 6) % 7;
+    weekdayCache.set(own(date), d);
+  }
+  return d;
+}
 
 /** Ages run 0 to MAX_AGE, the last bucket meaning "MAX_AGE or older". */
 export const MAX_AGE = 40;
@@ -142,6 +180,21 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
   const fuelBands = new Map(); // fuel -> [outcomes and mileage per age band]
   const areas = new Map();
   const models = new Map();
+  // Busy times count every car test, retests too: each takes a slot at the test centre.
+  const busy = new Map(); // area -> { grid: weekday x hour, month }
+  const ageMiles = Array.from({ length: MAX_AGE + 1 }, () => zeros(MAX_MILES / AGE_MILES_BAND + 1));
+
+  function countBusy(f) {
+    const area = f[col.postcode_area].trim().toUpperCase();
+    const day = weekdayOf(f[col.test_date]);
+    const hour = ukHour(f[col.completed_date]);
+    const month = Number(f[col.test_date].slice(5, 7)) - 1;
+    if (!area || day === null || hour === null || !(month >= 0 && month < 12)) return;
+    let b = busy.get(area);
+    if (!b) busy.set(own(area), (b = { grid: zeros(7 * 24), month: zeros(12) }));
+    b.grid[day * 24 + hour]++;
+    b.month[month]++;
+  }
 
   function header(fields) {
     const names = fields.map((f) => f.trim().toLowerCase());
@@ -160,6 +213,7 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     }
     if (f[col.test_class_id] !== '4') return;
     rows.cars++;
+    countBusy(f);
     const key = RESULT_KEY[f[col.test_result]];
     if (f[col.test_type] !== 'NT' || !key) return;
     const tested = f[col.test_date];
@@ -180,6 +234,8 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
       a.miles += mileage;
       a.milesN++;
       miles[Math.min(Math.floor(mileage / MILES_BAND), miles.length - 1)]++;
+      const byAge = ageMiles[Math.min(age, MAX_AGE)];
+      byAge[Math.min(Math.floor(mileage / AGE_MILES_BAND), byAge.length - 1)]++;
     }
     const month = Number(tested.slice(5, 7)) - 1;
     if (month >= 0 && month < 12) countOutcome(months[month], key);
@@ -264,6 +320,11 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
       mileage: { band: MILES_BAND, counts: miles },
       colours: byYear(colours),
       fuels: byYear(fuels),
+      busy: {
+        note: 'Every car test, retests included, by UK clock time. grid is Monday to Sunday, each 24 hours.',
+        areas: Object.fromEntries([...busy].sort(([a], [b]) => a.localeCompare(b))),
+      },
+      ageMiles: { band: AGE_MILES_BAND, counts: ageMiles },
       fuelBands: Object.fromEntries(
         [...fuelBands].map(([fuel, bands]) => [
           fuel,

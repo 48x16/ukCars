@@ -26,6 +26,7 @@
           <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
           <a class="wuk-nav__link" href="./mot.html">MOT</a>
           <a class="wuk-nav__link" href="./features.html">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
         </nav>
         <p class="wuk-offline" id="offline" role="status" hidden>
           <span class="wuk-offline__icon"></span>Offline: showing saved data
@@ -149,6 +150,26 @@
                   <span class="govuk-details__summary-text">Show the data as a table</span>
                 </summary>
                 <div class="govuk-details__text"><table class="govuk-table" id="lost-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="extinct-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="extinct-title">Nearly extinct</h2>
+              <p class="govuk-body">
+                Cars with fewer than 20 left, licensed or declared off the road, that had at least 25 in
+                <span data-first-quarter>2014 Q3</span>. The biggest falls first. Each mini-chart has its own scale.
+              </p>
+              <p class="govuk-body-s">“At least” means DVLA hides some counts of 1 to 4, so there may be a few more.</p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="extinct-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="extinct-table"></table></div>
               </details>
           </div>
         </section>

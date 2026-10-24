@@ -169,3 +169,15 @@ describe('createAggregator', () => {
     expect(slice([...rows].reverse()).index.makes.map((m) => m.slug)).toEqual(first);
   });
 });
+
+describe('motorbikes in the car figures', () => {
+  it('keeps their files, for totals, but leaves them out of the index', () => {
+    const agg = createAggregator(['2026 Q2']);
+    agg.add(['Cars', 'YAMAHA', 'YAMAHA MODEL MISSING', 'MODEL MISSING', 'Petrol', 'Licensed', '7']);
+    agg.add(['Cars', 'TRIUMPH', 'TRIUMPH SPITFIRE', 'SPITFIRE', 'Petrol', 'Licensed', '9']);
+    agg.add(['Cars', 'TRIUMPH', 'TRIUMPH TIGER', 'TIGER', 'Petrol', 'Licensed', '2']);
+    const { index, files } = agg.result();
+    expect(files.map((f) => f.data.genModel).sort()).toEqual(['TRIUMPH SPITFIRE', 'TRIUMPH TIGER', 'YAMAHA MODEL MISSING']);
+    expect(index.makes.map((m) => [m.name, m.models.map((x) => x.name)])).toEqual([['TRIUMPH', ['TRIUMPH SPITFIRE']]]);
+  });
+});

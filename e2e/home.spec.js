@@ -10,7 +10,7 @@ test('shows the headline number and a door to every section', async ({ page }) =
   await expect(page.locator('#big-number')).toHaveText(/\d/);
   await expect(page.locator('#big-label')).toContainText('cars licensed in the UK');
   for (const name of ['Explore', 'Insights', 'Electric', 'MOT']) {
-    await expect(page.getByRole('heading', { name, level: 3 }).getByRole('link')).toBeVisible();
+    await expect(page.getByRole('heading', { name, level: 3, exact: true }).getByRole('link')).toBeVisible();
   }
   await expect(page.locator('#door-explore-value')).toHaveText(/\d/);
   for (const name of ['Out to play', 'The Bavarian battle', 'Where cars come from', 'Silver to grey']) {

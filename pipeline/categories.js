@@ -49,6 +49,25 @@ export const SUPERCAR_MAKES = [
  */
 export const NOT_A_MAKE = [/^OTHER\b/, /^MERCEDES-BENZ$/];
 
+/**
+ * Motorbikes, scooters and quad bikes that turn up in DVLA's car figures: a few hundred in all.
+ * They stay in the totals, as DVLA counts them, but are left out of search, Explore and lists
+ * of cars. Checked by hand: lookalikes that are real cars stay in (the Sunbeam Tiger, Pontiac
+ * Bonneville, Honda Z600, Citroen GSX and KTM X-Bow), as does BSA, which made cars too.
+ */
+export const MOTORBIKES = {
+  makes: [
+    'AJS', 'BENELLI', 'CCM', 'DUCATI', 'HARLEY-DAVIDSON', 'KAWASAKI', 'KYMCO', 'LEXMOTO', 'MOTO GUZZI',
+    'NORTON', 'NORTON VILLIERS TRIUMPH', 'ROYAL ENFIELD', 'SYM', 'VESPA (DOUGLAS)', 'YAMAHA',
+  ],
+  models: [
+    'HONDA CB', 'HONDA CBR', 'HONDA TLM240R', 'SUZUKI GSX', 'PIAGGIO VESPA',
+    'TRIUMPH ADVENTURER', 'TRIUMPH BONNEVILLE', 'TRIUMPH TIGER', 'TRIUMPH TRIDENT',
+  ],
+};
+
+export const isMotorbike = (make, genModel) => MOTORBIKES.makes.includes(make) || MOTORBIKES.models.includes(genModel);
+
 /** A new arrival had fewer than `maxStart` cars at the start and at least `minNow` now. */
 export const ARRIVALS = { maxStart: 200, minNow: 5_000 };
 
