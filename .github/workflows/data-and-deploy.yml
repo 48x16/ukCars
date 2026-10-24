@@ -53,6 +53,9 @@ jobs:
           # Refuses data older than what's already live.
           PREVIOUS_META_URL: ${{ steps.pages.outputs.base_url }}/data/meta.json
 
+      - name: Plug-in vehicles and public chargers by council
+        run: npm run electric
+
       - name: Build
         run: npm run build
 

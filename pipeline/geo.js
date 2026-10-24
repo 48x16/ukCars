@@ -1,16 +1,23 @@
-// Builds data/geo/gb.json for the MOT map: an outline of Great Britain and a point for each
-// postcode area. Both are in British National Grid metres, so the page draws them without a
-// map projection. Run by hand (`npm run geo`) when the sources change, and commit the result.
+// Builds the map files the site draws. All are in British National Grid metres, so pages draw
+// them without a map projection. Run by hand (`npm run geo`) when the sources change, and
+// commit the results.
 //
-// Sources, both free to reuse with attribution:
+// data/geo/gb.json, for the MOT map: an outline of Great Britain and a point per postcode area.
 // - Outline: ONS Countries (December 2025) Boundaries UK BUC, ultra generalised (500 m).
 //   Northern Ireland is left out: MOT data covers Great Britain only.
 // - Points: OS Code-Point Open, the position of every postcode. Each area's point is the
 //   average of its postcodes, so it sits where people live rather than at a geometric centre.
+//
+// data/geo/councils.json, for the electric map: the UK's local authorities as TopoJSON, so
+// neighbouring councils share one simplified border instead of each drawing their own.
+// - ONS Local Authority Districts (December 2025) Boundaries UK BUC.
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { quantize } from 'topojson-client';
+import { topology } from 'topojson-server';
+import { presimplify, simplify as simplifyTopology } from 'topojson-simplify';
 import { download } from './fetch.js';
 import { splitCsv } from './mot.js';
 import { listEntries, openEntry } from './zip.js';
@@ -18,6 +25,8 @@ import { listEntries, openEntry } from './zip.js';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUTLINE_URL =
   'https://open-geography-portalx-ons.hub.arcgis.com/api/download/v1/items/818212ae5b2948bcb352842081c03762/geojson?layers=0';
+const COUNCILS_URL =
+  'https://open-geography-portalx-ons.hub.arcgis.com/api/download/v1/items/837dd9c41a7b458c974caf6e4ca56e7b/geojson?layers=0';
 const CODEPOINT_URL = 'https://api.os.uk/downloads/v1/products/CodePointOpen/downloads?area=GB&format=CSV&redirect';
 const GRID = 500; // metres: the outline's own precision
 const TOLERANCE = 1000; // metres a simplified line may stray from the original: under a pixel on the map
@@ -127,6 +136,21 @@ export function buildOutline(geojson) {
   };
 }
 
+/** Smallest triangle (m²) a simplified council border keeps: about half a pixel on the map. */
+const MIN_COUNCIL_WEIGHT = 1_500_000;
+
+/** UK local authorities as TopoJSON, borders simplified once and shared between neighbours. */
+export function buildCouncils(geojson, { minWeight = MIN_COUNCIL_WEIGHT } = {}) {
+  const features = geojson.features.map((f) => ({
+    type: 'Feature',
+    properties: { code: f.properties.LAD25CD, name: f.properties.LAD25NM },
+    geometry: f.geometry,
+  }));
+  const simplified = simplifyTopology(presimplify(topology({ councils: { type: 'FeatureCollection', features } })), minWeight);
+  // Whole-number steps on a 10,000-point grid (about 66 m): far finer than a pixel, and compact.
+  return quantize(simplified, 1e4);
+}
+
 /** One point per postcode area: the mean position of its postcodes, to the nearest 100 m. */
 export async function buildAreas(zipPath) {
   const areas = [];
@@ -158,9 +182,11 @@ async function main() {
   const cache = join(ROOT, '.cache');
   const outlinePath = join(cache, 'countries_buc.geojson');
   const codepointPath = join(cache, 'codepo_gb.zip');
+  const councilsPath = join(cache, 'lad_buc.geojson');
   if (!process.argv.includes('--cached')) {
-    console.log('Downloading ONS country outlines and OS Code-Point Open');
+    console.log('Downloading ONS country and council outlines and OS Code-Point Open');
     await download(OUTLINE_URL, outlinePath);
+    await download(COUNCILS_URL, councilsPath);
     await download(CODEPOINT_URL, codepointPath);
   }
   const outline = buildOutline(JSON.parse(await readFile(outlinePath, 'utf8')));
@@ -171,6 +197,11 @@ async function main() {
   await writeFile(out, json);
   const points = outline.features.reduce((n, f) => n + f.geometry.coordinates.flat(2).length, 0);
   console.log(`Wrote ${out}: ${areas.length} postcode areas, outline of ${points} points, ${Math.round(json.length / 1024)} KB`);
+
+  const councils = buildCouncils(JSON.parse(await readFile(councilsPath, 'utf8')));
+  const councilsJson = JSON.stringify({ attribution: ATTRIBUTION.slice(0, 2), ...councils });
+  await writeFile(join(ROOT, 'data', 'geo', 'councils.json'), councilsJson);
+  console.log(`Wrote councils.json: ${councils.objects.councils.geometries.length} councils, ${Math.round(councilsJson.length / 1024)} KB`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
