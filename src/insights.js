@@ -34,7 +34,7 @@ function renderHeadline(h) {
 function renderMoverSection(kind, items, data) {
   const { quarters, settings } = data;
   const startQuarter = quarters[quarters.length - 1 - settings.years * 4];
-  renderMovers($(`${kind}-list`), items, quarters, settings);
+  renderMovers($(`${kind}-list`), items, { startQuarter, latestQuarter: quarters.at(-1) });
   renderTable($(`${kind}-table`), {
     caption: `Change in licensed cars, ${startQuarter} to ${quarters.at(-1)}`,
     columns: [
@@ -77,6 +77,61 @@ function renderElectrified(data) {
   });
 }
 
+/** Make cards compare the first quarter with the latest. `headline` picks the big figure. */
+function renderMakeSection(kind, items, data, headline) {
+  const startQuarter = data.quarters[0];
+  const latestQuarter = data.quarters.at(-1);
+  renderMovers($(`${kind}-list`), items, { startQuarter, latestQuarter, headline });
+  renderTable($(`${kind}-table`), {
+    caption: `Licensed cars, ${startQuarter} to ${latestQuarter}`,
+    columns: [
+      { label: 'Make', value: (m) => m.name },
+      { label: startQuarter, value: (m) => count.format(m.from), numeric: true },
+      { label: latestQuarter, value: (m) => count.format(m.latest), numeric: true },
+      { label: 'Change', value: (m) => (m.change === null ? 'New' : formatChange(m.change)), numeric: true },
+    ],
+    rows: items,
+  });
+}
+
+function renderHotHatches(data) {
+  const { items, combined } = data.hotHatches;
+  const first = data.quarters[0];
+  const last = data.quarters.at(-1);
+  const change = (a, b) => (a ? ` (${formatChange((b - a) / a)})` : '');
+
+  $('hot-summary').textContent =
+    `Together, ${items.length} classic hot hatches went from ${count.format(combined.licensed[0])} licensed in ${first} ` +
+    `to ${count.format(combined.licensed.at(-1))} in ${last}${change(combined.licensed[0], combined.licensed.at(-1))}. ` +
+    `Over the same time, the number declared off the road went from ${count.format(combined.sorn[0])} ` +
+    `to ${count.format(combined.sorn.at(-1))}${change(combined.sorn[0], combined.sorn.at(-1))}.`;
+
+  const chart = createChart($('hot-chart'), { totalLabel: null });
+  chart.update({
+    quarters: data.quarters,
+    dates: data.quarters.map(quarterEndDate),
+    series: [{ id: 'petrol', label: 'Licensed', values: combined.licensed }],
+    sorn: { id: 'sorn', label: 'Off the road (SORN)', values: combined.sorn },
+    summary: `Line chart of all ${items.length} hot hatch heroes combined. ${$('hot-summary').textContent}`,
+  });
+
+  renderSplitBars($('hot-list'), items, {
+    scale: 'count',
+    note: (m) => (m.change === null ? '' : `${formatChange(m.change)} known to DVLA since ${first}`),
+  });
+  renderTable($('hot-table'), {
+    caption: `Hot hatch heroes still known to DVLA, ${last}`,
+    columns: [
+      { label: 'Car', value: (m) => m.name },
+      { label: 'Licensed', value: (m) => count.format(m.licensed), numeric: true },
+      { label: 'Off the road (SORN)', value: (m) => count.format(m.sorn), numeric: true },
+      { label: `Change in total since ${first}`, value: (m) => (m.change === null ? '' : formatChange(m.change)), numeric: true },
+      { label: 'DVLA variants counted', value: (m) => m.variants.join(', ') },
+    ],
+    rows: items,
+  });
+}
+
 async function start() {
   let data;
   try {
@@ -95,6 +150,14 @@ async function start() {
   for (const node of document.querySelectorAll('[data-years]')) node.textContent = String(years);
   for (const node of document.querySelectorAll('[data-min-base]')) node.textContent = count.format(minBase);
   for (const node of document.querySelectorAll('[data-min-sorn]')) node.textContent = count.format(minSorn);
+  for (const node of document.querySelectorAll('[data-first-quarter]')) node.textContent = data.quarters[0];
+  const { arrivals, lost } = data.settings;
+  $('arrivals-rule').textContent =
+    `Makes with fewer than ${count.format(arrivals.maxStart)} licensed cars in ${data.quarters[0]} ` +
+    `and at least ${count.format(arrivals.minNow)} now.`;
+  $('lost-rule').textContent =
+    `Makes with at least ${count.format(lost.minStart)} licensed cars in ${data.quarters[0]} ` +
+    `that have since lost ${formatPercent(lost.minFall)} or more of them.`;
 
   renderHeadline(h);
   renderMoverSection('dying', data.dying, data);
@@ -113,6 +176,11 @@ async function start() {
       `${yearAgo ? `${formatChange((electric.values.at(-1) - yearAgo) / yearAgo)} on a year earlier` : 'new this year'}.`;
   }
   renderElectrified(data);
+
+  renderMakeSection('arrivals', data.arrivals, data, (m) => count.format(m.latest));
+  renderMakeSection('lost', data.lost, data);
+  renderMakeSection('super', data.supercars, data);
+  renderHotHatches(data);
 
   renderSplitBars($('garage-list'), data.garageQueens);
   renderTable($('garage-table'), {

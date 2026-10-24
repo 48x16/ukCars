@@ -627,12 +627,13 @@ body {
   height: 12px;
 }
 
+// SORN is mid-grey and licensed is black, matching the SORN area and fuel lines in charts.
 .wuk-swatch--sorn {
-  background: var(--wuk-ink);
+  background: var(--wuk-ink-3);
 }
 
 .wuk-swatch--licensed {
-  background: var(--wuk-rule);
+  background: var(--wuk-ink);
 }
 
 .wuk-bars {
@@ -681,13 +682,12 @@ body {
 }
 
 .wuk-bar__sorn {
-  background: var(--wuk-ink);
-  border-radius: 0 4px 4px 0;
+  background: var(--wuk-ink-3);
 }
 
 .wuk-bar__licensed {
-  flex: 1;
-  background: var(--wuk-rule);
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
 }
 
 .wuk-bar__detail {

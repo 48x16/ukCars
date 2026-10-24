@@ -34,7 +34,24 @@ const files = [
   ]),
 ];
 
-const insights = buildInsights({ files }, { years: 1, minBase: 20, minSorn: 25, top: 2, topMakes: 2 });
+const insights = buildInsights(
+  { files },
+  {
+    years: 1,
+    minBase: 20,
+    minSorn: 25,
+    top: 2,
+    topMakes: 2,
+    supercarMakes: ['TESLA', 'MG', 'PAGANI'],
+    arrivals: { maxStart: 25, minNow: 100 },
+    lost: { minStart: 100, minFall: 0.5 },
+    hotHatches: [
+      { label: 'Golf GTE (the hot one)', genModel: 'VW GOLF', match: /^GOLF GTE\b/ },
+      { label: 'Not in the data', genModel: 'PEUGEOT 205', match: /^205 GTI\b/ },
+      { label: 'Ka with no matching variant', genModel: 'FORD KA', match: /^KA SPORT\b/ },
+    ],
+  },
+);
 
 describe('buildInsights', () => {
   it('summarises the latest quarter for the whole fleet', () => {
@@ -94,6 +111,40 @@ describe('buildInsights', () => {
     const short = buildInsights({ files }, { years: 5, minBase: 20 });
     expect(short.settings.years).toBe(1.25); // 5 quarters of history
     expect(short.dying[0]).toMatchObject({ name: 'FORD KA', from: 120, latest: 40 });
+  });
+
+  it('cards hand-picked makes, skipping any not in the data, biggest first', () => {
+    expect(insights.supercars.map((m) => [m.name, m.from, m.latest])).toEqual([
+      ['TESLA', 20, 150],
+      ['MG', 5, 5],
+    ]);
+    expect(insights.supercars[0].change).toBeCloseTo(6.5);
+  });
+
+  it('finds new arrivals: almost nothing at the start, plenty now', () => {
+    expect(insights.arrivals.map((m) => m.name)).toEqual(['TESLA']);
+  });
+
+  it('finds lost makes: big at the start, at least half gone', () => {
+    expect(insights.lost.map((m) => [m.name, Math.round(m.change * 100)])).toEqual([['FORD', -67]]);
+  });
+
+  it('counts hot hatch survivors from matching variants only', () => {
+    const { items, combined } = insights.hotHatches;
+    expect(items).toEqual([
+      {
+        name: 'Golf GTE (the hot one)',
+        makeSlug: 'vw',
+        modelSlug: 'vw-golf',
+        variants: ['GOLF GTE'],
+        licensed: 20,
+        sorn: 0,
+        total: 20,
+        startTotal: 0,
+        change: null,
+      },
+    ]);
+    expect(combined.licensed).toEqual([0, 0, 0, 5, 10, 20]);
   });
 
   it('tracks the electrified groups in counts', () => {

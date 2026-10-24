@@ -58,7 +58,9 @@ for how this maps to Azure DevOps, and the one-time GitHub setup.
   Suppressed counts (`[c]`, `[x]`, `[z]`) are `null`, and any total that includes one is `null` too.
 - `data/insights.json`: whole-fleet stories for the Insights page (headline figures,
   fastest falling and growing models, fuel shares, electrified cars, garage queens and
-  make rankings), built by `pipeline/insights.js` from the model files.
+  make rankings, new arrivals, lost makes, supercars and hot hatch heroes), built by
+  `pipeline/insights.js` from the model files. The hand-picked lists (hot hatches,
+  supercar makes) and the thresholds live in `pipeline/categories.js`.
 - `data/meta.json`: the quarter range and build details.
 
 ### Pages

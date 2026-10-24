@@ -92,6 +92,72 @@
           <div class="wuk-chart" id="electric-chart"></div>
         </section>
 
+        <section class="wuk-section" aria-labelledby="arrivals-title">
+          <h2 class="govuk-heading-l" id="arrivals-title">New arrivals</h2>
+          <p class="govuk-body"><span id="arrivals-rule"></span> The big figure is cars licensed now.</p>
+          <ol class="wuk-movers" id="arrivals-list"></ol>
+          <details class="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Show the data as a table</span>
+            </summary>
+            <div class="govuk-details__text"><table class="govuk-table" id="arrivals-table"></table></div>
+          </details>
+        </section>
+
+        <section class="wuk-section" aria-labelledby="lost-title">
+          <h2 class="govuk-heading-l" id="lost-title">Lost makes</h2>
+          <p class="govuk-body"><span id="lost-rule"></span></p>
+          <ol class="wuk-movers" id="lost-list"></ol>
+          <details class="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Show the data as a table</span>
+            </summary>
+            <div class="govuk-details__text"><table class="govuk-table" id="lost-table"></table></div>
+          </details>
+        </section>
+
+        <section class="wuk-section" aria-labelledby="super-title">
+          <h2 class="govuk-heading-l" id="super-title">Supercars and luxury</h2>
+          <p class="govuk-body">
+            Licensed cars from a hand-picked list of supercar and luxury makes, since
+            <span data-first-quarter>2014 Q3</span>. Biggest first.
+          </p>
+          <ol class="wuk-movers" id="super-list"></ol>
+          <details class="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Show the data as a table</span>
+            </summary>
+            <div class="govuk-details__text"><table class="govuk-table" id="super-table"></table></div>
+          </details>
+        </section>
+
+        <section class="wuk-section" aria-labelledby="hot-title">
+          <h2 class="govuk-heading-l" id="hot-title">Hot hatch heroes</h2>
+          <p class="govuk-body">
+            A hand-picked list of 1980s and 1990s hot hatches, matched on DVLA's variant names so that modern cars
+            with the same badges aren't counted.
+          </p>
+          <p class="govuk-body" id="hot-summary"></p>
+          <h3 class="govuk-heading-s">All hot hatch heroes combined</h3>
+          <div class="wuk-chart" id="hot-chart"></div>
+          <h3 class="govuk-heading-s">Still known to DVLA, by car</h3>
+          <p class="govuk-body-s">
+            Licensed plus declared off the road. Some totals have grown, perhaps as stored cars are restored and
+            declared; DfT doesn't say why.
+          </p>
+          <ul class="wuk-legend wuk-bars-legend" aria-hidden="true">
+            <li class="wuk-legend__item"><span class="wuk-swatch wuk-swatch--sorn"></span>Off the road (SORN)</li>
+            <li class="wuk-legend__item"><span class="wuk-swatch wuk-swatch--licensed"></span>Licensed</li>
+          </ul>
+          <ol class="wuk-bars" id="hot-list"></ol>
+          <details class="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Show the data as a table</span>
+            </summary>
+            <div class="govuk-details__text"><table class="govuk-table" id="hot-table"></table></div>
+          </details>
+        </section>
+
         <section class="wuk-section" aria-labelledby="garage-title">
           <h2 class="govuk-heading-l" id="garage-title">Garage queens</h2>
           <p class="govuk-body">
@@ -148,7 +214,8 @@
             </p>
             <p class="govuk-body-s">
               This site is not affiliated with or endorsed by DfT or DVLA. Models are DVLA's generic models, all variants
-              combined. On this page, figures suppressed for confidentiality (1 to 4 vehicles) are counted as zero.
+              combined. The hot hatch and supercar lists are our own choices, not DfT categories. On this page, figures
+              suppressed for confidentiality (1 to 4 vehicles) are counted as zero.
             </p>
           </div>
         </div>

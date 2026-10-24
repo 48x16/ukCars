@@ -20,7 +20,19 @@ test('is reachable from the header, which marks the current page', async ({ page
 test('shows the headline figures and every section', async ({ page }) => {
   await open(page);
   await expect(page.locator('.wuk-tile')).toHaveCount(4);
-  for (const name of ['Quickest dying cars', 'Fastest growing cars', 'The rise and fall of diesel', 'The electric surge', 'Garage queens', 'Make leaderboard']) {
+  const sections = [
+    'Quickest dying cars',
+    'Fastest growing cars',
+    'The rise and fall of diesel',
+    'The electric surge',
+    'New arrivals',
+    'Lost makes',
+    'Supercars and luxury',
+    'Hot hatch heroes',
+    'Garage queens',
+    'Make leaderboard',
+  ];
+  for (const name of sections) {
     await expect(page.getByRole('heading', { name, level: 2 })).toBeVisible();
   }
   await expect(page.locator('#fuel-summary')).toContainText('Diesel peaked at');

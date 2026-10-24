@@ -18,7 +18,8 @@ export function el(tag, className, text) {
   return node;
 }
 
-export const modelLink = (m) => `./#/${m.makeSlug}/${m.modelSlug}`;
+/** Links into Explore: a model, or a make (which opens at its most licensed model). */
+export const modelLink = (m) => (m.modelSlug ? `./#/${m.makeSlug}/${m.modelSlug}` : `./#/${m.makeSlug}`);
 
 /**
  * A mini-chart of one model's licensed cars. Each has its own scale: it shows the shape of
@@ -46,11 +47,12 @@ function sparkline(values, { width = 200, height = 56 } = {}) {
 
 const emptyItem = () => el('li', 'wuk-empty govuk-body', 'No models meet the criteria in this data.');
 
-/** Ranked cards: name, change, before and after, and a mini-chart. */
-export function renderMovers(list, items, quarters, settings) {
+/**
+ * Ranked cards: name, a headline figure (the change, unless `headline` says otherwise),
+ * before and after, and a mini-chart.
+ */
+export function renderMovers(list, items, { startQuarter, latestQuarter, headline = (m) => formatChange(m.change) }) {
   if (items.length === 0) return list.replaceChildren(emptyItem());
-  const startQuarter = quarters[quarters.length - 1 - settings.years * 4];
-  const latestQuarter = quarters.at(-1);
   list.replaceChildren(
     ...items.map((m, i) => {
       const card = el('li', 'wuk-mover');
@@ -58,7 +60,7 @@ export function renderMovers(list, items, quarters, settings) {
       rank.setAttribute('aria-hidden', 'true');
       const name = el('a', 'wuk-mover__name govuk-link', m.name);
       name.href = modelLink(m);
-      const change = el('p', 'wuk-mover__change', formatChange(m.change));
+      const change = el('p', 'wuk-mover__change', headline(m));
       const detail = el(
         'p',
         'wuk-mover__detail',
@@ -79,25 +81,32 @@ export function renderMovers(list, items, quarters, settings) {
   );
 }
 
-/** Each bar splits a model's cars into SORN (dark) and licensed (light), as shares of 100%. */
-export function renderSplitBars(list, items) {
+/**
+ * Each bar splits a model's cars into SORN (grey) and licensed (black), the same colours
+ * as everywhere else on the site. `scale: 'share'` fills each bar to 100%; `scale: 'count'`
+ * draws every bar against the biggest total, so lengths compare across rows.
+ */
+export function renderSplitBars(list, items, { scale = 'share', note } = {}) {
   if (items.length === 0) return list.replaceChildren(emptyItem());
+  const maxTotal = Math.max(...items.map((m) => m.sorn + m.licensed));
   list.replaceChildren(
     ...items.map((m) => {
+      const total = m.sorn + m.licensed;
+      const base = scale === 'share' ? total : maxTotal;
       const row = el('li', 'wuk-bar');
       const name = el('a', 'wuk-bar__name govuk-link', m.name);
       name.href = modelLink(m);
       const track = el('span', 'wuk-bar__track');
       track.setAttribute('aria-hidden', 'true');
       const sorn = el('span', 'wuk-bar__sorn');
-      sorn.style.width = `${m.share * 100}%`;
-      track.append(sorn, el('span', 'wuk-bar__licensed'));
-      const value = el('span', 'wuk-bar__value', formatPercent(m.share));
-      const detail = el(
-        'span',
-        'wuk-bar__detail',
-        `${count.format(m.sorn)} off the road, ${count.format(m.licensed)} licensed`,
-      );
+      sorn.style.width = `${(m.sorn / base) * 100}%`;
+      const licensed = el('span', 'wuk-bar__licensed');
+      licensed.style.width = `${(m.licensed / base) * 100}%`;
+      track.append(sorn, licensed);
+      const value = el('span', 'wuk-bar__value', scale === 'share' ? formatPercent(m.share) : count.format(total));
+      const parts = [`${count.format(m.sorn)} off the road, ${count.format(m.licensed)} licensed`];
+      if (note) parts.push(note(m));
+      const detail = el('span', 'wuk-bar__detail', parts.filter(Boolean).join(' · '));
       row.append(name, value, track, detail);
       return row;
     }),
