@@ -7,12 +7,13 @@
 // Set PREVIOUS_META_URL (the deployed meta.json) in CI so an older publication can't replace newer data.
 
 import { createReadStream } from 'node:fs';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { download, fetchText, findCsvUrl } from './fetch.js';
 import { buildInsights } from './insights.js';
+import { joinMot } from './mot-join.js';
 import { createAggregator } from './slice.js';
 import { CSV_FILE_NAME, SOURCE_PAGE_URL } from './sources.js';
 import { SchemaError, validateFile, validateHeader, validateRow } from './validate.js';
@@ -20,6 +21,7 @@ import { SchemaError, validateFile, validateHeader, validateRow } from './valida
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(ROOT, 'public', 'data');
 const CACHE_PATH = join(ROOT, '.cache', CSV_FILE_NAME);
+const MOT_DIR = join(ROOT, 'data', 'mot');
 const MAX_REPORTED_ROW_ERRORS = 50;
 
 /** Validates and slices a CSV stream. Throws SchemaError listing every problem found. */
@@ -79,6 +81,12 @@ async function previousLatestQuarter() {
   }
 }
 
+/** The newest yearly MOT summary (written by `npm run mot` and committed), or null. */
+async function latestMotSummary() {
+  const years = (await readdir(MOT_DIR).catch(() => [])).filter((f) => /^d{4}.json$/.test(f)).sort();
+  return years.length ? JSON.parse(await readFile(join(MOT_DIR, years.at(-1)), 'utf8')) : null;
+}
+
 async function writeJson(path, data) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, JSON.stringify(data));
@@ -120,6 +128,16 @@ async function main() {
   });
   for (const { path, data } of result.files) await writeJson(join(OUT_DIR, path), data);
   await writeJson(join(OUT_DIR, 'insights.json'), buildInsights(result));
+
+  const mot = await latestMotSummary();
+  if (mot) {
+    const joined = joinMot(mot, result.index);
+    await writeJson(join(OUT_DIR, 'mot.json'), joined);
+    const share = joined.match.testsMatched / joined.match.testsInModels;
+    console.log(`Joined ${mot.year} MOT results: ${(share * 100).toFixed(1)}% of tests matched to a DVLA model`);
+  } else {
+    console.log('No MOT summary in data/mot/, so no mot.json');
+  }
 
   console.log(
     `Wrote ${result.files.length} model files for ${result.index.makes.length} makes ` +

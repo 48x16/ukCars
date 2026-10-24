@@ -1,3 +1,5 @@
 * text=auto eol=lf
 *.png binary
 *.woff2 binary
+# Keeps its Windows line endings: the MOT tests rely on them.
+test/fixtures/mini_mot.csv -text

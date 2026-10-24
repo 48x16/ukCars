@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "data": "node pipeline/run.js",
     "data:fixture": "node pipeline/run.js --csv test/fixtures/mini_VEH0120_UK.csv --min-rows 1 --fresh",
+    "mot": "node pipeline/mot.js",
     "test:e2e": "playwright test"
   },
   "dependencies": {
