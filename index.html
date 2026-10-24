@@ -9,6 +9,9 @@
       content="See how many of each car are licensed on UK roads, by make, model and fuel type, using DfT vehicle licensing statistics."
     />
     <title>What's on UK roads</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
   </head>
   <body class="govuk-template__body">
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
@@ -16,6 +19,9 @@
     <header class="wuk-header">
       <div class="govuk-width-container wuk-header__inner">
         <a href="./" class="wuk-header__wordmark">What's on UK roads</a>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
       </div>
     </header>
 
@@ -37,6 +43,31 @@
         </div>
 
         <form class="wuk-filters" id="filters">
+          <div class="govuk-form-group wuk-search" id="search">
+            <label class="govuk-label govuk-label--m" for="search-input">Find a car</label>
+            <div class="govuk-hint" id="search-hint">Type a make or model, for example Fiesta or Tesla Model 3</div>
+            <div class="wuk-search__field">
+              <span class="wuk-search__icon"></span>
+              <input
+                class="govuk-input wuk-search__input"
+                id="search-input"
+                type="text"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="search-results"
+                aria-describedby="search-hint"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="wuk-search__clear" type="button" hidden>
+                <span class="govuk-visually-hidden">Clear search</span>
+              </button>
+              <ul class="wuk-search__results" id="search-results" role="listbox" aria-label="Matching cars" hidden></ul>
+            </div>
+            <div class="govuk-visually-hidden wuk-search__status" aria-live="polite"></div>
+          </div>
+
           <div class="govuk-form-group">
             <label class="govuk-label govuk-label--s" for="make">Make</label>
             <select class="govuk-select" id="make" name="make"></select>

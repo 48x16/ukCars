@@ -26,6 +26,8 @@
 @use "govuk-frontend/dist/govuk/objects";
 @use "govuk-frontend/dist/govuk/components/skip-link";
 @use "govuk-frontend/dist/govuk/components/label";
+@use "govuk-frontend/dist/govuk/components/hint";
+@use "govuk-frontend/dist/govuk/components/input";
 @use "govuk-frontend/dist/govuk/components/select";
 @use "govuk-frontend/dist/govuk/components/details";
 @use "govuk-frontend/dist/govuk/components/table";
@@ -63,7 +65,32 @@ body {
 }
 
 .wuk-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: govuk-spacing(2) govuk-spacing(4);
   padding: govuk-spacing(3) 0;
+}
+
+.wuk-offline {
+  display: inline-flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin: 0;
+  padding: 2px govuk-spacing(2);
+  @include govuk-font($size: 16, $weight: bold);
+  color: var(--wuk-ink);
+  background: var(--wuk-paper);
+
+  &[hidden] {
+    display: none;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .wuk-header__wordmark {
@@ -96,6 +123,126 @@ body {
     width: 100%;
     min-width: 0;
   }
+}
+
+// Search: a GOV.UK input with a Lucide icon each side and a listbox underneath.
+
+.wuk-search {
+  grid-column: 1 / -1;
+  max-width: 40em;
+}
+
+.wuk-search__field {
+  position: relative;
+}
+
+.wuk-search__icon {
+  position: absolute;
+  top: 50%;
+  left: govuk-spacing(2);
+  display: flex;
+  transform: translateY(-50%);
+  pointer-events: none;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.wuk-search__input.govuk-input {
+  padding-left: 40px;
+  padding-right: 44px;
+}
+
+.wuk-search__clear {
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  transform: translateY(-50%);
+  color: var(--wuk-ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:hover svg {
+    stroke-width: 3;
+  }
+
+  &:focus {
+    @include govuk-focused-text;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.wuk-search__results {
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 22em;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--wuk-paper);
+  border: 2px solid var(--wuk-ink);
+  border-top: 0;
+  box-shadow: 0 4px 12px rgb(11 12 12 / 15%);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.wuk-search__option {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 govuk-spacing(3);
+  padding: govuk-spacing(2) govuk-spacing(3);
+  cursor: pointer;
+  border-bottom: 1px solid var(--wuk-wash);
+
+  &:hover {
+    background: var(--wuk-wash);
+  }
+
+  // The active option: black with a pink edge, legible in forced-colours too.
+  &[aria-selected="true"] {
+    color: var(--wuk-paper);
+    background: var(--wuk-ink);
+    box-shadow: inset 4px 0 0 var(--wuk-pink);
+    outline: 2px solid transparent;
+
+    .wuk-search__detail {
+      color: var(--wuk-paper);
+    }
+  }
+}
+
+.wuk-search__name {
+  @include govuk-font($size: 19, $weight: bold);
+}
+
+.wuk-search__detail {
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
 }
 
 // Results

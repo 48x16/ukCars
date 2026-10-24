@@ -1,8 +1,10 @@
 import '@fontsource-variable/inter';
 import './styles/main.scss';
+import { createElement, WifiOff } from 'lucide';
 import { createChart, formatCount } from './chart.js';
 import { loadIndex, loadMeta, loadModel } from './data.js';
 import { quarterEndDate } from './quarters.js';
+import { buildEntries, createSearch } from './search.js';
 import { seriesByFuel, totalAt } from './series.js';
 import { renderTable } from './table.js';
 
@@ -45,11 +47,20 @@ async function showModel() {
   try {
     file = await loadModel(makeSelect.value, modelSelect.value);
   } catch (err) {
-    showError(err);
+    // Don't leave the previous model's chart under the newly selected name.
+    results.hidden = true;
+    const model = modelSelect.selectedOptions[0]?.textContent;
+    showError(
+      navigator.onLine
+        ? err
+        : new Error(`You're offline, and ${model} hasn't been viewed on this device yet, so it isn't saved.`),
+    );
     return;
   } finally {
     results.classList.remove('wuk-results--loading');
   }
+  $('error').hidden = true;
+  results.hidden = false;
   history.replaceState(null, '', `#/${makeSelect.value}/${modelSelect.value}`);
   fillVariants();
   render();
@@ -112,6 +123,12 @@ async function start() {
   makeSelect.value = initialMake.slug;
   fillModels(initialMake, modelSlug);
 
+  createSearch($('search'), buildEntries(index), (entry) => {
+    makeSelect.value = entry.makeSlug;
+    fillModels(index.makes.find((m) => m.slug === entry.makeSlug), entry.modelSlug);
+    showModel();
+  });
+
   $('filters').addEventListener('submit', (event) => event.preventDefault());
   makeSelect.addEventListener('change', () => {
     fillModels(index.makes.find((m) => m.slug === makeSelect.value));
@@ -128,4 +145,19 @@ function showMeta(meta) {
   for (const node of document.querySelectorAll('[data-first-quarter]')) node.textContent = meta.firstQuarter;
 }
 
+function watchConnection() {
+  $('offline').querySelector('.wuk-offline__icon').append(createElement(WifiOff, { 'aria-hidden': 'true' }));
+  const update = () => {
+    $('offline').hidden = navigator.onLine;
+  };
+  addEventListener('online', update);
+  addEventListener('offline', update);
+  update();
+}
+
+watchConnection();
 start();
+
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch((err) => console.error('Service worker not registered', err));
+}

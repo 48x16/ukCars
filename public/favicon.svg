@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- A road in perspective: white verges, one pink centre line. Kept inside the
+       maskable safe zone (the central 80% circle) so it survives any icon mask. -->
+  <rect width="512" height="512" fill="#0b0c0c"/>
+  <path d="M146 418 236 118M366 418 276 118" stroke="#fff" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <path d="M248 418h16l-2-62h-12zM250 318h12l-1.5-46h-9zM252 240h8l-1-32h-6zM253.5 182h5l-.7-20h-3.6z" fill="#ca357c"/>
+</svg>
