@@ -1,16 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { expandVariant, fuelGroupOf, seriesByFuel, totalAt } from '../src/series.js';
+import { expandSeries, fuelGroupOf, seriesByFuel, sornSeries, totalAt } from '../src/series.js';
 
 const file = {
   make: 'FORD',
   genModel: 'FORD FIESTA',
   quarters: ['2014 Q3', '2014 Q4', '2015 Q1', '2015 Q2'],
   variants: [
-    { model: 'FIESTA ST', fuel: 'Petrol', from: 0, values: [2, 2, null, 3] },
-    { model: 'FIESTA ZETEC', fuel: 'Diesel', from: 2, values: [5, 5] },
-    { model: 'FIESTA ZETEC', fuel: 'Petrol', from: 0, values: [7, 8, 9, 10] },
-    { model: 'FIESTA HYBRID', fuel: 'Hybrid electric (petrol)', from: 3, values: [1] },
-    { model: 'FIESTA MHEV', fuel: 'Hybrid electric (diesel)', from: 2, values: [4, 4] },
+    { model: 'FIESTA ST', fuel: 'Petrol', licensed: { from: 0, values: [2, 2, null, 3] }, sorn: null },
+    { model: 'FIESTA ZETEC', fuel: 'Diesel', licensed: { from: 2, values: [5, 5] }, sorn: { from: 3, values: [1] } },
+    {
+      model: 'FIESTA ZETEC',
+      fuel: 'Petrol',
+      licensed: { from: 0, values: [7, 8, 9, 10] },
+      sorn: { from: 0, values: [1, 1, 2, 2] },
+    },
+    { model: 'FIESTA HYBRID', fuel: 'Hybrid electric (petrol)', licensed: { from: 3, values: [1] }, sorn: null },
+    { model: 'FIESTA MHEV', fuel: 'Hybrid electric (diesel)', licensed: { from: 2, values: [4, 4] }, sorn: null },
+    { model: 'FIESTA XR2', fuel: 'Petrol', licensed: null, sorn: { from: 0, values: [6, 6, 6, 6] } },
   ],
 };
 
@@ -23,9 +29,13 @@ describe('fuelGroupOf', () => {
   });
 });
 
-describe('expandVariant', () => {
+describe('expandSeries', () => {
   it('restores the trimmed leading zeros', () => {
-    expect(expandVariant({ from: 2, values: [5, 6] }, 4)).toEqual([0, 0, 5, 6]);
+    expect(expandSeries({ from: 2, values: [5, 6] }, 4)).toEqual([0, 0, 5, 6]);
+  });
+
+  it('treats a missing series as all zeros', () => {
+    expect(expandSeries(null, 3)).toEqual([0, 0, 0]);
   });
 });
 
@@ -40,6 +50,24 @@ describe('seriesByFuel', () => {
 
   it('charts a single variant', () => {
     expect(seriesByFuel(file, 1)).toEqual([{ id: 'diesel', label: 'Diesel', values: [0, 0, 5, 5] }]);
+  });
+
+  it('has no fuel lines for a variant that is only off the road', () => {
+    expect(seriesByFuel(file, 5)).toEqual([]);
+  });
+});
+
+describe('sornSeries', () => {
+  it('sums SORN counts across every variant and fuel', () => {
+    expect(sornSeries(file)).toEqual({ id: 'sorn', label: 'Off the road (SORN)', values: [7, 7, 8, 9] });
+  });
+
+  it('follows the chosen variant', () => {
+    expect(sornSeries(file, 1).values).toEqual([0, 0, 0, 1]);
+  });
+
+  it('is null when nothing is off the road', () => {
+    expect(sornSeries(file, 0)).toBeNull();
   });
 });
 

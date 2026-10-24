@@ -10,13 +10,14 @@ function cell(tag, text, className = 'govuk-table__cell') {
   return node;
 }
 
-export function renderTable(table, { quarters, series, caption }) {
+export function renderTable(table, { quarters, series, sorn, caption }) {
   const showTotal = series.length > 1;
   const headRow = document.createElement('tr');
   headRow.className = 'govuk-table__row';
   headRow.append(cell('th', 'Quarter', 'govuk-table__header'));
   for (const s of series) headRow.append(cell('th', s.label, 'govuk-table__header govuk-table__header--numeric'));
-  if (showTotal) headRow.append(cell('th', 'Total', 'govuk-table__header govuk-table__header--numeric'));
+  if (showTotal) headRow.append(cell('th', 'Total licensed', 'govuk-table__header govuk-table__header--numeric'));
+  if (sorn) headRow.append(cell('th', sorn.label, 'govuk-table__header govuk-table__header--numeric'));
   headRow.querySelectorAll('th').forEach((th) => th.setAttribute('scope', 'col'));
 
   const rows = [];
@@ -28,6 +29,7 @@ export function renderTable(table, { quarters, series, caption }) {
     row.append(label);
     for (const s of series) row.append(cell('td', formatCount(s.values[i]), 'govuk-table__cell govuk-table__cell--numeric'));
     if (showTotal) row.append(cell('td', formatCount(totalAt(series, i)), 'govuk-table__cell govuk-table__cell--numeric'));
+    if (sorn) row.append(cell('td', formatCount(sorn.values[i]), 'govuk-table__cell govuk-table__cell--numeric'));
     rows.push(row);
   }
 

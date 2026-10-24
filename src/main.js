@@ -5,7 +5,7 @@ import { createChart, formatCount } from './chart.js';
 import { loadIndex, loadMeta, loadModel } from './data.js';
 import { quarterEndDate } from './quarters.js';
 import { buildEntries, createSearch } from './search.js';
-import { seriesByFuel, totalAt } from './series.js';
+import { seriesByFuel, sornSeries, totalAt } from './series.js';
 import { renderTable } from './table.js';
 
 const $ = (id) => document.getElementById(id);
@@ -36,7 +36,9 @@ function fillModels(make, modelSlug) {
 function fillVariants() {
   const fragment = document.createDocumentFragment();
   fragment.append(option('all', `All variants (${count(file.variants.length)})`));
-  file.variants.forEach((v, i) => fragment.append(option(String(i), `${v.model} – ${v.fuel}`)));
+  file.variants.forEach((v, i) =>
+    fragment.append(option(String(i), `${v.model} – ${v.fuel}${v.licensed ? '' : ' (off the road only)'}`)),
+  );
   variantSelect.replaceChildren(fragment);
 }
 
@@ -71,26 +73,31 @@ function render() {
   const variant = variantIndex === null ? null : file.variants[variantIndex];
   const name = variant ? `${file.make} ${variant.model} (${variant.fuel})` : file.genModel;
   const series = seriesByFuel(file, variantIndex);
+  const sorn = sornSeries(file, variantIndex);
   const { quarters } = file;
   const last = quarters.length - 1;
   const latest = totalAt(series, last);
   const yearEarlier = totalAt(series, last - 4);
+  const sornLatest = sorn ? sorn.values[last] : 0;
+  const sornText = sornLatest === 0 ? '' : `and ${formatCount(sornLatest)} declared off the road (SORN)`;
 
   $('stat-value').textContent = formatCount(latest);
   $('stat-label').textContent = `licensed at the end of ${quarters[last]}`;
+  $('stat-sorn').textContent = sornText;
   $('stat-change').textContent = describeChange(latest, yearEarlier);
-  $('chart-title').textContent = `${name}: licensed cars by fuel type`;
+  $('chart-title').textContent = `${name}: licensed cars by fuel type${sorn ? ', and off the road' : ''}`;
 
   chart.update({
     quarters,
     dates: quarters.map(quarterEndDate),
     series,
+    sorn,
     summary:
       `Line chart of licensed ${name} cars by fuel type, ${quarters[0]} to ${quarters[last]}. ` +
-      `${formatCount(latest)} licensed at the end of ${quarters[last]}. ` +
+      `${formatCount(latest)} licensed at the end of ${quarters[last]}${sornText ? `, ${sornText}` : ''}. ` +
       'Focus the chart and use the arrow keys to read each quarter, or open the data table below.',
   });
-  renderTable($('data-table'), { quarters, series, caption: `Licensed ${name} cars by fuel type` });
+  renderTable($('data-table'), { quarters, series, sorn, caption: `${name} cars by fuel type, and off the road` });
 }
 
 function describeChange(now, before) {

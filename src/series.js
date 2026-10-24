@@ -1,4 +1,5 @@
-// Turns a model file's variants into one series per fuel group, ready to chart.
+// Turns a model file's variants into one series per fuel group, ready to chart, plus one
+// series of cars declared off the road (SORN).
 //
 // DfT has 11 fuel types. A chart reads poorly past ~6 lines, so related fuels are grouped.
 // Each group has a fixed style that never depends on which groups are present.
@@ -21,33 +22,35 @@ export function fuelGroupOf(fuel) {
   return (FUEL_GROUPS.find((g) => g.fuels.includes(fuel)) ?? FUEL_GROUPS[FUEL_GROUPS.length - 1]).id;
 }
 
-/** Expands a compacted variant back to one value per quarter. */
-export function expandVariant({ from, values }, quarterCount) {
+/** Expands a compacted series ({ from, values } or null) back to one value per quarter. */
+export function expandSeries(series, quarterCount) {
   const out = new Array(quarterCount).fill(0);
-  values.forEach((v, i) => {
-    out[from + i] = v;
+  series?.values.forEach((v, i) => {
+    out[series.from + i] = v;
   });
   return out;
 }
 
+/** Element-wise sum; a null (suppressed) count makes that quarter's total null, never a guess. */
+function addSeries(a, b) {
+  return a.map((v, i) => (v === null || b[i] === null ? null : v + b[i]));
+}
+
+function chosenVariants(file, variantIndex) {
+  return variantIndex === null ? file.variants : [file.variants[variantIndex]];
+}
+
 /**
- * Sums the chosen variants by fuel group. `variantIndex` of null means all variants.
- * Returns only groups with at least one licensed vehicle, in FUEL_GROUPS order.
- * A null (suppressed) count makes that quarter's group total null, never a guess.
+ * Sums the chosen variants' licensed counts by fuel group. `variantIndex` of null means all
+ * variants. Returns only groups with at least one licensed vehicle, in FUEL_GROUPS order.
  */
 export function seriesByFuel(file, variantIndex = null) {
   const n = file.quarters.length;
-  const variants = variantIndex === null ? file.variants : [file.variants[variantIndex]];
   const totals = new Map();
 
-  for (const variant of variants) {
+  for (const variant of chosenVariants(file, variantIndex)) {
     const id = fuelGroupOf(variant.fuel);
-    const values = expandVariant(variant, n);
-    const sum = totals.get(id) ?? new Array(n).fill(0);
-    totals.set(
-      id,
-      sum.map((s, i) => (s === null || values[i] === null ? null : s + values[i])),
-    );
+    totals.set(id, addSeries(totals.get(id) ?? new Array(n).fill(0), expandSeries(variant.licensed, n)));
   }
 
   return FUEL_GROUPS.filter((g) => totals.get(g.id)?.some((v) => v !== 0)).map((g) => ({
@@ -55,6 +58,16 @@ export function seriesByFuel(file, variantIndex = null) {
     label: g.label,
     values: totals.get(g.id),
   }));
+}
+
+/** Cars declared off the road (SORN) across the chosen variants, or null if there are none. */
+export function sornSeries(file, variantIndex = null) {
+  const n = file.quarters.length;
+  const values = chosenVariants(file, variantIndex).reduce(
+    (sum, v) => addSeries(sum, expandSeries(v.sorn, n)),
+    new Array(n).fill(0),
+  );
+  return values.some((v) => v !== 0) ? { id: 'sorn', label: 'Off the road (SORN)', values } : null;
 }
 
 /** Total across series for one quarter; null if any part is suppressed. */

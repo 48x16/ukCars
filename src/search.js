@@ -15,6 +15,7 @@ export function buildEntries(index) {
       makeSlug: make.slug,
       modelCount: make.models.length,
       latest: make.latest,
+      sorn: make.sorn,
       words: words(make.name),
     });
     for (const model of make.models) {
@@ -24,6 +25,7 @@ export function buildEntries(index) {
         makeSlug: make.slug,
         modelSlug: model.slug,
         latest: model.latest,
+        sorn: model.sorn,
         words: words(model.name),
       });
     }
@@ -64,7 +66,12 @@ export function searchEntries(entries, query, limit = 8) {
 const count = new Intl.NumberFormat('en-GB');
 
 function describe(entry) {
-  const licensed = entry.latest === null ? 'some suppressed figures' : `${count.format(entry.latest)} licensed`;
+  const licensed =
+    entry.latest === null
+      ? 'some suppressed figures'
+      : entry.latest === 0 && entry.sorn > 0
+        ? `${count.format(entry.sorn)} off the road (SORN)`
+        : `${count.format(entry.latest)} licensed`;
   return entry.kind === 'make'
     ? `Make · ${entry.modelCount} ${entry.modelCount === 1 ? 'model' : 'models'} · ${licensed}`
     : licensed;

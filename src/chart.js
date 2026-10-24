@@ -1,8 +1,10 @@
-// Line chart of licensed cars over time, one line per fuel group.
+// Line chart of licensed cars over time, one line per fuel group, with cars declared off
+// the road (SORN) as a pale area behind them: the only area, so it never reads as a fuel.
 // Line colour and dash come from .wuk-line--<group> in the stylesheet, so identity never
 // rests on colour alone: greys differ by dash pattern, and lines carry direct labels.
 
 import {
+  area,
   axisBottom,
   axisLeft,
   bisector,
@@ -34,13 +36,18 @@ function el(tag, className, text) {
   return node;
 }
 
-/** A short stroke keying a series, used in the legend and tooltip. */
-function lineKey(id) {
+/** Keys a series in the legend and tooltip, mirroring its mark: a stroke for lines, a block for the area. */
+function seriesKey(id) {
   const svg = select(document.createElementNS('http://www.w3.org/2000/svg', 'svg'))
     .attr('class', 'wuk-key')
     .attr('viewBox', '0 0 24 8')
     .attr('aria-hidden', 'true');
-  svg.append('line').attr('class', `wuk-line wuk-line--${id}`).attr('x1', 1).attr('x2', 23).attr('y1', 4).attr('y2', 4);
+  if (id === 'sorn') {
+    svg.append('rect').attr('class', 'wuk-sorn__area').attr('x', 1).attr('y', 0).attr('width', 22).attr('height', 8);
+    svg.append('line').attr('class', 'wuk-sorn__edge').attr('x1', 1).attr('x2', 23).attr('y1', 0.75).attr('y2', 0.75);
+  } else {
+    svg.append('line').attr('class', `wuk-line wuk-line--${id}`).attr('x1', 1).attr('x2', 23).attr('y1', 4).attr('y2', 4);
+  }
   return svg.node();
 }
 
@@ -63,9 +70,9 @@ export function createChart(root) {
 
   function drawLegend() {
     legend.replaceChildren(
-      ...data.series.map((s) => {
+      ...data.plotted.map((s) => {
         const item = el('li', 'wuk-legend__item');
-        item.append(lineKey(s.id), el('span', null, s.label));
+        item.append(seriesKey(s.id), el('span', null, s.label));
         return item;
       }),
     );
@@ -75,15 +82,15 @@ export function createChart(root) {
     if (!data) return;
     const width = frame.clientWidth;
     const narrow = width < NARROW;
-    const directLabels = !narrow && data.series.length <= 4;
-    const m = { top: 16, right: directLabels ? 128 : 16, bottom: 32, left: 52 };
-    const { dates, series } = data;
+    const directLabels = !narrow && data.plotted.length <= 5;
+    const m = { top: 16, right: directLabels ? 156 : 16, bottom: 32, left: 52 };
+    const { dates, series, sorn, plotted } = data;
 
     const x = scaleUtc()
       .domain([dates[0], dates[dates.length - 1]])
       .range([m.left, width - m.right]);
     const y = scaleLinear()
-      .domain([0, max(series, (s) => max(s.values)) || 1])
+      .domain([0, max(plotted, (s) => max(s.values)) || 1])
       .nice()
       .range([HEIGHT - m.bottom, m.top]);
     geometry = { x, y, m, width };
@@ -114,6 +121,22 @@ export function createChart(root) {
       .call(axisLeft(y).ticks(5).tickFormat(tickCount).tickSize(0).tickPadding(8))
       .call((g) => g.select('.domain').remove());
 
+    if (sorn) {
+      const defined = (v) => v !== null;
+      const sornArea = area()
+        .defined(defined)
+        .x((_, i) => x(dates[i]))
+        .y0(y(0))
+        .y1((v) => y(v));
+      const sornEdge = line()
+        .defined(defined)
+        .x((_, i) => x(dates[i]))
+        .y((v) => y(v));
+      const g = svg.append('g').attr('class', 'wuk-sorn');
+      g.append('path').attr('class', 'wuk-sorn__area').attr('d', sornArea(sorn.values));
+      g.append('path').attr('class', 'wuk-sorn__edge').attr('d', sornEdge(sorn.values));
+    }
+
     const path = line()
       .defined((v) => v !== null)
       .x((_, i) => x(dates[i]))
@@ -126,13 +149,13 @@ export function createChart(root) {
       .attr('class', (s) => `wuk-line wuk-line--${s.id}`)
       .attr('d', (s) => path(s.values));
 
-    if (directLabels) drawDirectLabels(series, dates, x, y, width - m.right + 8);
+    if (directLabels) drawDirectLabels(plotted, dates, x, y, width - m.right + 8);
 
     const focus = svg.append('g').attr('class', 'wuk-chart__focus').style('display', 'none');
     focus.append('line').attr('class', 'wuk-chart__crosshair').attr('y1', m.top).attr('y2', HEIGHT - m.bottom);
     focus
       .selectAll('circle')
-      .data(series)
+      .data(plotted)
       .join('circle')
       .attr('class', (s) => `wuk-dot wuk-dot--${s.id}`)
       .attr('r', 4);
@@ -214,8 +237,14 @@ export function createChart(root) {
       return node;
     };
     const ordered = [...data.series].sort((a, b) => (b.values[i] ?? -1) - (a.values[i] ?? -1));
-    const rows = ordered.map((s) => row(s.values[i], s.label, lineKey(s.id)));
-    if (ordered.length > 1) rows.push(row(totalAt(data.series, i), 'Total', null, 'wuk-tooltip__row--total'));
+    const rows = ordered.map((s) => row(s.values[i], s.label, seriesKey(s.id)));
+    if (ordered.length > 1) {
+      rows.push(row(totalAt(data.series, i), 'Total licensed', null, 'wuk-tooltip__row--total'));
+    }
+    // SORN sits apart from the licensed figures: it isn't part of their total.
+    if (data.sorn) {
+      rows.push(row(data.sorn.values[i], data.sorn.label, seriesKey('sorn'), 'wuk-tooltip__row--total'));
+    }
     tooltip.replaceChildren(el('p', 'wuk-tooltip__title', data.quarters[i]), ...rows);
   }
 
@@ -234,9 +263,12 @@ export function createChart(root) {
   new ResizeObserver(() => draw()).observe(frame);
 
   return {
-    /** `quarters` are labels, `dates` their quarter-end dates, `series` from seriesByFuel. */
-    update({ quarters, dates, series, summary }) {
-      data = { quarters, dates, series, focusIndex: null };
+    /**
+     * `quarters` are labels, `dates` their quarter-end dates, `series` from seriesByFuel,
+     * and `sorn` from sornSeries (or null).
+     */
+    update({ quarters, dates, series, sorn, summary }) {
+      data = { quarters, dates, series, sorn, plotted: sorn ? [...series, sorn] : series, focusIndex: null };
       svg.attr('aria-label', summary);
       tooltip.hidden = true;
       drawLegend();

@@ -40,6 +40,19 @@ test('finds a model with keyboard-only search', async ({ page }) => {
   await expect(page).toHaveURL(/#\/ford\/ford-fiesta$/);
 });
 
+test('shows cars declared off the road (SORN) alongside the fuel lines', async ({ page }) => {
+  await open(page, './#/ford/ford-fiesta');
+  await expect(page.locator('.wuk-legend')).toContainText('Off the road (SORN)');
+  await expect(page.locator('.wuk-chart__svg .wuk-sorn__area')).toBeAttached();
+  await expect(page.locator('#stat-sorn')).toContainText('declared off the road (SORN)');
+
+  await page.locator('.wuk-chart__svg').focus();
+  await expect(page.locator('.wuk-tooltip')).toContainText('Off the road (SORN)');
+
+  await page.getByText('Show the data as a table').click();
+  await expect(page.locator('#data-table thead')).toContainText('Off the road (SORN)');
+});
+
 test('opens a model from a shared link', async ({ page }) => {
   await open(page, './#/ford/ford-fiesta');
   await expect(page.locator('#chart-title')).toContainText('FORD FIESTA');

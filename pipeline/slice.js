@@ -1,4 +1,7 @@
-import { BODY_TYPE, LICENCE_STATUS } from './sources.js';
+import { BODY_TYPE } from './sources.js';
+
+/** LicenceStatus values in the CSV, and the keys they're stored under. */
+const STATUS_KEYS = { Licensed: 'licensed', SORN: 'sorn' };
 
 /** "[c]", "[x]" and "[z]" become null: unknown, not zero. */
 export function parseCount(cell) {
@@ -20,7 +23,8 @@ export function slugify(name) {
 }
 
 /**
- * Collects licensed cars into Make -> GenModel -> variant (Model + Fuel) series.
+ * Collects cars into Make -> GenModel -> variant (Model + Fuel), each variant holding a
+ * licensed series and a SORN (off the road) series.
  * `quarters` are in file order (newest first); output series are oldest first.
  */
 export function createAggregator(quarters) {
@@ -28,7 +32,8 @@ export function createAggregator(quarters) {
 
   function add(row) {
     const [bodyType, make, genModel, model, fuel, status] = row;
-    if (bodyType !== BODY_TYPE || status !== LICENCE_STATUS) return;
+    const statusKey = STATUS_KEYS[status];
+    if (bodyType !== BODY_TYPE || !statusKey) return;
 
     const values = row.slice(6).map(parseCount).reverse();
 
@@ -38,12 +43,11 @@ export function createAggregator(quarters) {
     const variants = genModels.get(genModel);
 
     const key = `${model}\u0000${fuel}`;
-    const existing = variants.get(key);
-    if (existing) {
-      existing.values = existing.values.map((v, i) => addCounts(v, values[i]));
-    } else {
-      variants.set(key, { model, fuel, values });
-    }
+    if (!variants.has(key)) variants.set(key, { model, fuel });
+    const variant = variants.get(key);
+    variant[statusKey] = variant[statusKey]
+      ? variant[statusKey].map((v, i) => addCounts(v, values[i]))
+      : values;
   }
 
   function result() {
@@ -69,7 +73,12 @@ export function createAggregator(quarters) {
           path: `models/${makeSlug}/${genSlug}.json`,
           data: { make, genModel, quarters: oldestFirst, variants },
         });
-        indexModels.push({ name: genModel, slug: genSlug, latest: latestTotal(variants, oldestFirst.length) });
+        indexModels.push({
+          name: genModel,
+          slug: genSlug,
+          latest: latestTotal(variants, 'licensed'),
+          sorn: latestTotal(variants, 'sorn'),
+        });
       }
 
       if (indexModels.length === 0) continue;
@@ -77,6 +86,7 @@ export function createAggregator(quarters) {
         name: make,
         slug: makeSlug,
         latest: indexModels.reduce((sum, m) => addCounts(sum, m.latest), 0),
+        sorn: indexModels.reduce((sum, m) => addCounts(sum, m.sorn), 0),
         models: indexModels,
       });
     }
@@ -113,16 +123,22 @@ export function shortHash(text) {
   return h.toString(36).slice(0, 5);
 }
 
-/** Drops leading zeros (quarters before the variant existed); `from` says where values start. */
-function compactVariant({ model, fuel, values }) {
-  const from = values.findIndex((v) => v !== 0);
-  if (from === -1) return null;
-  return { model, fuel, from, values: values.slice(from) };
+/**
+ * Drops leading zeros (quarters before the variant existed); `from` says where values start.
+ * A series that's zero throughout becomes null.
+ */
+export function compactSeries(values) {
+  const from = values ? values.findIndex((v) => v !== 0) : -1;
+  return from === -1 ? null : { from, values: values.slice(from) };
 }
 
-function latestTotal(variants, quarterCount) {
-  return variants.reduce((sum, v) => {
-    const latest = v.from + v.values.length === quarterCount ? v.values[v.values.length - 1] : 0;
-    return addCounts(sum, latest);
-  }, 0);
+/** A variant with neither licensed nor SORN vehicles in any quarter is dropped. */
+function compactVariant({ model, fuel, licensed, sorn }) {
+  const out = { model, fuel, licensed: compactSeries(licensed), sorn: compactSeries(sorn) };
+  return out.licensed || out.sorn ? out : null;
+}
+
+/** Only leading zeros are trimmed, so a series' last value is always the latest quarter. */
+function latestTotal(variants, key) {
+  return variants.reduce((sum, v) => addCounts(sum, v[key] ? v[key].values.at(-1) : 0), 0);
 }
