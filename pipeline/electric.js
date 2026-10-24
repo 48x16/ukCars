@@ -2,6 +2,7 @@
 //
 //   npm run electric             download the latest DfT tables and the ONS lookup
 //   npm run electric -- --cached use the copies in .cache/
+//   npm run electric -- --fixture tiny test files, for CI (part of `npm run data:fixture`)
 //
 // Runs after `npm run data`, which clears public/data/. Sources, all Open Government Licence:
 // - DfT VEH0145: licensed plug-in vehicles by small area (LSOA / data zone), quarterly.
@@ -181,14 +182,29 @@ function csvRows(stream, options = {}) {
   return stream.pipe(parse({ bom: true, relax_column_count: true, ...options }));
 }
 
+/** The ONS lookup is a zipped CSV; the test fixture is a plain one. */
+async function openLookup(path) {
+  if (path.endsWith('.csv')) return createReadStream(path);
+  const entry = (await listEntries(path)).find((e) => /\.csv$/i.test(e.name));
+  if (!entry) throw new Error('No CSV in the ONS postcode lookup');
+  return openEntry(path, entry);
+}
+
 async function main() {
-  const cached = process.argv.includes('--cached');
-  const paths = {
-    veh0145: join(CACHE, 'df_VEH0145.csv'),
-    chargers: join(CACHE, 'evci0102.ods'),
-    lookup: join(CACHE, 'pcd_lookup.zip'),
-  };
-  if (!cached) {
+  const fixture = process.argv.includes('--fixture');
+  const fixtures = join(ROOT, 'test', 'fixtures');
+  const paths = fixture
+    ? {
+        veh0145: join(fixtures, 'mini_VEH0145.csv'),
+        chargers: join(fixtures, 'mini_evci0102.ods'),
+        lookup: join(fixtures, 'mini_lookup.csv'),
+      }
+    : {
+        veh0145: join(CACHE, 'df_VEH0145.csv'),
+        chargers: join(CACHE, 'evci0102.ods'),
+        lookup: join(CACHE, 'pcd_lookup.zip'),
+      };
+  if (!fixture && !process.argv.includes('--cached')) {
     const vehUrl = findCsvUrl(await fetchText(SOURCE_PAGE_URL), 'df_VEH0145.csv');
     const chargersUrl = findChargersUrl(await fetchText(CHARGERS_PAGE_URL));
     for (const [url, path] of [
@@ -201,9 +217,7 @@ async function main() {
     }
   }
 
-  const [entry] = (await listEntries(paths.lookup)).filter((e) => /\.csv$/i.test(e.name));
-  if (!entry) throw new Error('No CSV in the ONS postcode lookup');
-  const lookup = await buildLookup(csvRows(await openEntry(paths.lookup, entry), { columns: true }));
+  const lookup = await buildLookup(csvRows(await openLookup(paths.lookup), { columns: true }));
   const plugIns = await plugInsByCouncil(csvRows(createReadStream(paths.veh0145)), lookup);
   const chargers = chargersByCouncil(await readSheet(paths.chargers, CHARGERS_SHEET));
   const electric = buildElectric({ plugIns, chargers });

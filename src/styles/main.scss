@@ -38,6 +38,8 @@ $ink: #111;
 @use "govuk-frontend/dist/govuk/components/hint";
 @use "govuk-frontend/dist/govuk/components/input";
 @use "govuk-frontend/dist/govuk/components/select";
+@use "govuk-frontend/dist/govuk/components/fieldset";
+@use "govuk-frontend/dist/govuk/components/radios";
 @use "govuk-frontend/dist/govuk/components/details";
 @use "govuk-frontend/dist/govuk/components/table";
 @use "govuk-frontend/dist/govuk/components/error-summary";
@@ -972,4 +974,190 @@ body {
 .wuk-footer {
   background: var(--wuk-paper);
   border-top: 1px solid var(--wuk-ink);
+}
+
+// Electric page
+
+// Council map: five greys, light (low) to dark (high). Shade is backed by the legend's
+// labelled ranges, the council list and the table, so no value rests on shade alone.
+.wuk-map {
+  position: relative;
+}
+
+.wuk-map__svg {
+  display: block;
+  width: 100%;
+  max-height: 85vh;
+  font-family: var(--wuk-display);
+}
+
+.wuk-map__council {
+  stroke: var(--wuk-paper);
+  stroke-width: 0.5px;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  cursor: pointer;
+
+  &:hover {
+    stroke: var(--wuk-pink);
+    stroke-width: 1.5px;
+  }
+}
+
+$wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
+
+@each $i, $colour in $wuk-map-steps {
+  .wuk-map__council[data-step="#{$i}"],
+  .wuk-map__swatch[data-step="#{$i}"] {
+    fill: $colour;
+    background: $colour;
+  }
+}
+
+.wuk-map__council[data-step="none"],
+.wuk-map__swatch[data-step="none"] {
+  fill: var(--wuk-paper);
+  background: var(--wuk-paper);
+  stroke: var(--wuk-ink-3);
+}
+
+.wuk-map__swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--wuk-rule);
+
+  &[data-step="none"] {
+    border-color: var(--wuk-ink-3);
+  }
+}
+
+.wuk-map__picked {
+  fill: none;
+  stroke: var(--wuk-pink);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.wuk-map__inset-frame {
+  fill: var(--wuk-paper);
+  stroke: var(--wuk-ink);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.wuk-map__inset-marker {
+  fill: none;
+  stroke: var(--wuk-ink);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.wuk-map__inset-label {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--wuk-ink);
+}
+
+.wuk-map__legend {
+  @include govuk-font($size: 16);
+}
+
+.wuk-map__tooltip {
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.wuk-map__summary {
+  margin-top: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-council-select {
+  width: 100%;
+}
+
+// The picked council's facts, with the figures in Plex Mono.
+.wuk-council:not(:empty) {
+  padding-top: govuk-spacing(3);
+  border-top: 4px solid var(--wuk-pink);
+}
+
+.wuk-council__name {
+  margin-bottom: govuk-spacing(2);
+}
+
+.wuk-council__facts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: govuk-spacing(1) govuk-spacing(3);
+  margin: 0;
+  @include govuk-font($size: 16);
+
+  dt {
+    color: var(--wuk-ink-2);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--wuk-figure);
+    font-weight: 600;
+    text-align: right;
+  }
+}
+
+.wuk-council__note {
+  margin-top: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+// Top and bottom ten, side by side when there's room.
+.wuk-ranks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+  gap: govuk-spacing(6);
+}
+
+.wuk-rank {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: rank;
+  @include govuk-font($size: 16);
+}
+
+.wuk-rank__item {
+  display: grid;
+  grid-template-columns: 2em 1fr auto;
+  gap: govuk-spacing(2);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-rule);
+  counter-increment: rank;
+
+  &::before {
+    content: counter(rank);
+    color: var(--wuk-ink-3);
+    font-family: var(--wuk-figure);
+  }
+}
+
+.wuk-rank__value {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+}
+
+// Wide tables scroll sideways inside their box rather than widening the page.
+.wuk-table-scroll {
+  overflow-x: auto;
+}
+
+.wuk-table-scroll:focus-visible {
+  outline: 3px solid var(--wuk-focus);
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px var(--wuk-ink);
 }
