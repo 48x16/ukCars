@@ -12,6 +12,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { download, fetchText, findCsvUrl } from './fetch.js';
+import { buildInsights } from './insights.js';
 import { createAggregator } from './slice.js';
 import { CSV_FILE_NAME, SOURCE_PAGE_URL } from './sources.js';
 import { SchemaError, validateFile, validateHeader, validateRow } from './validate.js';
@@ -118,6 +119,7 @@ async function main() {
     builtAt: new Date().toISOString(),
   });
   for (const { path, data } of result.files) await writeJson(join(OUT_DIR, path), data);
+  await writeJson(join(OUT_DIR, 'insights.json'), buildInsights(result));
 
   console.log(
     `Wrote ${result.files.length} model files for ${result.index.makes.length} makes ` +

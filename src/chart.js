@@ -51,7 +51,11 @@ function seriesKey(id) {
   return svg.node();
 }
 
-export function createChart(root) {
+/**
+ * `formatValue` and `formatTick` format tooltip values and y-axis ticks; `totalLabel` names
+ * the tooltip's total row, or null to leave it out (e.g. for shares, which sum to 100%).
+ */
+export function createChart(root, { formatValue = formatCount, formatTick = tickCount, totalLabel = 'Total licensed' } = {}) {
   const legend = el('ul', 'wuk-legend');
   const frame = el('div', 'wuk-chart__frame');
   const tooltip = el('div', 'wuk-tooltip');
@@ -118,7 +122,7 @@ export function createChart(root) {
       .append('g')
       .attr('class', 'wuk-chart__axis wuk-chart__axis--y')
       .attr('transform', `translate(${m.left},0)`)
-      .call(axisLeft(y).ticks(5).tickFormat(tickCount).tickSize(0).tickPadding(8))
+      .call(axisLeft(y).ticks(5).tickFormat(formatTick).tickSize(0).tickPadding(8))
       .call((g) => g.select('.domain').remove());
 
     if (sorn) {
@@ -233,13 +237,13 @@ export function createChart(root) {
       const name = el('span', 'wuk-tooltip__label');
       if (key) name.append(key);
       name.append(el('span', null, label));
-      node.append(el('span', 'wuk-tooltip__value', formatCount(value)), name);
+      node.append(el('span', 'wuk-tooltip__value', formatValue(value)), name);
       return node;
     };
     const ordered = [...data.series].sort((a, b) => (b.values[i] ?? -1) - (a.values[i] ?? -1));
     const rows = ordered.map((s) => row(s.values[i], s.label, seriesKey(s.id)));
-    if (ordered.length > 1) {
-      rows.push(row(totalAt(data.series, i), 'Total licensed', null, 'wuk-tooltip__row--total'));
+    if (totalLabel && ordered.length > 1) {
+      rows.push(row(totalAt(data.series, i), totalLabel, null, 'wuk-tooltip__row--total'));
     }
     // SORN sits apart from the licensed figures: it isn't part of their total.
     if (data.sorn) {

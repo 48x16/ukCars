@@ -34,8 +34,9 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
+    // Each page is cached under its own URL; the home page is the last resort.
     event.respondWith(networkFirst(request, SHELL_CACHE, new URL('./', self.registration.scope).href));
-  } else if (/\/data\/(index|meta)\.json$/.test(url.pathname)) {
+  } else if (/\/data\/(index|meta|insights)\.json$/.test(url.pathname)) {
     event.respondWith(networkFirst(request, DATA_CACHE));
   } else if (url.pathname.includes('/data/')) {
     event.respondWith(staleWhileRevalidate(event, DATA_CACHE));
@@ -48,10 +49,10 @@ async function networkFirst(request, cacheName, fallbackUrl) {
   const cache = await caches.open(cacheName);
   try {
     const response = await fetch(request);
-    if (response.ok) cache.put(fallbackUrl ?? request, response.clone());
+    if (response.ok) cache.put(request, response.clone());
     return response;
   } catch (err) {
-    const cached = await cache.match(fallbackUrl ?? request);
+    const cached = (await cache.match(request, { ignoreSearch: true })) ?? (fallbackUrl && (await cache.match(fallbackUrl)));
     if (cached) return cached;
     throw err;
   }

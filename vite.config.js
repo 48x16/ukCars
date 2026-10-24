@@ -22,7 +22,9 @@ function serviceWorker() {
       const files = Object.keys(bundle).filter(
         (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || /inter-latin-wght-normal/.test(f)),
       );
-      const precache = ['./', ...files, ...PUBLIC_SHELL].map((f) => (f === './' ? f : `./${f}`));
+      // HTML pages are emitted after this hook runs, so they're listed by name.
+      const pages = ['insights.html'];
+      const precache = ['./', ...new Set([...pages, ...files, ...PUBLIC_SHELL])].map((f) => (f === './' ? f : `./${f}`));
       const version = createHash('sha256').update(precache.join('\n')).digest('hex').slice(0, 12);
       let source = readFileSync('src/sw.js', 'utf8');
       for (const [line, value] of [
@@ -41,6 +43,11 @@ export default defineConfig({
   // Relative base so the build works under the GitHub Pages project path (/ukCars/).
   base: './',
   plugins: [serviceWorker()],
+  build: {
+    rolldownOptions: {
+      input: { main: 'index.html', insights: 'insights.html' },
+    },
+  },
   test: {
     include: ['test/**/*.test.js'],
     environment: 'node',

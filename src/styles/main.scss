@@ -467,6 +467,339 @@ body {
   }
 }
 
+// Header navigation: white links on black; the current page is underlined in pink.
+
+.wuk-nav {
+  display: flex;
+  gap: govuk-spacing(4);
+  margin-right: auto;
+  margin-left: govuk-spacing(4);
+}
+
+.wuk-nav__link {
+  @include govuk-font($size: 19, $weight: bold);
+  color: var(--wuk-paper);
+  text-decoration: none;
+  padding: 2px 0;
+  border-bottom: 4px solid transparent;
+
+  &:hover {
+    border-bottom-color: var(--wuk-paper);
+  }
+
+  &[aria-current="page"] {
+    border-bottom-color: var(--wuk-pink);
+  }
+
+  &:focus {
+    @include govuk-focused-text;
+  }
+}
+
+// Insights page
+
+.wuk-section {
+  margin-top: govuk-spacing(9);
+}
+
+.wuk-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
+  gap: govuk-spacing(4);
+  margin: govuk-spacing(6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-tile {
+  padding: govuk-spacing(3) govuk-spacing(4) govuk-spacing(4);
+  border-top: 4px solid var(--wuk-ink);
+
+  &:first-child {
+    border-top-color: var(--wuk-pink);
+  }
+}
+
+.wuk-tile__value {
+  display: block;
+  @include govuk-font($size: 36, $weight: bold);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.wuk-tile__label {
+  display: block;
+  margin-top: govuk-spacing(1);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Mover cards: rank, name, change, before/after, and a mini-chart.
+
+.wuk-movers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+  gap: govuk-spacing(4);
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-mover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: govuk-spacing(3);
+  padding-left: govuk-spacing(7) + 4px;
+  border: 1px solid var(--wuk-rule);
+}
+
+.wuk-mover__rank {
+  position: absolute;
+  top: govuk-spacing(3);
+  left: govuk-spacing(3);
+  @include govuk-font($size: 19, $weight: bold);
+  color: var(--wuk-ink-3);
+}
+
+.wuk-mover__name {
+  @include govuk-font($size: 19, $weight: bold);
+}
+
+.wuk-mover__change {
+  margin: govuk-spacing(1) 0 0;
+  @include govuk-font($size: 36, $weight: bold);
+  letter-spacing: -0.03em;
+}
+
+.wuk-mover__detail {
+  margin: 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-mover__chart {
+  margin-top: auto;
+  padding-top: govuk-spacing(3);
+}
+
+.wuk-mover__plot {
+  position: relative;
+  height: 56px;
+}
+
+.wuk-spark {
+  display: block;
+  width: 100%;
+  height: 56px;
+}
+
+.wuk-spark__area {
+  fill: var(--wuk-wash);
+}
+
+.wuk-spark__line {
+  fill: none;
+  stroke: var(--wuk-ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.wuk-mover__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--wuk-pink);
+  border: 2px solid var(--wuk-paper);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Split bars: share off the road (dark) against licensed (light).
+
+.wuk-bars-legend {
+  margin-bottom: govuk-spacing(4);
+}
+
+.wuk-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+}
+
+.wuk-swatch--sorn {
+  background: var(--wuk-ink);
+}
+
+.wuk-swatch--licensed {
+  background: var(--wuk-rule);
+}
+
+.wuk-bars {
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-bar {
+  display: grid;
+  grid-template-columns: minmax(8em, 14em) 3.5em 1fr;
+  grid-template-areas:
+    "name value track"
+    ". . detail";
+  align-items: center;
+  gap: 0 govuk-spacing(3);
+  padding: govuk-spacing(2) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name value"
+      "track track"
+      "detail detail";
+  }
+}
+
+.wuk-bar__name {
+  grid-area: name;
+  @include govuk-font($size: 19, $weight: bold);
+}
+
+.wuk-bar__value {
+  grid-area: value;
+  @include govuk-font($size: 19, $weight: bold);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.wuk-bar__track {
+  grid-area: track;
+  display: flex;
+  gap: 2px;
+  height: 16px;
+}
+
+.wuk-bar__sorn {
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-bar__licensed {
+  flex: 1;
+  background: var(--wuk-rule);
+}
+
+.wuk-bar__detail {
+  grid-area: detail;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Slope (rank) chart
+
+.wuk-slope-wrap {
+  max-width: 640px;
+  margin-bottom: govuk-spacing(4);
+}
+
+.wuk-slope {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  @include govuk-font($size: 16);
+}
+
+.wuk-slope__head {
+  fill: var(--wuk-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.wuk-slope__label {
+  fill: var(--wuk-ink);
+  font-size: 14px;
+
+  @include govuk-media-query($until: tablet) {
+    font-size: 13px;
+  }
+
+  font-variant-numeric: tabular-nums;
+}
+
+.wuk-slope__line {
+  stroke: var(--wuk-ink-3);
+  stroke-width: 2;
+}
+
+.wuk-slope__dot {
+  fill: var(--wuk-ink-3);
+  stroke: var(--wuk-paper);
+  stroke-width: 2;
+}
+
+.wuk-slope__make--up .wuk-slope__line,
+.wuk-slope__make--down .wuk-slope__line {
+  stroke: var(--wuk-ink);
+}
+
+.wuk-slope__make--up .wuk-slope__dot,
+.wuk-slope__make--down .wuk-slope__dot {
+  fill: var(--wuk-ink);
+}
+
+.wuk-slope__make--down .wuk-slope__line {
+  stroke-dasharray: 6 4;
+}
+
+.wuk-slope__make--climber {
+  .wuk-slope__line {
+    stroke: var(--wuk-pink);
+    stroke-width: 3;
+  }
+
+  .wuk-slope__dot {
+    fill: var(--wuk-pink);
+  }
+
+  .wuk-slope__label {
+    font-weight: 700;
+  }
+}
+
+.wuk-slope__hit {
+  stroke: transparent;
+  stroke-width: 24;
+}
+
+.wuk-slope__make {
+  cursor: default;
+  outline: none;
+  transition: opacity 120ms;
+}
+
+.wuk-slope--focus .wuk-slope__make:not(.is-active) {
+  opacity: 0.2;
+}
+
+.wuk-slope__make.is-active {
+  .wuk-slope__label {
+    font-weight: 700;
+  }
+
+  .wuk-slope__line {
+    stroke-width: 4;
+  }
+}
+
+.wuk-slope__make:focus-visible .wuk-slope__label {
+  paint-order: stroke;
+  stroke: var(--wuk-focus);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
 // Footer: white, with a black rule, in place of the GOV.UK footer's colours.
 
 .wuk-footer {

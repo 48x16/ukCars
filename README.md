@@ -56,7 +56,16 @@ for how this maps to Azure DevOps, and the one-time GitHub setup.
   `null` when that series is zero throughout. Leading zeros are trimmed; `from` says which
   quarter `values` starts at.
   Suppressed counts (`[c]`, `[x]`, `[z]`) are `null`, and any total that includes one is `null` too.
+- `data/insights.json`: whole-fleet stories for the Insights page (headline figures,
+  fastest falling and growing models, fuel shares, electrified cars, garage queens and
+  make rankings), built by `pipeline/insights.js` from the model files.
 - `data/meta.json`: the quarter range and build details.
+
+### Pages
+
+- `index.html` (Explore): search any make and model, chart it by fuel type and SORN.
+- `insights.html` (Insights): the national picture. Every sentence that states a figure
+  is generated from the data, so it stays true after each weekly update.
 
 ### Design
 
