@@ -613,10 +613,17 @@ body {
 
 // Header navigation: ink links on paper; the current page is underlined in pink.
 
+// Wraps on narrow screens, so the links never push the page wider than the phone.
 .wuk-nav {
   display: flex;
-  gap: govuk-spacing(5);
+  flex-wrap: wrap;
+  gap: govuk-spacing(1) govuk-spacing(5);
   margin-left: auto;
+
+  @include govuk-media-query($until: tablet) {
+    gap: govuk-spacing(1) govuk-spacing(4);
+    margin-left: 0;
+  }
 }
 
 .wuk-nav__link {
@@ -1265,4 +1272,763 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
   font-family: var(--wuk-figure);
   font-weight: 600;
   text-align: right;
+}
+
+// Features
+// Feature pages open like a magazine story: a kicker, a big title, a standfirst, then the
+// lead infographic. Every graphic below is HTML or SVG built from the data.
+
+.wuk-kicker {
+  margin: 0 0 govuk-spacing(2);
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wuk-pink);
+}
+
+.wuk-standfirst {
+  margin: 0 0 govuk-spacing(5);
+  @include govuk-font($size: 24);
+  font-family: var(--wuk-display);
+  line-height: 1.35;
+}
+
+// Features index: one card per story.
+.wuk-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+  gap: govuk-spacing(6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-card {
+  position: relative;
+  padding-top: govuk-spacing(3);
+  border-top: 4px solid var(--wuk-ink);
+
+  &:hover {
+    border-top-color: var(--wuk-pink);
+  }
+}
+
+.wuk-card__icon svg {
+  width: 40px;
+  height: 40px;
+  stroke-width: 1.5;
+}
+
+.wuk-card__title {
+  margin: govuk-spacing(2) 0;
+}
+
+// The whole card is the link's target, for a bigger hit area.
+.wuk-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+// Out to play: summer against winter.
+.wuk-season-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  gap: govuk-spacing(4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-season-tile {
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+
+  &--quiet {
+    color: var(--wuk-ink-2);
+  }
+}
+
+.wuk-season-tile__label {
+  margin: 0 0 govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-season-tile__row {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin: 0;
+}
+
+.wuk-season-tile__icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+.wuk-season-tile__row--winter .wuk-season-tile__icon {
+  color: var(--wuk-pink);
+}
+
+.wuk-season-tile__value {
+  min-width: 2.6em;
+  @include govuk-font($size: 27, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-season-tile__words {
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Sun (summer) and snowflake (winter) markers, in the legend and on the dumbbells.
+.wuk-season-key,
+.wuk-dumbbell__end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.wuk-season-key--summer,
+.wuk-dumbbell__end--summer {
+  background: var(--wuk-paper);
+  border: 2px solid var(--wuk-ink);
+}
+
+.wuk-season-key--winter,
+.wuk-dumbbell__end--winter {
+  color: var(--wuk-paper);
+  background: var(--wuk-pink);
+}
+
+.wuk-dumbbells {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-dumbbell {
+  display: grid;
+  grid-template-columns: minmax(9em, 14em) 1fr 6.5em;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 16);
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr auto;
+
+    .wuk-dumbbell__track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}
+
+.wuk-dumbbell__track {
+  position: relative;
+  height: 28px;
+  margin: 0 12px;
+  background: linear-gradient(var(--wuk-rule), var(--wuk-rule)) center / 100% 1px no-repeat;
+}
+
+.wuk-dumbbell__bar {
+  position: absolute;
+  top: 12px;
+  height: 4px;
+  background: var(--wuk-ink);
+}
+
+.wuk-dumbbell__end {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+}
+
+.wuk-dumbbell__figures {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.wuk-dumbbell-scale,
+.wuk-dotrow-scale {
+  color: var(--wuk-ink-2);
+}
+
+// Sawtooth small multiples.
+.wuk-saws {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14em, 1fr));
+  gap: govuk-spacing(5);
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-saw {
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-saw__title {
+  margin-bottom: govuk-spacing(2);
+}
+
+.wuk-saw__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wuk-saw__winter {
+  fill: var(--wuk-wash);
+}
+
+.wuk-saw__area {
+  fill: var(--wuk-pink);
+  opacity: 0.08;
+}
+
+.wuk-saw__line {
+  fill: none;
+  stroke: var(--wuk-pink);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
+
+.wuk-saw__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 govuk-spacing(3);
+  margin: govuk-spacing(2) 0 0;
+  @include govuk-font($size: 16);
+}
+
+.wuk-saw__fact--winter {
+  font-weight: 700;
+}
+
+.wuk-saw__turnout {
+  margin: govuk-spacing(1) 0 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Bavarian battle: the podium, and a line style per make.
+.wuk-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: govuk-spacing(2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-podium__step {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  max-width: 11em;
+  text-align: center;
+}
+
+.wuk-podium__name {
+  @include govuk-font($size: 24, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-podium__value {
+  margin-bottom: govuk-spacing(2);
+  @include govuk-font($size: 16);
+  font-family: var(--wuk-figure);
+}
+
+.wuk-podium__block {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  height: calc(var(--height) * 170px);
+  padding-top: govuk-spacing(2);
+  font-family: var(--wuk-display);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--wuk-paper);
+  background: var(--wuk-ink-2);
+}
+
+.wuk-podium__step--1 .wuk-podium__block {
+  background: var(--wuk-ink);
+  box-shadow: inset 0 6px 0 var(--wuk-pink);
+}
+
+.wuk-line--bmw { stroke: var(--wuk-ink); }
+.wuk-line--mercedes { stroke: var(--wuk-ink-2); stroke-dasharray: 7 4; stroke-linecap: butt; }
+.wuk-line--audi { stroke: var(--wuk-pink); stroke-width: 3; }
+.wuk-dot--bmw { fill: var(--wuk-ink); }
+.wuk-dot--mercedes { fill: var(--wuk-ink-2); }
+.wuk-dot--audi { fill: var(--wuk-pink); }
+
+// 100% bars, one per row.
+.wuk-stacks {
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-stackrow {
+  display: grid;
+  grid-template-columns: 9em 1fr;
+  align-items: center;
+  gap: govuk-spacing(1) govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  @include govuk-font($size: 16);
+}
+
+.wuk-stackrow__extra {
+  grid-column: 2;
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  color: var(--wuk-ink-2);
+}
+
+.wuk-stack {
+  display: flex;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.wuk-stack__seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-right: 2px solid var(--wuk-paper);
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.wuk-stacks--paint .wuk-stack__seg {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+}
+
+.wuk-fill--petrol { color: #fff; background: #111; }
+.wuk-fill--diesel { color: #fff; background: #6b6b6b; }
+.wuk-fill--hybrid { color: #111; background: #b8b8b8; }
+.wuk-fill--plugin { color: #111; background: #e2e2e2; }
+.wuk-fill--electric { color: #fff; background: var(--wuk-pink); }
+.wuk-fill--other { color: #111; background: #f2f2f2; }
+
+.wuk-fill-key {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--wuk-rule);
+}
+
+// Best sellers: one column per make.
+.wuk-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  gap: govuk-spacing(5);
+}
+
+.wuk-column-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--wuk-ink-2);
+}
+
+.wuk-bars-simple {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-bar-simple {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px govuk-spacing(2);
+  margin-bottom: govuk-spacing(2);
+  @include govuk-font($size: 16);
+}
+
+.wuk-bar-simple__value {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+}
+
+.wuk-bar-simple__track {
+  position: relative;
+  grid-column: 1 / -1;
+  height: 10px;
+  background: var(--wuk-wash);
+}
+
+.wuk-bar-simple__now {
+  display: block;
+  height: 100%;
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-bar-simple__then,
+.wuk-then-key {
+  position: absolute;
+  top: -3px;
+  width: 3px;
+  height: 16px;
+  background: var(--wuk-pink);
+}
+
+.wuk-then-key {
+  position: static;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+// MOT dot plot: one row per age band, one mark per make.
+.wuk-dotplot {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-dotrow {
+  display: grid;
+  grid-template-columns: 9.5em 1fr;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(2) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 16);
+}
+
+.wuk-dotrow__track {
+  position: relative;
+  height: 20px;
+  margin: 0 8px;
+  background: linear-gradient(var(--wuk-rule), var(--wuk-rule)) center / 100% 1px no-repeat;
+}
+
+.wuk-mark {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+.wuk-dotrow__track .wuk-mark {
+  position: absolute;
+  top: 3px;
+  transform: translateX(-50%);
+}
+
+.wuk-mark--bmw { background: var(--wuk-ink); border-radius: 50%; }
+.wuk-mark--mercedes { background: var(--wuk-ink-2); }
+.wuk-mark--audi { background: var(--wuk-pink); transform: rotate(45deg) scale(0.85); }
+.wuk-dotrow__track .wuk-mark--audi { transform: translateX(-50%) rotate(45deg) scale(0.85); }
+
+// Origins: a pictogram of 100 cars.
+.wuk-pictos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-picto {
+  display: grid;
+  grid-template-columns: 8.5em 1fr 2.5em;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 16);
+}
+
+.wuk-picto__cars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+  }
+}
+
+.wuk-picto--highlight {
+  .wuk-picto__cars,
+  .wuk-picto__value {
+    color: var(--wuk-pink);
+  }
+}
+
+.wuk-picto__value {
+  font-family: var(--wuk-display);
+  font-size: 24px;
+  font-weight: 700;
+  text-align: right;
+}
+
+// Then and now.
+.wuk-changes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-change {
+  display: grid;
+  grid-template-columns: 8.5em 1fr 8.5em;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  @include govuk-font($size: 16);
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr auto;
+
+    .wuk-change__track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}
+
+.wuk-change__track {
+  position: relative;
+  height: 20px;
+  margin: 0 8px;
+  background: linear-gradient(var(--wuk-wash), var(--wuk-wash)) center / 100% 2px no-repeat;
+}
+
+.wuk-change__bar {
+  position: absolute;
+  top: 8px;
+  height: 4px;
+  background: var(--wuk-ink-3);
+}
+
+.wuk-change--up .wuk-change__bar {
+  background: var(--wuk-pink);
+}
+
+.wuk-change__dot,
+.wuk-change-key {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.wuk-change__dot {
+  position: absolute;
+  top: 3px;
+  transform: translateX(-50%);
+}
+
+.wuk-change__dot--from,
+.wuk-change-key--from {
+  background: var(--wuk-paper);
+  border: 2px solid var(--wuk-ink);
+}
+
+.wuk-change__dot--to,
+.wuk-change-key--to {
+  background: var(--wuk-ink);
+}
+
+.wuk-change__figures {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+// Small multiples.
+.wuk-multiples {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11em, 1fr));
+  gap: govuk-spacing(5) govuk-spacing(4);
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-multiple {
+  --paint: var(--wuk-ink);
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-multiple--highlight {
+  --paint: var(--wuk-pink);
+  border-top: 4px solid var(--wuk-pink);
+}
+
+.wuk-multiple__title {
+  margin: 0;
+}
+
+.wuk-multiple__value {
+  margin: 0;
+  @include govuk-font($size: 27, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-multiple__change,
+.wuk-multiple__makes {
+  margin: 0 0 govuk-spacing(1);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-mini {
+  display: block;
+  width: 100%;
+  height: 70px;
+  margin: govuk-spacing(1) 0;
+}
+
+.wuk-mini__area {
+  fill: var(--paint);
+  opacity: 0.18;
+}
+
+.wuk-mini__line {
+  fill: none;
+  stroke: var(--paint);
+  stroke-width: 2.5px;
+}
+
+.wuk-multiple--paint .wuk-mini__area {
+  opacity: 0.85;
+}
+
+.wuk-multiple--paint .wuk-mini__line {
+  stroke: var(--wuk-ink);
+  stroke-width: 1px;
+}
+
+// Colours: paint chips by year, eras, and the hero's era chips.
+.wuk-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.2em, 1fr));
+  gap: govuk-spacing(1);
+  margin: 0 0 govuk-spacing(5);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-chip {
+  text-align: center;
+}
+
+.wuk-chip__paint {
+  display: block;
+  aspect-ratio: 1;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 4px;
+}
+
+.wuk-chip__year {
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+}
+
+.wuk-eras {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-era {
+  display: grid;
+  grid-template-columns: 32px 8em 1fr;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 19);
+}
+
+.wuk-era__paint {
+  width: 32px;
+  height: 20px;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 3px;
+}
+
+.wuk-era__name {
+  font-weight: 700;
+}
+
+.wuk-era__years {
+  font-family: var(--wuk-figure);
+}
+
+.wuk-hero-chips {
+  display: flex;
+  min-height: 220px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 4px;
+
+  @include govuk-media-query($until: tablet) {
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+.wuk-hero-chip {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: govuk-spacing(3);
+  border-right: 2px solid var(--wuk-paper);
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.wuk-hero-chip__name {
+  font-family: var(--wuk-display);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.wuk-hero-chip__years {
+  font-family: var(--wuk-figure);
+  font-size: 14px;
 }

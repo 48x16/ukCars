@@ -50,6 +50,8 @@ export const MILES_BAND = 10_000;
 export const MAX_MILES = 300_000;
 /** Makes and models with fewer initial tests than this are left out of the summary. */
 export const MIN_MODEL_TESTS = 100;
+/** Ages counted as "recent cars" for colours by make and by fuel: what people choose now. */
+export const RECENT_AGES = { from: 3, to: 7 };
 
 // DVSA fuel codes, plus the spelled-out values that also appear in the data.
 const FUELS = {
@@ -135,6 +137,8 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
   const miles = zeros(MAX_MILES / MILES_BAND + 1);
   const colours = new Map(); // first-use year -> Map(colour -> count)
   const fuels = new Map(); // first-use year -> Map(fuel -> count)
+  const recentByMake = new Map(); // make -> Map(colour -> count), recent cars only
+  const recentByFuel = new Map(); // fuel -> Map(colour -> count), recent cars only
   const areas = new Map();
   const models = new Map();
 
@@ -186,6 +190,13 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     tally(colours.get(year), colour);
     if (!fuels.has(year)) fuels.set(year, new Map());
     tally(fuels.get(year), fuel);
+    if (age >= RECENT_AGES.from && age <= RECENT_AGES.to) {
+      const makeName = f[col.make].trim().toUpperCase();
+      if (!recentByMake.has(makeName)) recentByMake.set(own(makeName), new Map());
+      tally(recentByMake.get(makeName), colour);
+      if (!recentByFuel.has(fuel)) recentByFuel.set(fuel, new Map());
+      tally(recentByFuel.get(fuel), colour);
+    }
 
     const areaName = f[col.postcode_area].trim().toUpperCase();
     if (areaName) {
@@ -241,6 +252,14 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
       mileage: { band: MILES_BAND, counts: miles },
       colours: byYear(colours),
       fuels: byYear(fuels),
+      recentColours: {
+        ages: RECENT_AGES,
+        byMake: [...recentByMake]
+          .map(([make, counts]) => ({ make, tests: [...counts.values()].reduce((a, b) => a + b, 0), colours: Object.fromEntries(counts) }))
+          .filter((m) => m.tests >= minModelTests)
+          .sort((a, b) => b.tests - a.tests),
+        byFuel: [...recentByFuel].map(([fuel, counts]) => ({ fuel, colours: Object.fromEntries(counts) })),
+      },
       areas: [...areas]
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([area, a]) => ({

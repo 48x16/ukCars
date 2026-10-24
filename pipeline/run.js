@@ -12,6 +12,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { download, fetchText, findCsvUrl } from './fetch.js';
+import { buildFeatures } from './features.js';
 import { buildInsights } from './insights.js';
 import { joinMot } from './mot-join.js';
 import { createAggregator } from './slice.js';
@@ -127,17 +128,23 @@ async function main() {
     builtAt: new Date().toISOString(),
   });
   for (const { path, data } of result.files) await writeJson(join(OUT_DIR, path), data);
-  await writeJson(join(OUT_DIR, 'insights.json'), buildInsights(result));
+  const insights = buildInsights(result);
+  await writeJson(join(OUT_DIR, 'insights.json'), insights);
 
   const mot = await latestMotSummary();
+  let joined = null;
   if (mot) {
-    const joined = joinMot(mot, result.index);
+    joined = joinMot(mot, result.index);
     await writeJson(join(OUT_DIR, 'mot.json'), joined);
     const share = joined.match.testsMatched / joined.match.testsInModels;
     console.log(`Joined ${mot.year} MOT results: ${(share * 100).toFixed(1)}% of tests matched to a DVLA model`);
   } else {
     console.log('No MOT summary in data/mot/, so no mot.json');
   }
+
+  const features = buildFeatures({ files: result.files, insights, mot: joined });
+  for (const [name, data] of Object.entries(features)) await writeJson(join(OUT_DIR, 'features', `${name}.json`), data);
+  console.log(`Wrote features: ${Object.keys(features).join(', ')}`);
 
   console.log(
     `Wrote ${result.files.length} model files for ${result.index.makes.length} makes ` +

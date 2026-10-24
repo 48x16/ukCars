@@ -9,6 +9,7 @@ import { createChart } from './chart.js';
 import { quintileBreaks, renderMapLegend } from './council-map.js';
 import { loadMot } from './data.js';
 import { el, modelLink, renderTable } from './insight-charts.js';
+import { colourYears } from './colour-years.js';
 import { createPaintChart } from './paint-chart.js';
 
 const $ = (id) => document.getElementById(id);
@@ -19,7 +20,6 @@ const pct0 = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionD
 const oneDp = new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const FIRST_AGE = 3; // cars' first MOT
-const MIN_COLOUR_YEAR_TESTS = 20_000;
 const MIN_BAND_TESTS = 2_000;
 const RANK_SIZE = 10;
 
@@ -93,7 +93,7 @@ function renderColours(data) {
   const totals = allYears.map((_, i) => allSeries.reduce((n, s) => n + s.values[i], 0));
   // Cars first used in the last few years aren't due a test yet; the few that are (imports,
   // early tests) aren't typical, so years stop at the age of a first MOT.
-  const keep = allYears.map((y, i) => totals[i] >= MIN_COLOUR_YEAR_TESTS && y <= data.year - FIRST_AGE);
+  const keep = colourYears(allYears, totals, data.year);
   const years = allYears.filter((_, i) => keep[i]);
   const yearTotals = totals.filter((_, i) => keep[i]);
   // "Other" sits on top of the stack, after the named colours.

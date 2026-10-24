@@ -23,7 +23,7 @@ export const DEFAULTS = {
 };
 
 /** One row per GenModel: licensed and SORN totals per quarter. */
-function modelTotals(files) {
+export function modelTotals(files) {
   return files.map(({ path, data }) => {
     const [, makeSlug, file] = path.split('/');
     const n = data.quarters.length;
@@ -33,7 +33,7 @@ function modelTotals(files) {
   });
 }
 
-function fleetByFuel(files, n) {
+export function fleetByFuel(files, n) {
   const totals = new Map(FUEL_GROUPS.map((g) => [g.id, zeros(n)]));
   for (const { data } of files) {
     for (const v of data.variants) {
@@ -108,7 +108,7 @@ function makeRanks(byMake, { topMakes }) {
 }
 
 /** Licensed and SORN totals per make, per quarter. */
-function makeTotals(models, n) {
+export function makeTotals(models, n) {
   const byMake = new Map();
   for (const m of models) {
     const t = byMake.get(m.make) ?? { make: m.make, makeSlug: m.makeSlug, licensed: zeros(n), sorn: zeros(n) };

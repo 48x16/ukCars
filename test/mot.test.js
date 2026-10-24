@@ -67,6 +67,13 @@ describe('MOT aggregator', () => {
     expect(diesel.total).toBe(3);
   });
 
+  it('counts the colours of recent cars by make and by fuel', async () => {
+    const s = await summarise(createReadStream(CSV));
+    // Only cars aged 3 to 7: the C220 D (3) and the Tesla (4).
+    expect(s.recentColours.byMake.map((m) => m.make).sort()).toEqual(['MERCEDES-BENZ', 'TESLA']);
+    expect(s.recentColours.byFuel.find((f) => f.fuel === 'electric').colours).toEqual({ WHITE: 1 });
+  });
+
   it('summarises postcode areas and models, including quoted names', async () => {
     const s = await summarise(createReadStream(CSV));
     const bn = s.areas.find((a) => a.area === 'BN');
