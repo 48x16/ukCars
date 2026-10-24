@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="description"
+      content="A year of MOT tests on Great Britain's cars: pass rates by age, mileage, the colours we chose, where cars pass best, and which models fail most."
+    />
+    <title>MOT – What's on UK roads</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">What&#8217;s on UK roads</a>
+        <nav class="wuk-nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./mot.html" aria-current="page">MOT</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero">
+          <div class="wuk-split__side">
+            <h1 class="govuk-heading-xl">Test day</h1>
+            <p class="govuk-body-l">
+              A year of MOT tests on Great Britain's cars: who passes, how far they've been, and what colour they are.
+            </p>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DVSA anonymised MOT results</li>
+              <li><b>Covers</b> Cars, Great Britain</li>
+              <li><b>Year</b> <span data-year>the latest year</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <h2 class="govuk-visually-hidden">Headline figures</h2>
+            <ul class="wuk-tiles" id="tiles"></ul>
+          </div>
+        </div>
+
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">The MOT data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+
+        <section class="wuk-section wuk-split" aria-labelledby="age-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="age-title">Age before beauty</h2>
+            <p class="govuk-body" id="age-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Share of cars passing their MOT, by age</h3>
+            <div class="wuk-chart" id="pass-chart"></div>
+            <h3 class="govuk-heading-s">Average mileage at the test, by age</h3>
+            <div class="wuk-chart" id="miles-chart"></div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="colour-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="colour-title">Fifty shades of grey</h2>
+            <p class="govuk-body" id="colour-summary"></p>
+            <p class="govuk-body-s">
+              Colours as recorded at the MOT, for cars tested this year, by the year they were first used. Older years
+              only include the cars that are still going.
+            </p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Colour of cars tested, by year first used</h3>
+            <div class="wuk-chart" id="paint-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="Colours by year (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="paint-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="map-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="map-title">Where cars pass</h2>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Shade the map by</legend>
+                <div class="govuk-radios govuk-radios--small" id="metric">
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="metric-pass" name="metric" type="radio" value="pass" checked />
+                    <label class="govuk-label govuk-radios__label" for="metric-pass">Passed first time</label>
+                  </div>
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="metric-miles" name="metric" type="radio" value="miles" />
+                    <label class="govuk-label govuk-radios__label" for="metric-miles">Average mileage</label>
+                  </div>
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="metric-age" name="metric" type="radio" value="age" />
+                    <label class="govuk-label govuk-radios__label" for="metric-age">Average age</label>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <p class="govuk-body" id="metric-note"></p>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="area">Find a postcode area</label>
+              <select class="govuk-select wuk-council-select" id="area" name="area"></select>
+            </div>
+            <div class="wuk-council" id="area-card" aria-live="polite"></div>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s" id="map-heading">Passed first time</h3>
+            <p class="govuk-body-s wuk-map__note">Each circle is a postcode area, sized by the number of tests.</p>
+            <ul class="wuk-legend wuk-map__legend" id="map-legend"></ul>
+            <div id="map"></div>
+            <p class="govuk-body-s wuk-map__summary" id="map-summary"></p>
+            <div class="wuk-ranks">
+              <div>
+                <h3 class="govuk-heading-s">Highest</h3>
+                <ol class="wuk-rank" id="area-high"></ol>
+              </div>
+              <div>
+                <h3 class="govuk-heading-s">Lowest</h3>
+                <ol class="wuk-rank" id="area-low"></ol>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="models-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="models-title">Built to last</h2>
+            <p class="govuk-body">
+              Older cars fail more, so models are compared with cars of the same age. Models with at least
+              <span data-min-band>2,000</span> tests at that age.
+            </p>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="band">Age of car</label>
+              <select class="govuk-select wuk-council-select" id="band" name="band"></select>
+            </div>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-ranks">
+              <div>
+                <h3 class="govuk-heading-s">Most likely to pass first time</h3>
+                <ol class="wuk-rank" id="model-best"></ol>
+              </div>
+              <div>
+                <h3 class="govuk-heading-s">Least likely</h3>
+                <ol class="wuk-rank" id="model-worst"></ol>
+              </div>
+            </div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show every model as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="Every model (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="model-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="month-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="month-title">Plate days</h2>
+            <p class="govuk-body" id="month-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Car MOT tests by month</h3>
+            <ol class="wuk-months" id="months"></ol>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="notes-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="notes-title">About these figures</h2>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="govuk-list govuk-list--bullet" id="notes">
+              <li>
+                <b>Great Britain only.</b> Northern Ireland runs its own MOT system. Cars are first tested at 3 years old,
+                so newer cars aren't here.
+              </li>
+              <li>
+                <b>Each test is a car's first test of a visit.</b> Retests after a fail aren't counted again, and
+                abandoned tests are left out. "Fixed within the hour" means it failed, but was put right at the test
+                centre within an hour.
+              </li>
+              <li><b>Postcode area</b> is where the car was tested, not where it's kept.</li>
+              <li id="note-vans"></li>
+              <li id="note-match"></li>
+            </ul>
+          </div>
+        </section>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results"
+                >anonymised MOT tests and results</a
+              >, <span data-year>the latest year</span>. Models matched to DVLA's, from DfT vehicle licensing statistics.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. Map: Source: Office for National Statistics licensed under the Open Government Licence v3.0. Contains
+              OS data © Crown copyright and database right 2026. Contains Royal Mail data © Royal Mail copyright and
+              database right 2026.
+            </p>
+            <p class="govuk-body-s">This site is not affiliated with or endorsed by DVSA, DfT or DVLA.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/mot.js"></script>
+  </body>
+</html>

@@ -19,4 +19,5 @@ export const loadIndex = () => getJson('index.json');
 export const loadMeta = () => getJson('meta.json');
 export const loadInsights = () => getJson('insights.json');
 export const loadElectric = () => getJson('electric.json');
+export const loadMot = () => getJson('mot.json');
 export const loadModel = (makeSlug, modelSlug) => getJson(`models/${makeSlug}/${modelSlug}.json`);

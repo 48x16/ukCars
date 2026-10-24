@@ -54,8 +54,12 @@ function seriesKey(id) {
 /**
  * `formatValue` and `formatTick` format tooltip values and y-axis ticks; `totalLabel` names
  * the tooltip's total row, or null to leave it out (e.g. for shares, which sum to 100%).
+ * The x axis is time by default; `formatX` makes it numeric (e.g. ages), with ticks so formatted.
  */
-export function createChart(root, { formatValue = formatCount, formatTick = tickCount, totalLabel = 'Total licensed' } = {}) {
+export function createChart(
+  root,
+  { formatValue = formatCount, formatTick = tickCount, totalLabel = 'Total licensed', formatX = null } = {},
+) {
   const legend = el('ul', 'wuk-legend');
   const frame = el('div', 'wuk-chart__frame');
   const tooltip = el('div', 'wuk-tooltip');
@@ -90,7 +94,7 @@ export function createChart(root, { formatValue = formatCount, formatTick = tick
     const m = { top: 16, right: directLabels ? 156 : 16, bottom: 32, left: 52 };
     const { dates, series, sorn, plotted } = data;
 
-    const x = scaleUtc()
+    const x = (formatX ? scaleLinear() : scaleUtc())
       .domain([dates[0], dates[dates.length - 1]])
       .range([m.left, width - m.right]);
     const y = scaleLinear()
@@ -117,7 +121,11 @@ export function createChart(root, { formatValue = formatCount, formatTick = tick
       .append('g')
       .attr('class', 'wuk-chart__axis')
       .attr('transform', `translate(0,${HEIGHT - m.bottom})`)
-      .call(axisBottom(x).ticks(utcYear.every(narrow ? 4 : 2)).tickFormat(year).tickSizeOuter(0));
+      .call(
+        formatX
+          ? axisBottom(x).ticks(narrow ? 5 : 10).tickFormat(formatX).tickSizeOuter(0)
+          : axisBottom(x).ticks(utcYear.every(narrow ? 4 : 2)).tickFormat(year).tickSizeOuter(0),
+      );
     svg
       .append('g')
       .attr('class', 'wuk-chart__axis wuk-chart__axis--y')
@@ -252,7 +260,7 @@ export function createChart(root, { formatValue = formatCount, formatTick = tick
     tooltip.replaceChildren(el('p', 'wuk-tooltip__title', data.quarters[i]), ...rows);
   }
 
-  // Keyboard: focus the chart, then use arrow keys, Home and End to move between quarters.
+  // Keyboard: focus the chart, then use arrow keys, Home and End to move between points.
   svg.on('focus', () => showFocus(data.dates.length - 1));
   svg.on('blur', hideFocus);
   svg.on('keydown', (event) => {
@@ -268,8 +276,8 @@ export function createChart(root, { formatValue = formatCount, formatTick = tick
 
   return {
     /**
-     * `quarters` are labels, `dates` their quarter-end dates, `series` from seriesByFuel,
-     * and `sorn` from sornSeries (or null).
+     * `quarters` are labels, `dates` their quarter-end dates (or numbers, with `formatX`),
+     * `series` from seriesByFuel, and `sorn` from sornSeries (or null).
      */
     update({ quarters, dates, series, sorn, summary }) {
       data = { quarters, dates, series, sorn, plotted: sorn ? [...series, sorn] : series, focusIndex: null };
