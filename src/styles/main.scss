@@ -1,22 +1,31 @@
-// GOV.UK Frontend, with our own veneer on top.
+// House style: a car-magazine feel (after The Road Rat), with a little "Instrument panel".
 //
-// This is not a government service, so the GOV.UK brand stays out: no crown, no GOV.UK
-// header, and not the GDS Transport typeface. We keep GOV.UK Frontend's accessible
-// components, spacing and its yellow focus state, which keyboard users rely on.
+// GOV.UK Frontend supplies the accessible behaviour: components, spacing, form patterns and
+// the yellow focus state keyboard users rely on. The look is ours. This is not a government
+// service, so the GOV.UK brand stays out: no crown, no GOV.UK header, no GDS Transport.
 //
-// Palette: black and white throughout; pink (#ca357c, 4.87:1 on white) used sparingly.
+// - Pure white, near-black ink, generous whitespace, an asymmetric magazine grid.
+// - All sans: Inter Tight for the wordmark and headings, Inter for reading,
+//   IBM Plex Mono for figures in charts and tables and for small-caps credits.
+// - Pink is the one accent: link underlines, the current page, and the key figure.
+// - Contrast on white: ink 18.9:1, ink-2 8.9:1, ink-3 4.0:1, pink 4.9:1.
+
+$paper: #fff;
+$ink: #111;
 
 // Settings are configured once on `base`; everything imported after it shares them.
 @use "govuk-frontend/dist/govuk/base" as * with (
   $govuk-font-family: ("Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
   $govuk-functional-colours: (
-    brand: (name: "black"),
-    link: (name: "black"),
-    link-visited: (name: "black", variant: "tint-25"),
-    link-hover: (name: "black"),
-    link-active: (name: "black"),
-    template-background: (name: "white"),
-    surface-background: (name: "black", variant: "tint-95")
+    brand: $ink,
+    text: $ink,
+    link: $ink,
+    link-visited: #4a4a4a,
+    link-hover: $ink,
+    link-active: $ink,
+    template-background: $paper,
+    body-background: $paper,
+    surface-background: #f2f2f2
   )
 );
 
@@ -37,32 +46,96 @@
 @use "govuk-frontend/dist/govuk/overrides";
 
 :root {
-  --wuk-ink: #{govuk-colour("black")};
-  --wuk-ink-2: #{govuk-colour("black", "tint-25")};
-  --wuk-ink-3: #{govuk-colour("black", "tint-50")};
-  --wuk-rule: #{govuk-colour("black", "tint-80")};
-  --wuk-wash: #{govuk-colour("black", "tint-95")};
-  --wuk-paper: #{govuk-colour("white")};
+  --wuk-ink: #{$ink};
+  --wuk-ink-2: #4a4a4a;
+  --wuk-ink-3: #7f7f7f;
+  --wuk-rule: #d4d4d4;
+  --wuk-wash: #f2f2f2;
+  --wuk-paper: #{$paper};
   --wuk-pink: #{govuk-colour("magenta")};
   --wuk-focus: #{govuk-functional-colour(focus)};
+  --wuk-display: "Inter Tight Variable", "Inter Variable", system-ui, sans-serif;
+  --wuk-figure: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 body {
   background: var(--wuk-paper);
 }
 
+// Headings: Inter Tight, firm but not shouty. The wordmark is the only heavy, capitalised line.
 .govuk-heading-xl,
 .govuk-heading-l,
-.govuk-heading-m {
+.govuk-heading-m,
+.govuk-heading-s {
+  font-family: var(--wuk-display);
+  font-weight: 650;
   letter-spacing: -0.02em;
 }
 
-// Header: a black band with a thin pink rule, in place of the GOV.UK header.
-
-.wuk-header {
-  background: var(--wuk-ink);
-  border-bottom: 4px solid var(--wuk-pink);
+.govuk-heading-xl {
+  font-weight: 700;
+  letter-spacing: -0.035em;
 }
+
+// Pink is the accent on links: ink text, pink underline.
+.govuk-link:link,
+.govuk-link:visited {
+  text-decoration-color: var(--wuk-pink);
+}
+
+// Small-caps credits, as in a magazine: "DATA DfT VEH0120 · UPDATED 2026 Q2".
+.wuk-credits {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--wuk-ink-2);
+
+  b {
+    font-weight: 600;
+    color: var(--wuk-ink);
+  }
+}
+
+// An uppercase pull quote for the narrow column.
+.wuk-pullquote {
+  margin: 0;
+  font-family: var(--wuk-display);
+  font-size: 24px;
+  font-weight: 450;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+// The asymmetric magazine grid: a narrow column for titles and notes, a wide one for content.
+.wuk-split {
+  display: grid;
+  gap: govuk-spacing(4) govuk-spacing(7);
+
+  @include govuk-media-query($from: desktop) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+.wuk-split__side > :last-child,
+.wuk-split__main > :last-child {
+  margin-bottom: 0;
+}
+
+// Figures in tables line up in Plex Mono.
+.govuk-table__cell--numeric,
+.govuk-table__header--numeric {
+  font-family: var(--wuk-figure);
+  font-size: 0.875em;
+}
+
+// Header: a heavy capitalised wordmark over one thin black rule.
 
 .wuk-header__inner {
   display: flex;
@@ -70,7 +143,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: govuk-spacing(2) govuk-spacing(4);
-  padding: govuk-spacing(3) 0;
+  padding: govuk-spacing(4) 0 govuk-spacing(3);
+  border-bottom: 1px solid var(--wuk-ink);
 }
 
 .wuk-offline {
@@ -80,8 +154,8 @@ body {
   margin: 0;
   padding: 2px govuk-spacing(2);
   @include govuk-font($size: 16, $weight: bold);
-  color: var(--wuk-ink);
-  background: var(--wuk-paper);
+  color: var(--wuk-paper);
+  background: var(--wuk-ink);
 
   &[hidden] {
     display: none;
@@ -94,29 +168,43 @@ body {
 }
 
 .wuk-header__wordmark {
-  @include govuk-font($size: 24, $weight: bold);
-  color: var(--wuk-paper);
-  text-decoration: none;
+  font-family: var(--wuk-display);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
   letter-spacing: -0.02em;
+  word-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wuk-ink);
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
+    text-decoration-color: var(--wuk-pink);
     text-decoration-thickness: 3px;
   }
 
   &:focus {
     @include govuk-focused-text;
   }
+
+  @include govuk-media-query($until: tablet) {
+    font-size: 22px;
+  }
 }
 
-// Filters: one row above everything they scope.
+// Filters: search, then make and model side by side, then the (long) variant list.
 
 .wuk-filters {
   display: grid;
   gap: 0 govuk-spacing(4);
 
   @include govuk-media-query($from: tablet) {
-    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr;
+
+    .govuk-form-group:has(#variant) {
+      grid-column: 1 / -1;
+    }
   }
 
   .govuk-select {
@@ -264,7 +352,9 @@ body {
 .wuk-stat__value {
   display: block;
   @include govuk-font($size: 48, $weight: bold);
-  letter-spacing: -0.03em;
+  font-family: var(--wuk-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .wuk-stat__label {
@@ -329,7 +419,8 @@ body {
 
   text {
     fill: var(--wuk-ink-2);
-    font-size: 14px;
+    font-family: var(--wuk-figure);
+    font-size: 13px;
   }
 
   .domain,
@@ -441,8 +532,9 @@ body {
 }
 
 .wuk-tooltip__value {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--wuk-figure);
+  font-size: 15px;
+  font-weight: 600;
   text-align: right;
 }
 
@@ -467,24 +559,23 @@ body {
   }
 }
 
-// Header navigation: white links on black; the current page is underlined in pink.
+// Header navigation: ink links on paper; the current page is underlined in pink.
 
 .wuk-nav {
   display: flex;
-  gap: govuk-spacing(4);
-  margin-right: auto;
-  margin-left: govuk-spacing(4);
+  gap: govuk-spacing(5);
+  margin-left: auto;
 }
 
 .wuk-nav__link {
   @include govuk-font($size: 19, $weight: bold);
-  color: var(--wuk-paper);
+  color: var(--wuk-ink);
   text-decoration: none;
   padding: 2px 0;
   border-bottom: 4px solid transparent;
 
   &:hover {
-    border-bottom-color: var(--wuk-paper);
+    border-bottom-color: var(--wuk-ink);
   }
 
   &[aria-current="page"] {
@@ -498,8 +589,23 @@ body {
 
 // Insights page
 
+// Each section opens with a hairline, then the narrow column names it and the wide one shows it.
 .wuk-section {
   margin-top: govuk-spacing(9);
+  padding-top: govuk-spacing(4);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-hero {
+  margin-bottom: govuk-spacing(7);
+
+  .govuk-body-l {
+    @include govuk-font($size: 24);
+  }
+
+  .wuk-credits {
+    margin-top: govuk-spacing(5);
+  }
 }
 
 .wuk-tiles {
@@ -512,18 +618,21 @@ body {
 }
 
 .wuk-tile {
-  padding: govuk-spacing(3) govuk-spacing(4) govuk-spacing(4);
-  border-top: 4px solid var(--wuk-ink);
+  padding: govuk-spacing(3) 0 govuk-spacing(4);
+  border-top: 1px solid var(--wuk-ink);
 
   &:first-child {
-    border-top-color: var(--wuk-pink);
+    border-top: 4px solid var(--wuk-pink);
+    padding-top: calc(#{govuk-spacing(3)} - 3px);
   }
 }
 
 .wuk-tile__value {
   display: block;
   @include govuk-font($size: 36, $weight: bold);
-  letter-spacing: -0.03em;
+  font-family: var(--wuk-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
@@ -549,27 +658,34 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: govuk-spacing(3);
-  padding-left: govuk-spacing(7) + 4px;
-  border: 1px solid var(--wuk-rule);
+  padding: govuk-spacing(3) 0 govuk-spacing(2) govuk-spacing(7);
+  border-top: 1px solid var(--wuk-ink);
 }
 
 .wuk-mover__rank {
   position: absolute;
   top: govuk-spacing(3);
-  left: govuk-spacing(3);
+  left: 0;
   @include govuk-font($size: 19, $weight: bold);
-  color: var(--wuk-ink-3);
+  font-family: var(--wuk-figure);
+  color: var(--wuk-ink-2);
 }
 
 .wuk-mover__name {
   @include govuk-font($size: 19, $weight: bold);
 }
 
+.wuk-mover__name {
+  text-decoration-color: var(--wuk-pink);
+  text-decoration-thickness: 2px;
+}
+
 .wuk-mover__change {
   margin: govuk-spacing(1) 0 0;
   @include govuk-font($size: 36, $weight: bold);
-  letter-spacing: -0.03em;
+  font-family: var(--wuk-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .wuk-mover__detail {
@@ -670,7 +786,8 @@ body {
 .wuk-bar__value {
   grid-area: value;
   @include govuk-font($size: 19, $weight: bold);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--wuk-figure);
+  font-size: 17px;
   text-align: right;
 }
 
@@ -800,7 +917,7 @@ body {
   stroke-linejoin: round;
 }
 
-// Footer: white, with a black rule, in place of the GOV.UK footer's colours.
+// Footer: white, opened by the same thin black rule as the header.
 
 .wuk-footer {
   background: var(--wuk-paper);

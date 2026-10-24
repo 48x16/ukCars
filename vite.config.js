@@ -17,10 +17,11 @@ function serviceWorker() {
     name: 'ukcars-service-worker',
     apply: 'build',
     generateBundle(_, bundle) {
-      // Inter ships a font file per script; browsers fetch only the subsets a page needs.
-      // Precache the Latin one; any other is cached the first time it's used.
+      // Fonts ship a file per script; browsers fetch only the subsets a page needs.
+      // Precache the Latin ones; any other is cached the first time it's used.
+      const latinFont = /(inter|inter-tight)-latin-wght-normal|ibm-plex-mono-latin-(400|600)-normal/;
       const files = Object.keys(bundle).filter(
-        (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || /inter-latin-wght-normal/.test(f)),
+        (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || latinFont.test(f)),
       );
       // HTML pages are emitted after this hook runs, so they're listed by name.
       const pages = ['insights.html'];

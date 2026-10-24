@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0c0c" />
+    <meta name="theme-color" content="#f8f6f1" />
     <meta
       name="description"
       content="See how many of each car are licensed on UK roads, by make, model and fuel type, using DfT vehicle licensing statistics."
@@ -18,7 +18,7 @@
 
     <header class="wuk-header">
       <div class="govuk-width-container wuk-header__inner">
-        <a href="./" class="wuk-header__wordmark">What's on UK roads</a>
+        <a href="./" class="wuk-header__wordmark">What&#8217;s on UK roads</a>
         <nav class="wuk-nav" aria-label="Pages">
           <a class="wuk-nav__link" href="./" aria-current="page">Explore</a>
           <a class="wuk-nav__link" href="./insights.html">Insights</a>
@@ -31,11 +31,61 @@
 
     <div class="govuk-width-container">
       <main class="govuk-main-wrapper" id="main-content">
-        <h1 class="govuk-heading-xl">What's on UK roads</h1>
-        <p class="govuk-body-l">
-          Licensed cars in the UK by make, model and fuel type, from
-          <span data-first-quarter>2014 Q3</span> to <span data-latest-quarter>the latest quarter</span>.
-        </p>
+        <div class="wuk-split wuk-hero">
+          <div class="wuk-split__side">
+            <h1 class="govuk-heading-xl">Explore</h1>
+            <p class="govuk-body-l">
+              Licensed cars in the UK by make, model and fuel type, from
+              <span data-first-quarter>2014 Q3</span> to <span data-latest-quarter>the latest quarter</span>.
+            </p>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT and DVLA, table VEH0120</li>
+              <li><b>Covers</b> Cars, United Kingdom</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <form class="wuk-filters" id="filters">
+              <div class="govuk-form-group wuk-search" id="search">
+                <label class="govuk-label govuk-label--m" for="search-input">Find a car</label>
+                <div class="govuk-hint" id="search-hint">Type a make or model, for example Fiesta or Tesla Model 3</div>
+                <div class="wuk-search__field">
+                  <span class="wuk-search__icon"></span>
+                  <input
+                    class="govuk-input wuk-search__input"
+                    id="search-input"
+                    type="text"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="search-results"
+                    aria-describedby="search-hint"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button class="wuk-search__clear" type="button" hidden>
+                    <span class="govuk-visually-hidden">Clear search</span>
+                  </button>
+                  <ul class="wuk-search__results" id="search-results" role="listbox" aria-label="Matching cars" hidden></ul>
+                </div>
+                <div class="govuk-visually-hidden wuk-search__status" aria-live="polite"></div>
+              </div>
+    
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="make">Make</label>
+                <select class="govuk-select" id="make" name="make"></select>
+              </div>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="model">Model</label>
+                <select class="govuk-select" id="model" name="model"></select>
+              </div>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="variant">Variant</label>
+                <select class="govuk-select" id="variant" name="variant"></select>
+              </div>
+            </form>
+          </div>
+        </div>
 
         <div class="govuk-error-summary" id="error" hidden>
           <div role="alert">
@@ -46,45 +96,6 @@
           </div>
         </div>
 
-        <form class="wuk-filters" id="filters">
-          <div class="govuk-form-group wuk-search" id="search">
-            <label class="govuk-label govuk-label--m" for="search-input">Find a car</label>
-            <div class="govuk-hint" id="search-hint">Type a make or model, for example Fiesta or Tesla Model 3</div>
-            <div class="wuk-search__field">
-              <span class="wuk-search__icon"></span>
-              <input
-                class="govuk-input wuk-search__input"
-                id="search-input"
-                type="text"
-                role="combobox"
-                aria-autocomplete="list"
-                aria-expanded="false"
-                aria-controls="search-results"
-                aria-describedby="search-hint"
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <button class="wuk-search__clear" type="button" hidden>
-                <span class="govuk-visually-hidden">Clear search</span>
-              </button>
-              <ul class="wuk-search__results" id="search-results" role="listbox" aria-label="Matching cars" hidden></ul>
-            </div>
-            <div class="govuk-visually-hidden wuk-search__status" aria-live="polite"></div>
-          </div>
-
-          <div class="govuk-form-group">
-            <label class="govuk-label govuk-label--s" for="make">Make</label>
-            <select class="govuk-select" id="make" name="make"></select>
-          </div>
-          <div class="govuk-form-group">
-            <label class="govuk-label govuk-label--s" for="model">Model</label>
-            <select class="govuk-select" id="model" name="model"></select>
-          </div>
-          <div class="govuk-form-group">
-            <label class="govuk-label govuk-label--s" for="variant">Variant</label>
-            <select class="govuk-select" id="variant" name="variant"></select>
-          </div>
-        </form>
 
         <section class="wuk-results" id="results" aria-labelledby="chart-title">
           <p class="wuk-stat">

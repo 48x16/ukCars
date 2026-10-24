@@ -1,6 +1,9 @@
 // Shared by every page: fonts, styles, the offline badge and the service worker.
 
 import '@fontsource-variable/inter';
+import '@fontsource-variable/inter-tight';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-600.css';
 import './styles/main.scss';
 import { createElement, WifiOff } from 'lucide';
 
