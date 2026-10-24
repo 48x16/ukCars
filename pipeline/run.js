@@ -2,6 +2,7 @@
 //
 //   npm run data                     download the current CSV from DfT
 //   npm run data -- --csv <path>     use a local copy instead
+//   npm run data:fixture             tiny test data, for CI checks that mustn't depend on DfT
 //
 // Set PREVIOUS_META_URL (the deployed meta.json) in CI so an older publication can't replace newer data.
 
@@ -82,8 +83,14 @@ async function writeJson(path, data) {
   await writeFile(path, JSON.stringify(data));
 }
 
+function arg(name) {
+  const i = process.argv.indexOf(name);
+  return i === -1 ? undefined : process.argv[i + 1];
+}
+
 async function main() {
   const csvArg = process.argv.indexOf('--csv');
+  const minRows = arg('--min-rows') === undefined ? undefined : Number(arg('--min-rows'));
   let csvPath;
   let csvUrl;
 
@@ -97,8 +104,9 @@ async function main() {
     csvPath = CACHE_PATH;
   }
 
-  const previous = await previousLatestQuarter();
-  const result = await processCsv(createReadStream(csvPath), { previousLatestQuarter: previous });
+  // --fresh skips the "not older than before" check, e.g. when swapping real data for the fixture.
+  const previous = process.argv.includes('--fresh') ? undefined : await previousLatestQuarter();
+  const result = await processCsv(createReadStream(csvPath), { previousLatestQuarter: previous, minRows });
   result.warnings.forEach((w) => console.warn(`warning: ${w}`));
 
   await rm(OUT_DIR, { recursive: true, force: true });

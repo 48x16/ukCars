@@ -1,0 +1,22 @@
+# Opens pull requests when dependencies or pinned GitHub Actions have updates.
+# Each one runs through CI like any other change, so a breaking update can't merge.
+# Grouped to keep it to about one pull request per ecosystem per week.
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
