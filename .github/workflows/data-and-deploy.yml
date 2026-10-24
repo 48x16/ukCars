@@ -56,6 +56,14 @@ jobs:
       - name: Plug-in vehicles and public chargers by council
         run: npm run electric
 
+      - name: Postcodes for the finder tools
+        run: npm run postcodes
+
+      - name: Chargers near you (Open Charge Map)
+        run: npm run chargers
+        env:
+          OCM_API_KEY: ${{ secrets.OCM_API_KEY }}
+
       - name: Build
         run: npm run build
 

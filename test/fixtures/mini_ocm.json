@@ -1,0 +1,1067 @@
+{
+ "pois": [
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2024-02-29T13:52:00Z",
+   "ID": 295965,
+   "UUID": "6CEA904C-DBDF-481D-AB37-0ABA7D8DE215",
+   "DataProviderID": 1,
+   "OperatorID": 3562,
+   "UsageTypeID": 1,
+   "AddressInfo": {
+    "ID": 296352,
+    "Title": "NCP Brighton Centre Russell Road",
+    "AddressLine1": "Russell Road",
+    "Town": "Brighton ",
+    "Postcode": "BN1 2DX",
+    "CountryID": 1,
+    "Latitude": 50.82208036,
+    "Longitude": -0.147311482,
+    "ContactTelephone1": "0330 111 2999 ",
+    "RelatedURL": "http://www.evc.co.uk",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 527793,
+     "ConnectionTypeID": 25,
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "PowerKW": 22,
+     "CurrentTypeID": 20,
+     "Quantity": 10
+    }
+   ],
+   "NumberOfPoints": 10,
+   "StatusTypeID": 50,
+   "DateLastStatusUpdate": "2024-02-29T13:52:00Z",
+   "DataQualityLevel": 1,
+   "DateCreated": "2024-02-29T13:52:00Z",
+   "SubmissionStatusTypeID": 200
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 285371,
+   "UUID": "E0A44D9F-8F6E-437B-98A1-0C3BB8CB9C0C",
+   "DataProviderID": 18,
+   "DataProvidersReference": "82f75d423a6800bbbb3bc8e208805198",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 285758,
+    "Title": "Norton Road Car Park 9",
+    "AddressLine1": "Norton Road Car Park 9",
+    "Town": "Brighton",
+    "Postcode": "BN3 3AP",
+    "CountryID": 1,
+    "Latitude": 50.828646,
+    "Longitude": -0.171561,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 499973,
+     "ConnectionTypeID": 25,
+     "Reference": "1796-09-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "StatusTypeID": 0,
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 29616,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-12-07T08:09:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 285370,
+   "UUID": "B0B18A13-8163-4A6D-9AAA-ADBB61F297FD",
+   "DataProviderID": 18,
+   "DataProvidersReference": "829c531a3af70df17ef7a359340e65f6",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 285757,
+    "Title": "Norton Road Car Park 8",
+    "AddressLine1": "Norton Road Car Park 8",
+    "Town": "Brighton",
+    "Postcode": "BN3 3AP",
+    "CountryID": 1,
+    "Latitude": 50.828565,
+    "Longitude": -0.171586,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 499972,
+     "ConnectionTypeID": 25,
+     "Reference": "1796-08-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "StatusTypeID": 0,
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 29615,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-12-07T08:09:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 285369,
+   "UUID": "232FAFE1-937D-48AB-857A-2E6FE9F972B6",
+   "DataProviderID": 18,
+   "DataProvidersReference": "d6a0bdd7ddd40396c10158c92909065f",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 285756,
+    "Title": "Norton Road Car Park 6",
+    "AddressLine1": "Norton Road Car Park 6",
+    "Town": "Brighton",
+    "Postcode": "BN3 3AP",
+    "CountryID": 1,
+    "Latitude": 50.828465,
+    "Longitude": -0.171627,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 499971,
+     "ConnectionTypeID": 25,
+     "Reference": "1796-06-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "StatusTypeID": 0,
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 29614,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-12-07T08:09:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 285368,
+   "UUID": "01CB36A4-3D5E-4AB0-A405-4EDB3DED44BD",
+   "DataProviderID": 18,
+   "DataProvidersReference": "a88640e3d92c4bb9c98f3386f5ad1cfe",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 285755,
+    "Title": "Norton Road Car Park 3",
+    "AddressLine1": "Norton Road Car Park 1",
+    "Town": "Brighton",
+    "Postcode": "BN3 3AP",
+    "CountryID": 1,
+    "Latitude": 50.828354,
+    "Longitude": -0.171644,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 499970,
+     "ConnectionTypeID": 25,
+     "Reference": "1796-03-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "StatusTypeID": 0,
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 29613,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-12-07T08:09:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 267965,
+   "UUID": "CB72EBE4-A175-4D01-B2B1-2603EDA7BEE7",
+   "DataProviderID": 18,
+   "DataProvidersReference": "a36bb940f171527c17f4ff52b6d123ef",
+   "OperatorID": 5,
+   "UsageTypeID": 1,
+   "AddressInfo": {
+    "ID": 268349,
+    "Title": "RAWOWNED CHATSWORTH CT 1",
+    "AddressLine1": "Chatsworth Square Davigdor Rd",
+    "Town": "Brighton and Hove",
+    "Postcode": "BN3 1WG",
+    "CountryID": 1,
+    "Latitude": 50.831231,
+    "Longitude": -0.159759,
+    "AccessComments": "",
+    "RelatedURL": "https://www.chargepoint.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 457042,
+     "ConnectionTypeID": 25,
+     "Reference": "GBCPIP6713805*1*82",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 400,
+     "PowerKW": 22,
+     "CurrentTypeID": 20
+    },
+    {
+     "ID": 457043,
+     "ConnectionTypeID": 25,
+     "Reference": "GBCPIP6713805*2*82",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 400,
+     "PowerKW": 22,
+     "CurrentTypeID": 20
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28993,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-07-04T05:44:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-07-12T05:36:00Z",
+   "ID": 267649,
+   "UUID": "BAA2D6FA-9FDE-4EF2-8630-2816BD862CC5",
+   "DataProviderID": 1,
+   "OperatorID": 3345,
+   "OperatorsReference": "GB*CGY*E*01267,GB*CGY*E*02161",
+   "UsageTypeID": 1,
+   "UsageCost": "Day (07:00-00:00): £0.65/kWh Night (00:00-0700): £0.29/kWh ",
+   "AddressInfo": {
+    "ID": 268033,
+    "Title": "Try Me!",
+    "AddressLine1": "Try Me!",
+    "Town": "London",
+    "Postcode": "E1 6LT",
+    "CountryID": 1,
+    "Latitude": 50.81877,
+    "Longitude": -0.13064,
+    "RelatedURL": "https://char.gy/01267",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 456119,
+     "ConnectionTypeID": 25,
+     "Reference": "GB*CGY*E*02161",
+     "StatusTypeID": 100,
+     "LevelID": 1,
+     "Voltage": 230,
+     "PowerKW": 2.3,
+     "CurrentTypeID": 10,
+     "Quantity": 1
+    },
+    {
+     "ID": 460739,
+     "ConnectionTypeID": 25,
+     "Reference": "GB*CGY*E*01267",
+     "StatusTypeID": 50,
+     "LevelID": 1,
+     "Voltage": 230,
+     "PowerKW": 2.3,
+     "CurrentTypeID": 10,
+     "Quantity": 1
+    }
+   ],
+   "NumberOfPoints": 1,
+   "GeneralComments": "Can also be paid with the Octopus Electroverse app, Zap-Pay, Bonnet app, Paua App, or Shell Recharge app. Charge point not fitted with RFID reader or payment terminal.",
+   "StatusTypeID": 50,
+   "DateLastStatusUpdate": "2023-07-12T05:36:00Z",
+   "DataQualityLevel": 1,
+   "DateCreated": "2023-07-03T10:12:00Z",
+   "SubmissionStatusTypeID": 200
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 264921,
+   "UUID": "AB93101E-494D-41C8-97EA-DA715132A92E",
+   "DataProviderID": 18,
+   "DataProvidersReference": "80c9e681654a8d478ca6156e503698a2",
+   "OperatorID": 3737,
+   "UsageTypeID": 1,
+   "AddressInfo": {
+    "ID": 265305,
+    "Title": "Lansdowne Place",
+    "AddressLine1": "Lansdowne Place",
+    "Town": "Brighton",
+    "Postcode": "BN3 1FH",
+    "CountryID": 1,
+    "Latitude": 50.823842,
+    "Longitude": -0.161389,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 449027,
+     "ConnectionTypeID": 25,
+     "Reference": "1216-02-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 400,
+     "PowerKW": 22,
+     "CurrentTypeID": 20
+    },
+    {
+     "ID": 449028,
+     "ConnectionTypeID": 25,
+     "Reference": "1216-02-02",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 400,
+     "PowerKW": 22,
+     "CurrentTypeID": 20
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28795,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-04T09:43:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 264524,
+   "UUID": "7B0C0856-413E-40C6-925D-B2ED1E17C386",
+   "DataProviderID": 18,
+   "DataProvidersReference": "63792dc1bee2f3f63716e4489e5acb0f",
+   "OperatorID": 3737,
+   "UsageTypeID": 1,
+   "AddressInfo": {
+    "ID": 264908,
+    "Title": "05909 Dyke Road Drive",
+    "AddressLine1": "Dyke Road Drive",
+    "Town": "Brighton",
+    "Postcode": "BN1 6AJ",
+    "CountryID": 1,
+    "Latitude": 50.836941,
+    "Longitude": -0.146676,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 448557,
+     "ConnectionTypeID": 25,
+     "Reference": "62196-2 (SINGLE PHASE)",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 16,
+     "Voltage": 230,
+     "PowerKW": 3.7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28399,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-04T08:38:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 264523,
+   "UUID": "5BAA2C4A-BBCC-47F0-B280-502CAC616B1E",
+   "DataProviderID": 18,
+   "DataProvidersReference": "85c7b4d44f21fceed750e0f2a7061181",
+   "OperatorID": 3737,
+   "UsageTypeID": 1,
+   "AddressInfo": {
+    "ID": 264907,
+    "Title": "05898 Holland Road",
+    "AddressLine1": "Holland Road",
+    "Town": "Hove",
+    "Postcode": "BN3 1JF",
+    "CountryID": 1,
+    "Latitude": 50.825,
+    "Longitude": -0.162,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 448556,
+     "ConnectionTypeID": 25,
+     "Reference": "62196-2 (SINGLE PHASE)",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 16,
+     "Voltage": 230,
+     "PowerKW": 3.7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28398,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-04T08:38:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 260832,
+   "UUID": "CB458E6C-033A-4C49-A971-8FA72BB9DDDE",
+   "DataProviderID": 18,
+   "DataProvidersReference": "ddbb85ad3e87604e65d162b13de8f562",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 261216,
+    "Title": "Osbourne Road, Lamp Column 5",
+    "AddressLine1": "Osbourne Road, Lamp Column 5",
+    "Town": "Brighton",
+    "Postcode": "BN1 6LW",
+    "CountryID": 1,
+    "Latitude": 50.846642,
+    "Longitude": -0.138805,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 439109,
+     "ConnectionTypeID": 25,
+     "Reference": "1712-01-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 16,
+     "Voltage": 230,
+     "PowerKW": 3.7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28023,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-01T03:50:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 260831,
+   "UUID": "6FA33898-36A4-40C2-BC2B-1D68BBDD574F",
+   "DataProviderID": 18,
+   "DataProvidersReference": "e0b250a3123283d06804526510b5443e",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 261215,
+    "Title": "Ditchling Road, Lamp Column 73",
+    "AddressLine1": "Ditchling Road, Lamp Column 73",
+    "Town": "Brighton",
+    "Postcode": "BN1 6JJ",
+    "CountryID": 1,
+    "Latitude": 50.846433,
+    "Longitude": -0.135353,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 439108,
+     "ConnectionTypeID": 25,
+     "Reference": "1710-01-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 16,
+     "Voltage": 230,
+     "PowerKW": 3.7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28022,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-01T03:50:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 260830,
+   "UUID": "ED847BA4-ECE2-4842-A4B9-37914030CD52",
+   "DataProviderID": 18,
+   "DataProvidersReference": "3afecbc6dc480465cdb7511d35eae695",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 261214,
+    "Title": "Matlock Road, Lamp Column 2",
+    "AddressLine1": "Matlock Road, Lamp Column 2",
+    "Town": "Brighton",
+    "Postcode": "BN1 5BF",
+    "CountryID": 1,
+    "Latitude": 50.843963,
+    "Longitude": -0.157848,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 439107,
+     "ConnectionTypeID": 25,
+     "Reference": "1282-02-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 16,
+     "Voltage": 230,
+     "PowerKW": 3.7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28021,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-01T03:50:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2023-12-07T08:09:00Z",
+   "ID": 260829,
+   "UUID": "D5DEC5F6-C412-414F-9EC6-7418CE43B51F",
+   "DataProviderID": 18,
+   "DataProvidersReference": "f0a0ad3c9f6284a24bf36485e0ffd8ff",
+   "OperatorID": 3737,
+   "UsageTypeID": 5,
+   "AddressInfo": {
+    "ID": 261213,
+    "Title": "Southdown Road, Lamp Column 8",
+    "AddressLine1": "Southdown Road, Lamp Column 8",
+    "Town": "Brighton",
+    "Postcode": "BN1 6FH",
+    "CountryID": 1,
+    "Latitude": 50.843615,
+    "Longitude": -0.137497,
+    "AccessComments": "",
+    "RelatedURL": "http://blinkcharging.com/",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 439106,
+     "ConnectionTypeID": 25,
+     "Reference": "1724-01-01",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 16,
+     "Voltage": 230,
+     "PowerKW": 3.7,
+     "CurrentTypeID": 10
+    }
+   ],
+   "DateLastStatusUpdate": "2023-12-07T08:09:00Z",
+   "MetadataValues": [
+    {
+     "ID": 28020,
+     "MetadataFieldID": 4,
+     "ItemValue": "Contains public sector information licensed under the Open Government Licence v2.0. http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/"
+    }
+   ],
+   "DataQualityLevel": 3,
+   "DateCreated": "2023-05-01T03:50:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": true,
+   "DateLastVerified": "2026-10-23T05:36:00Z",
+   "ID": 512617,
+   "UUID": "BE1CFE59-2420-4300-9E66-391EC12034D5",
+   "DataProviderID": 1,
+   "OperatorID": 3,
+   "OperatorsReference": "PG-83297,PG-83560,PG-83570,PG-96000",
+   "UsageTypeID": 4,
+   "UsageCost": "",
+   "AddressInfo": {
+    "ID": 513006,
+    "Title": "JLL-Dundrum Town Centre",
+    "AddressLine1": "Sandyford Road",
+    "Town": "Dundrum",
+    "StateOrProvince": "Co. Dublin",
+    "Postcode": "D16 HY94",
+    "CountryID": 1,
+    "Latitude": 53.286055,
+    "Longitude": -6.2399,
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 883678,
+     "ConnectionTypeID": 25,
+     "Reference": "PG-83297",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10,
+     "Quantity": 2,
+     "Comments": "Jake-Jean"
+    },
+    {
+     "ID": 883679,
+     "ConnectionTypeID": 25,
+     "Reference": "PG-83560",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10,
+     "Quantity": 2,
+     "Comments": "Skye-Hugh"
+    },
+    {
+     "ID": 883680,
+     "ConnectionTypeID": 25,
+     "Reference": "PG-83570",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10,
+     "Quantity": 2,
+     "Comments": "Ralf-Levi"
+    },
+    {
+     "ID": 883681,
+     "ConnectionTypeID": 25,
+     "Reference": "PG-96000",
+     "StatusTypeID": 50,
+     "LevelID": 2,
+     "Amps": 32,
+     "Voltage": 230,
+     "PowerKW": 7,
+     "CurrentTypeID": 10,
+     "Quantity": 1,
+     "Comments": "Joey-Liam"
+    }
+   ],
+   "GeneralComments": "This is an open charge unit installed at the Dundrum Town Centre at Sandyford Road, Dundrum, Dublin",
+   "StatusTypeID": 50,
+   "DateLastStatusUpdate": "2026-10-23T05:36:00Z",
+   "DataQualityLevel": 1,
+   "DateCreated": "2026-10-23T05:36:00Z",
+   "SubmissionStatusTypeID": 200
+  },
+  {
+   "IsRecentlyVerified": false,
+   "DateLastVerified": "2016-06-04T02:56:00Z",
+   "ID": 54012,
+   "UUID": "FF863C79-CC20-43B0-A048-2BDFD43936EE",
+   "DataProviderID": 26,
+   "DataProvidersReference": "68530",
+   "OperatorID": 78,
+   "OperatorsReference": "Essent EM-GB-00000011-01-00005",
+   "UsageCost": "0.00 jaarabonnement",
+   "AddressInfo": {
+    "ID": 54358,
+    "Title": "Kendray Street",
+    "AddressLine1": "Kendray Street",
+    "Town": "Barnsley",
+    "Postcode": "S70 1RX",
+    "CountryID": 1,
+    "Latitude": 53.5526,
+    "Longitude": -1.47808,
+    "RelatedURL": "http://www.essent.nl",
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 67541,
+     "ConnectionTypeID": 25,
+     "LevelID": 2,
+     "PowerKW": 11,
+     "CurrentTypeID": 10
+    },
+    {
+     "ID": 67542,
+     "ConnectionTypeID": 25,
+     "LevelID": 2,
+     "PowerKW": 11,
+     "CurrentTypeID": 10
+    }
+   ],
+   "NumberOfPoints": 1,
+   "StatusTypeID": 50,
+   "DateLastStatusUpdate": "2016-06-04T02:56:00Z",
+   "DataQualityLevel": 3,
+   "DateCreated": "2015-09-20T11:50:00Z",
+   "SubmissionStatusTypeID": 100
+  },
+  {
+   "IsRecentlyVerified": true,
+   "DateLastVerified": "2026-07-24T12:03:00Z",
+   "ID": 499822,
+   "UUID": "1D932284-58F4-4C1D-9D39-09CAECB32FAF",
+   "DataProviderID": 1,
+   "OperatorID": 3471,
+   "UsageTypeID": 1,
+   "UsageCost": "",
+   "AddressInfo": {
+    "ID": 500211,
+    "Title": "MfG",
+    "AddressLine1": "High St",
+    "Town": "Acton",
+    "Postcode": "W3",
+    "CountryID": 1,
+    "Latitude": 51.5085248030677,
+    "Longitude": -0.274040542927537,
+    "DistanceUnit": 0
+   },
+   "Connections": [
+    {
+     "ID": 852450,
+     "ConnectionTypeID": 0,
+     "StatusTypeID": 100,
+     "LevelID": 3,
+     "PowerKW": 400,
+     "CurrentTypeID": 30,
+     "Quantity": 1,
+     "Comments": "Installed but not yet commissioned."
+    }
+   ],
+   "NumberOfPoints": 8,
+   "GeneralComments": "In Morrisons Car Park",
+   "StatusTypeID": 100,
+   "DateLastStatusUpdate": "2026-07-24T12:03:00Z",
+   "DataQualityLevel": 1,
+   "DateCreated": "2026-07-21T11:59:00Z",
+   "SubmissionStatusTypeID": 200
+  }
+ ],
+ "reference": {
+  "DataProviders": [
+   {
+    "WebsiteURL": "http://openchargemap.org",
+    "Comments": null,
+    "DataProviderStatusType": {
+     "IsProviderEnabled": true,
+     "ID": 1,
+     "Title": "Manual Data Entry"
+    },
+    "IsRestrictedEdit": false,
+    "IsOpenDataLicensed": true,
+    "IsApprovedImport": true,
+    "License": "Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "DateLastImported": null,
+    "ID": 1,
+    "Title": "Open Charge Map Contributors"
+   },
+   {
+    "WebsiteURL": "http://chargepoints.dft.gov.uk",
+    "Comments": null,
+    "DataProviderStatusType": {
+     "IsProviderEnabled": true,
+     "ID": 20,
+     "Title": "Automated Import"
+    },
+    "IsRestrictedEdit": false,
+    "IsOpenDataLicensed": true,
+    "IsApprovedImport": true,
+    "License": "Contains public sector information licensed under the Open Government Licence v2.0.",
+    "DateLastImported": "2023-12-07T08:14:38.417Z",
+    "ID": 18,
+    "Title": "UK National Charge Point Registry"
+   },
+   {
+    "WebsiteURL": "http://www.oplaadpalen.nl/",
+    "Comments": null,
+    "DataProviderStatusType": {
+     "IsProviderEnabled": true,
+     "ID": 20,
+     "Title": "Automated Import"
+    },
+    "IsRestrictedEdit": false,
+    "IsOpenDataLicensed": true,
+    "IsApprovedImport": true,
+    "License": "Licensed under Attribution-NonCommercial-ShareAlike 3.0 : http://creativecommons.org/licenses/by-nc-sa/3.0/",
+    "DateLastImported": "2016-06-04T03:04:53.05Z",
+    "ID": 26,
+    "Title": "Oplaadpalen.nl"
+   }
+  ],
+  "StatusTypes": [
+   {
+    "IsOperational": null,
+    "IsUserSelectable": true,
+    "ID": 0,
+    "Title": "Unknown"
+   },
+   {
+    "IsOperational": true,
+    "IsUserSelectable": false,
+    "ID": 10,
+    "Title": "Currently Available (Automated Status)"
+   },
+   {
+    "IsOperational": true,
+    "IsUserSelectable": false,
+    "ID": 20,
+    "Title": "Currently In Use (Automated Status)"
+   },
+   {
+    "IsOperational": true,
+    "IsUserSelectable": true,
+    "ID": 30,
+    "Title": "Temporarily Unavailable"
+   },
+   {
+    "IsOperational": true,
+    "IsUserSelectable": true,
+    "ID": 50,
+    "Title": "Operational"
+   },
+   {
+    "IsOperational": true,
+    "IsUserSelectable": true,
+    "ID": 75,
+    "Title": "Partly Operational (Mixed)"
+   },
+   {
+    "IsOperational": false,
+    "IsUserSelectable": true,
+    "ID": 100,
+    "Title": "Not Operational"
+   },
+   {
+    "IsOperational": false,
+    "IsUserSelectable": true,
+    "ID": 150,
+    "Title": "Planned For Future Date"
+   },
+   {
+    "IsOperational": false,
+    "IsUserSelectable": true,
+    "ID": 200,
+    "Title": "Removed (Decommissioned)"
+   },
+   {
+    "IsOperational": false,
+    "IsUserSelectable": true,
+    "ID": 210,
+    "Title": "Removed (Duplicate Listing)"
+   }
+  ],
+  "UsageTypes": [
+   {
+    "IsPayAtLocation": null,
+    "IsMembershipRequired": null,
+    "IsAccessKeyRequired": null,
+    "ID": 0,
+    "Title": "(Unknown)"
+   },
+   {
+    "IsPayAtLocation": false,
+    "IsMembershipRequired": false,
+    "IsAccessKeyRequired": false,
+    "ID": 6,
+    "Title": "Private - For Staff, Visitors or Customers"
+   },
+   {
+    "IsPayAtLocation": null,
+    "IsMembershipRequired": true,
+    "IsAccessKeyRequired": null,
+    "ID": 2,
+    "Title": "Private - Restricted Access"
+   },
+   {
+    "IsPayAtLocation": null,
+    "IsMembershipRequired": null,
+    "IsAccessKeyRequired": null,
+    "ID": 3,
+    "Title": "Privately Owned - Notice Required"
+   },
+   {
+    "IsPayAtLocation": null,
+    "IsMembershipRequired": null,
+    "IsAccessKeyRequired": null,
+    "ID": 1,
+    "Title": "Public"
+   },
+   {
+    "IsPayAtLocation": false,
+    "IsMembershipRequired": true,
+    "IsAccessKeyRequired": true,
+    "ID": 4,
+    "Title": "Public - Membership Required"
+   },
+   {
+    "IsPayAtLocation": false,
+    "IsMembershipRequired": false,
+    "IsAccessKeyRequired": false,
+    "ID": 7,
+    "Title": "Public - Notice Required"
+   },
+   {
+    "IsPayAtLocation": true,
+    "IsMembershipRequired": false,
+    "IsAccessKeyRequired": false,
+    "ID": 5,
+    "Title": "Public - Pay At Location"
+   }
+  ],
+  "ConnectionTypes": [
+   {
+    "ID": 25,
+    "Title": "Type 2 (Socket Only)"
+   },
+   {
+    "ID": 0,
+    "Title": "Unknown"
+   }
+  ],
+  "Operators": [
+   {
+    "ID": 3737,
+    "Title": "Blink Charging (UK)"
+   },
+   {
+    "ID": 3345,
+    "Title": "Char.gy"
+   },
+   {
+    "ID": 5,
+    "Title": "ChargePoint"
+   },
+   {
+    "ID": 78,
+    "Title": "Essent (NL)"
+   },
+   {
+    "ID": 3471,
+    "Title": "MFG EV Power"
+   },
+   {
+    "ID": 3,
+    "Title": "POD Point (UK)"
+   },
+   {
+    "ID": 3562,
+    "Title": "Roam Charging (UK)"
+   }
+  ]
+ }
+}

@@ -25,7 +25,10 @@ $ink: #111;
     link-active: $ink,
     template-background: $paper,
     body-background: $paper,
-    surface-background: #f2f2f2
+    surface-background: #f2f2f2,
+    // Errors wear the house pink (GOV.UK's magenta, 4.9:1 on white) rather than red. The
+    // message text, "Error:" prefix and summary still carry the meaning, not colour alone.
+    error: #ca357c
   )
 );
 
@@ -37,6 +40,8 @@ $ink: #111;
 @use "govuk-frontend/dist/govuk/components/label";
 @use "govuk-frontend/dist/govuk/components/hint";
 @use "govuk-frontend/dist/govuk/components/input";
+@use "govuk-frontend/dist/govuk/components/button";
+@use "govuk-frontend/dist/govuk/components/error-message";
 @use "govuk-frontend/dist/govuk/components/select";
 @use "govuk-frontend/dist/govuk/components/fieldset";
 @use "govuk-frontend/dist/govuk/components/radios";
@@ -2128,4 +2133,125 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 
 .wuk-door__chart .wuk-mini {
   height: 56px;
+}
+
+// Chargers near you
+
+// Buttons in the house style: black, with GOV.UK's focus state.
+.wuk-button.govuk-button {
+  color: var(--wuk-paper);
+  background-color: var(--wuk-ink);
+  box-shadow: 0 2px 0 var(--wuk-pink);
+
+  &:hover {
+    background-color: #333;
+  }
+
+  &:focus:not(:active):not(:hover) {
+    color: var(--wuk-ink);
+    background-color: var(--wuk-focus);
+    box-shadow: 0 2px 0 var(--wuk-ink);
+  }
+}
+
+// A button that looks like a link, for a secondary action.
+.wuk-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.wuk-finder__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11em, 1fr));
+  gap: 0 govuk-spacing(5);
+}
+
+.wuk-chargers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-charger {
+  padding: govuk-spacing(3) 0;
+  border-top: 1px solid var(--wuk-rule);
+}
+
+.wuk-charger__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: govuk-spacing(2);
+}
+
+.wuk-charger__name {
+  margin: 0;
+}
+
+.wuk-charger__place {
+  margin: govuk-spacing(1) 0 govuk-spacing(2);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-charger__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px govuk-spacing(3);
+  margin: 0 0 govuk-spacing(2);
+  @include govuk-font($size: 16);
+
+  dt {
+    color: var(--wuk-ink-2);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.wuk-charger__links {
+  margin: 0;
+  @include govuk-font($size: 16);
+}
+
+// Speed bands, darkest and pink for the fastest. Always a word, never colour alone.
+.wuk-speed {
+  padding: 2px govuk-spacing(2);
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 2px solid var(--wuk-ink);
+
+  &--ultra {
+    color: var(--wuk-paper);
+    background: var(--wuk-pink);
+    border-color: var(--wuk-pink);
+  }
+
+  &--rapid {
+    color: var(--wuk-paper);
+    background: var(--wuk-ink);
+  }
+
+  &--fast {
+    color: var(--wuk-ink);
+    background: var(--wuk-paper);
+  }
+
+  &--slow,
+  &--unknown {
+    color: var(--wuk-ink-2);
+    border-color: var(--wuk-ink-3);
+  }
+}
+
+.wuk-finder__options .govuk-select {
+  width: 100%;
+  min-width: 0;
 }

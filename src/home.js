@@ -72,7 +72,7 @@ async function start() {
   door(
     'electric',
     bigger.format(h.electric.values[last]),
-    `battery electric cars, ${pct1.format(h.electric.share)} of all cars, and where the public chargers are.`,
+    `battery electric cars, ${pct1.format(h.electric.share)} of all cars, and the public chargers near you.`,
     h.electric.values.slice(h.quarters.findIndex((q) => q.startsWith('2018'))),
   );
   if (h.mot) {
