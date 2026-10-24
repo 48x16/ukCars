@@ -15,6 +15,25 @@ npm test
 
 `npm run data -- --csv path/to/df_VEH0120_UK.csv` uses a local copy instead of downloading.
 
+End-to-end and accessibility tests (WCAG 2.2 AA with axe) run against the production build,
+using Edge locally:
+
+```sh
+npm run build
+npm run test:e2e
+```
+
+## Pipelines
+
+| Workflow | When | What |
+| --- | --- | --- |
+| `CI` | Every pull request and push to `main` | Audit, unit tests, build on fixture data, end-to-end and axe tests |
+| `Data and deploy` | Weekly, on push to `main`, or by hand | Fetch and validate DfT data, build, deploy to GitHub Pages |
+| `CodeQL` | Pull requests, `main`, weekly | Static security analysis |
+
+Dependabot opens grouped update pull requests weekly. See [docs/devops-notes.md](docs/devops-notes.md)
+for how this maps to Azure DevOps, and the one-time GitHub setup.
+
 ## How it fits together
 
 | Path | What it does |
