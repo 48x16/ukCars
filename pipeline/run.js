@@ -1,0 +1,125 @@
+// Fetch -> validate -> slice -> write public/data/.
+//
+//   npm run data                     download the current CSV from DfT
+//   npm run data -- --csv <path>     use a local copy instead
+//
+// Set PREVIOUS_META_URL (the deployed meta.json) in CI so an older publication can't replace newer data.
+
+import { createReadStream } from 'node:fs';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { parse } from 'csv-parse';
+import { download, fetchText, findCsvUrl } from './fetch.js';
+import { createAggregator } from './slice.js';
+import { CSV_FILE_NAME, SOURCE_PAGE_URL } from './sources.js';
+import { SchemaError, validateFile, validateHeader, validateRow } from './validate.js';
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const OUT_DIR = join(ROOT, 'public', 'data');
+const CACHE_PATH = join(ROOT, '.cache', CSV_FILE_NAME);
+const MAX_REPORTED_ROW_ERRORS = 50;
+
+/** Validates and slices a CSV stream. Throws SchemaError listing every problem found. */
+export async function processCsv(input, { previousLatestQuarter, minRows, firstQuarter } = {}) {
+  const parser = input.pipe(parse({ bom: true, relax_column_count: true, info: true }));
+  const rowErrors = [];
+  let rowErrorCount = 0;
+  const warnings = new Map();
+  let quarters;
+  let aggregator;
+  let rowCount = 0;
+
+  for await (const { record, info } of parser) {
+    if (!quarters) {
+      quarters = validateHeader(record, { firstQuarter });
+      aggregator = createAggregator(quarters);
+      continue;
+    }
+    rowCount++;
+    const { errors, warnings: rowWarnings } = validateRow(record, quarters.length);
+    rowWarnings.forEach((w) => warnings.set(w, (warnings.get(w) ?? 0) + 1));
+    if (errors.length) {
+      rowErrorCount++;
+      if (rowErrors.length < MAX_REPORTED_ROW_ERRORS) rowErrors.push(`line ${info.lines}: ${errors.join('; ')}`);
+      continue;
+    }
+    aggregator.add(record);
+  }
+
+  if (!quarters) throw new SchemaError(['file is empty']);
+  if (rowErrorCount > rowErrors.length) rowErrors.push(`...and ${rowErrorCount - rowErrors.length} more bad rows`);
+  if (rowErrors.length) throw new SchemaError(rowErrors);
+  validateFile({ rowCount, latestQuarter: quarters[0], previousLatestQuarter, minRows });
+
+  const { index, files } = aggregator.result();
+  return {
+    index,
+    files,
+    warnings: [...warnings].map(([w, n]) => `${w} (${n} rows)`),
+    meta: {
+      latestQuarter: quarters[0],
+      firstQuarter: quarters[quarters.length - 1],
+      rowCount,
+      modelFiles: files.length,
+    },
+  };
+}
+
+async function previousLatestQuarter() {
+  try {
+    const text = process.env.PREVIOUS_META_URL
+      ? await fetchText(process.env.PREVIOUS_META_URL)
+      : await readFile(join(OUT_DIR, 'meta.json'), 'utf8');
+    return JSON.parse(text).latestQuarter;
+  } catch {
+    return undefined; // First run, or nothing deployed yet.
+  }
+}
+
+async function writeJson(path, data) {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, JSON.stringify(data));
+}
+
+async function main() {
+  const csvArg = process.argv.indexOf('--csv');
+  let csvPath;
+  let csvUrl;
+
+  if (csvArg !== -1) {
+    csvPath = resolve(process.argv[csvArg + 1]);
+    console.log(`Using local CSV ${csvPath}`);
+  } else {
+    csvUrl = findCsvUrl(await fetchText(SOURCE_PAGE_URL), CSV_FILE_NAME);
+    console.log(`Downloading ${csvUrl}`);
+    await download(csvUrl, CACHE_PATH);
+    csvPath = CACHE_PATH;
+  }
+
+  const previous = await previousLatestQuarter();
+  const result = await processCsv(createReadStream(csvPath), { previousLatestQuarter: previous });
+  result.warnings.forEach((w) => console.warn(`warning: ${w}`));
+
+  await rm(OUT_DIR, { recursive: true, force: true });
+  await writeJson(join(OUT_DIR, 'index.json'), result.index);
+  await writeJson(join(OUT_DIR, 'meta.json'), {
+    ...result.meta,
+    sourcePage: SOURCE_PAGE_URL,
+    csvUrl: csvUrl ?? null,
+    builtAt: new Date().toISOString(),
+  });
+  for (const { path, data } of result.files) await writeJson(join(OUT_DIR, path), data);
+
+  console.log(
+    `Wrote ${result.files.length} model files for ${result.index.makes.length} makes ` +
+      `(${result.meta.firstQuarter} to ${result.meta.latestQuarter}, ${result.meta.rowCount} rows read)`,
+  );
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((err) => {
+    console.error(err instanceof SchemaError ? err.message : err);
+    process.exitCode = 1;
+  });
+}

@@ -1,0 +1,11 @@
+BodyType,Make,GenModel,Model,Fuel,LicenceStatus,2015 Q2,2015 Q1,2014 Q4,2014 Q3
+Cars,FORD,FORD FIESTA,FIESTA ZETEC,Petrol,Licensed,10,9,8,7
+Cars,FORD,FORD FIESTA,FIESTA ZETEC,Petrol,SORN,1,1,1,1
+Cars,FORD,FORD FIESTA,FIESTA ZETEC,Diesel,Licensed,5,5,0,0
+Cars,FORD,FORD FIESTA,FIESTA ST,Petrol,Licensed,3,[c],2,2
+Cars,FORD,FORD FOCUS,FOCUS,Petrol,Licensed,20,20,20,20
+Cars,FORD,FORD FOCUS,FOCUS OLD,Petrol,Licensed,0,0,0,0
+Cars,FORD,FORD KA,KA,Petrol,Licensed,0,0,4,4
+Cars,LYNK & CO,LYNK & CO 01,01,Hybrid electric (petrol),Licensed,4,2,0,0
+Cars,MERCEDES-BENZ,MERCEDES-BENZ A CLASS,"A 180 ""SPORT""",Diesel,Licensed,6,6,6,6
+Motorcycles,HONDA,HONDA CBR,CBR600,Petrol,Licensed,50,50,50,50

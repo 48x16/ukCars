@@ -1,0 +1,306 @@
+// GOV.UK Frontend, with our own veneer on top.
+//
+// This is not a government service, so the GOV.UK brand stays out: no crown, no GOV.UK
+// header, and not the GDS Transport typeface. We keep GOV.UK Frontend's accessible
+// components, spacing and its yellow focus state, which keyboard users rely on.
+//
+// Palette: black and white throughout; pink (#ca357c, 4.87:1 on white) used sparingly.
+
+// Settings are configured once on `base`; everything imported after it shares them.
+@use "govuk-frontend/dist/govuk/base" as * with (
+  $govuk-font-family: ("Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
+  $govuk-functional-colours: (
+    brand: (name: "black"),
+    link: (name: "black"),
+    link-visited: (name: "black", variant: "tint-25"),
+    link-hover: (name: "black"),
+    link-active: (name: "black"),
+    template-background: (name: "white"),
+    surface-background: (name: "black", variant: "tint-95")
+  )
+);
+
+// Only the components we use. Keeps the CSS small, and leaves out service navigation,
+// whose old-IE media query hack Vite's CSS minifier rejects.
+@use "govuk-frontend/dist/govuk/core";
+@use "govuk-frontend/dist/govuk/objects";
+@use "govuk-frontend/dist/govuk/components/skip-link";
+@use "govuk-frontend/dist/govuk/components/label";
+@use "govuk-frontend/dist/govuk/components/select";
+@use "govuk-frontend/dist/govuk/components/details";
+@use "govuk-frontend/dist/govuk/components/table";
+@use "govuk-frontend/dist/govuk/components/error-summary";
+@use "govuk-frontend/dist/govuk/components/footer";
+@use "govuk-frontend/dist/govuk/utilities";
+@use "govuk-frontend/dist/govuk/overrides";
+
+:root {
+  --wuk-ink: #{govuk-colour("black")};
+  --wuk-ink-2: #{govuk-colour("black", "tint-25")};
+  --wuk-ink-3: #{govuk-colour("black", "tint-50")};
+  --wuk-rule: #{govuk-colour("black", "tint-80")};
+  --wuk-wash: #{govuk-colour("black", "tint-95")};
+  --wuk-paper: #{govuk-colour("white")};
+  --wuk-pink: #{govuk-colour("magenta")};
+  --wuk-focus: #{govuk-functional-colour(focus)};
+}
+
+body {
+  background: var(--wuk-paper);
+}
+
+.govuk-heading-xl,
+.govuk-heading-l,
+.govuk-heading-m {
+  letter-spacing: -0.02em;
+}
+
+// Header: a black band with a thin pink rule, in place of the GOV.UK header.
+
+.wuk-header {
+  background: var(--wuk-ink);
+  border-bottom: 4px solid var(--wuk-pink);
+}
+
+.wuk-header__inner {
+  padding: govuk-spacing(3) 0;
+}
+
+.wuk-header__wordmark {
+  @include govuk-font($size: 24, $weight: bold);
+  color: var(--wuk-paper);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+
+  &:focus {
+    @include govuk-focused-text;
+  }
+}
+
+// Filters: one row above everything they scope.
+
+.wuk-filters {
+  display: grid;
+  gap: 0 govuk-spacing(4);
+
+  @include govuk-media-query($from: tablet) {
+    grid-template-columns: 1fr 1fr 2fr;
+  }
+
+  .govuk-select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+// Results
+
+.wuk-results {
+  transition: opacity 150ms;
+}
+
+.wuk-results--loading {
+  opacity: 0.5;
+}
+
+.wuk-stat {
+  margin: govuk-spacing(4) 0 govuk-spacing(6);
+  padding-left: govuk-spacing(3);
+  border-left: 4px solid var(--wuk-pink);
+}
+
+.wuk-stat__value {
+  display: block;
+  @include govuk-font($size: 48, $weight: bold);
+  letter-spacing: -0.03em;
+}
+
+.wuk-stat__label {
+  display: block;
+  @include govuk-font($size: 19);
+}
+
+.wuk-stat__change {
+  display: block;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+
+  &:empty {
+    display: none;
+  }
+}
+
+// Chart. Each fuel group keeps the same style wherever it appears.
+// Greys are told apart by dash pattern and direct labels, never by shade alone.
+
+// GOV.UK Frontend sets the font per class, not on body, so SVG text needs it set here.
+.wuk-chart {
+  @include govuk-font($size: 16);
+}
+
+.wuk-chart__frame {
+  position: relative;
+}
+
+.wuk-chart__svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+
+  &:focus {
+    outline: 3px solid transparent;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--wuk-focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--wuk-ink);
+  }
+}
+
+.wuk-chart__grid line {
+  stroke: var(--wuk-wash);
+  stroke-width: 1;
+}
+
+.wuk-chart__axis {
+  @include govuk-font($size: 16, $tabular: true);
+
+  text {
+    fill: var(--wuk-ink-2);
+    font-size: 14px;
+  }
+
+  .domain,
+  .tick line {
+    stroke: var(--wuk-rule);
+  }
+}
+
+.wuk-chart__labels text {
+  fill: var(--wuk-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.wuk-chart__crosshair {
+  stroke: var(--wuk-ink-3);
+  stroke-width: 1;
+}
+
+.wuk-chart__hit {
+  fill: transparent;
+  pointer-events: all;
+}
+
+.wuk-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.wuk-line--petrol { stroke: var(--wuk-ink); }
+.wuk-line--diesel { stroke: var(--wuk-ink); stroke-dasharray: 7 4; stroke-linecap: butt; }
+.wuk-line--hybrid { stroke: var(--wuk-ink-2); }
+.wuk-line--plugin { stroke: var(--wuk-ink-2); stroke-dasharray: 0.1 5; stroke-width: 3; }
+.wuk-line--electric { stroke: var(--wuk-pink); stroke-width: 3; }
+.wuk-line--other { stroke: var(--wuk-ink-3); stroke-dasharray: 12 3 2 3; stroke-linecap: butt; }
+
+.wuk-dot {
+  stroke: var(--wuk-paper);
+  stroke-width: 2;
+}
+
+.wuk-dot--petrol,
+.wuk-dot--diesel { fill: var(--wuk-ink); }
+.wuk-dot--hybrid,
+.wuk-dot--plugin { fill: var(--wuk-ink-2); }
+.wuk-dot--electric { fill: var(--wuk-pink); }
+.wuk-dot--other { fill: var(--wuk-ink-3); }
+
+.wuk-key {
+  width: 24px;
+  height: 8px;
+  flex: none;
+  overflow: visible;
+}
+
+.wuk-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: govuk-spacing(1) govuk-spacing(4);
+  margin: 0 0 govuk-spacing(3);
+  padding: 0;
+  list-style: none;
+  @include govuk-font($size: 16);
+}
+
+.wuk-legend__item {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+}
+
+.wuk-tooltip {
+  position: absolute;
+  z-index: 1;
+  min-width: 180px;
+  padding: govuk-spacing(2) govuk-spacing(3);
+  background: var(--wuk-paper);
+  border: 1px solid var(--wuk-ink);
+  box-shadow: 0 2px 8px rgb(11 12 12 / 15%);
+  pointer-events: none;
+  @include govuk-font($size: 16);
+}
+
+.wuk-tooltip__title {
+  margin: 0 0 govuk-spacing(1);
+  font-weight: 700;
+}
+
+.wuk-tooltip__row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: govuk-spacing(3);
+}
+
+.wuk-tooltip__value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.wuk-tooltip__label {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-tooltip__row--total {
+  margin-top: govuk-spacing(1);
+  padding-top: govuk-spacing(1);
+  border-top: 1px solid var(--wuk-rule);
+}
+
+.wuk-table-details {
+  margin-top: govuk-spacing(4);
+
+  .govuk-table {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// Footer: white, with a black rule, in place of the GOV.UK footer's colours.
+
+.wuk-footer {
+  background: var(--wuk-paper);
+  border-top: 1px solid var(--wuk-ink);
+}
