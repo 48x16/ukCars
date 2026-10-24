@@ -72,6 +72,11 @@ function modelBars(list, models, before) {
 
 function renderModels(data) {
   fill('five-years-ago', data.fiveYearsAgoQuarter);
+  if (!data.petrolModels.length || !data.dieselModels.length) {
+    none($('petrol-models'));
+    none($('diesel-models'));
+    return;
+  }
   modelBars($('petrol-models'), data.petrolModels, data.fiveYearsAgoQuarter);
   modelBars($('diesel-models'), data.dieselModels, data.fiveYearsAgoQuarter);
   const [petrol] = data.petrolModels;
@@ -82,7 +87,10 @@ function renderModels(data) {
     (diesel.fiveYearsAgo ? `, ${formatChange((diesel.latest - diesel.fiveYearsAgo) / diesel.fiveYearsAgo)} in five years.` : '.');
 }
 
+const none = (list) => list.replaceChildren(el('li', 'govuk-body', 'None meet the criteria in this data.'));
+
 function renderStrongholds(data) {
+  if (!data.dieselMakes.length) return none($('strongholds'));
   const [top] = data.dieselMakes;
   const fallen = [...data.dieselMakes].sort((a, b) => b.before - b.share - (a.before - a.share))[0];
   $('strongholds-summary').textContent =
@@ -96,6 +104,7 @@ function renderStrongholds(data) {
 }
 
 function renderFallers(data) {
+  if (!data.dieselFallers.length) return none($('fallers'));
   const [first] = data.dieselFallers;
   $('fallers-summary').textContent = first
     ? `The diesel ${displayName(first.name)} has lost ${pct0.format(-first.change)} of its licensed cars in five years: the fastest-disappearing diesel on Britain's roads.`
