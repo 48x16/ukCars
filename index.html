@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#ffffff" />
     <meta
       name="description"
-      content="See how many of each car are licensed on UK roads, by make, model and fuel type, using DfT vehicle licensing statistics."
+      content="Every car on Britain's roads, from the official numbers: find any make and model, see what's changing, go electric, read the MOT results, and dip into the stories."
     />
     <title>What's on UK roads</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
@@ -18,9 +18,9 @@
 
     <header class="wuk-header" id="top">
       <div class="govuk-width-container wuk-header__inner">
-        <a href="./" class="wuk-header__wordmark">What&#8217;s on UK roads</a>
+        <a href="./" class="wuk-header__wordmark" aria-current="page">What&#8217;s on UK roads</a>
         <nav class="wuk-nav" aria-label="Pages">
-          <a class="wuk-nav__link" href="./" aria-current="page">Explore</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
           <a class="wuk-nav__link" href="./insights.html">Insights</a>
           <a class="wuk-nav__link" href="./electric.html">Electric</a>
           <a class="wuk-nav__link" href="./mot.html">MOT</a>
@@ -34,21 +34,23 @@
 
     <div class="govuk-width-container">
       <main class="govuk-main-wrapper" id="main-content">
-        <div class="wuk-split wuk-hero">
+        <div class="wuk-split wuk-hero wuk-front">
           <div class="wuk-split__side">
-            <h1 class="govuk-heading-xl">Explore</h1>
-            <p class="govuk-body-l">
-              Licensed cars in the UK by make, model and fuel type, from
-              <span data-first-quarter>2014 Q3</span> to <span data-latest-quarter>the latest quarter</span>.
-            </p>
+            <p class="wuk-kicker">UK car statistics</p>
+            <h1 class="govuk-heading-xl">Every car on Britain’s roads</h1>
+            <p class="govuk-body-l">From the official numbers, updated every quarter: find any car, see what’s changing, and read the stories.</p>
             <ul class="wuk-credits">
-              <li><b>Data</b> DfT and DVLA, table VEH0120</li>
-              <li><b>Covers</b> Cars, United Kingdom</li>
+              <li><b>Data</b> DfT, DVLA and DVSA</li>
               <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
             </ul>
           </div>
           <div class="wuk-split__main">
-            <form class="wuk-filters" id="filters">
+            <p class="wuk-bignum">
+              <span class="wuk-bignum__value" id="big-number">Millions of</span>
+              <span class="wuk-bignum__label" id="big-label">cars licensed in the UK</span>
+            </p>
+            <div class="wuk-bignum__chart" id="big-chart"></div>
+            <form class="wuk-filters wuk-front__search" id="filters">
               <div class="govuk-form-group wuk-search" id="search">
                 <label class="govuk-label govuk-label--m" for="search-input">Find a car</label>
                 <div class="govuk-hint" id="search-hint">Type a make or model, for example Fiesta or Tesla Model 3</div>
@@ -73,52 +75,77 @@
                 </div>
                 <div class="govuk-visually-hidden wuk-search__status" aria-live="polite"></div>
               </div>
-    
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--s" for="make">Make</label>
-                <select class="govuk-select" id="make" name="make"></select>
-              </div>
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--s" for="model">Model</label>
-                <select class="govuk-select" id="model" name="model"></select>
-              </div>
-              <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--s" for="variant">Variant</label>
-                <select class="govuk-select" id="variant" name="variant"></select>
-              </div>
             </form>
           </div>
         </div>
 
         <div class="govuk-error-summary" id="error" hidden>
           <div role="alert">
-            <h2 class="govuk-error-summary__title">The data could not be loaded</h2>
+            <h2 class="govuk-error-summary__title">The latest figures could not be loaded</h2>
             <div class="govuk-error-summary__body">
               <p class="govuk-body" id="error-message"></p>
             </div>
           </div>
         </div>
 
+        <section class="wuk-section" aria-labelledby="doors-title">
+          <h2 class="govuk-heading-l" id="doors-title">Where to start</h2>
+          <ul class="wuk-doors">
+            <li class="wuk-door">
+              <span class="wuk-door__icon" data-icon="search"></span>
+              <h3 class="govuk-heading-m wuk-door__title"><a class="govuk-link wuk-card__link" href="./explore.html">Explore</a></h3>
+              <p class="wuk-door__value" id="door-explore-value"></p>
+              <p class="wuk-door__label" id="door-explore-label">Every make and model, every quarter since 2014.</p>
+              <div class="wuk-door__chart" id="door-explore-chart"></div>
+            </li>
+            <li class="wuk-door">
+              <span class="wuk-door__icon" data-icon="lightbulb"></span>
+              <h3 class="govuk-heading-m wuk-door__title"><a class="govuk-link wuk-card__link" href="./insights.html">Insights</a></h3>
+              <p class="wuk-door__value" id="door-insights-value"></p>
+              <p class="wuk-door__label" id="door-insights-label">What’s changed: the dying, the growing, diesel and more.</p>
+              <div class="wuk-door__chart" id="door-insights-chart"></div>
+            </li>
+            <li class="wuk-door">
+              <span class="wuk-door__icon" data-icon="zap"></span>
+              <h3 class="govuk-heading-m wuk-door__title"><a class="govuk-link wuk-card__link" href="./electric.html">Electric</a></h3>
+              <p class="wuk-door__value" id="door-electric-value"></p>
+              <p class="wuk-door__label" id="door-electric-label">Electric cars, and where the public chargers are.</p>
+              <div class="wuk-door__chart" id="door-electric-chart"></div>
+            </li>
+            <li class="wuk-door">
+              <span class="wuk-door__icon" data-icon="clipboard"></span>
+              <h3 class="govuk-heading-m wuk-door__title"><a class="govuk-link wuk-card__link" href="./mot.html">MOT</a></h3>
+              <p class="wuk-door__value" id="door-mot-value"></p>
+              <p class="wuk-door__label" id="door-mot-label">A year of MOT tests: who passes, and how far they’ve been.</p>
+              <div class="wuk-door__chart" id="door-mot-chart"></div>
+            </li>
+          </ul>
+        </section>
 
-        <section class="wuk-results" id="results" aria-labelledby="chart-title">
-          <p class="wuk-stat">
-            <span class="wuk-stat__value" id="stat-value"></span>
-            <span class="wuk-stat__label" id="stat-label"></span>
-            <span class="wuk-stat__sorn" id="stat-sorn"></span>
-            <span class="wuk-stat__change" id="stat-change"></span>
-          </p>
-
-          <h2 class="govuk-heading-m" id="chart-title">Licensed cars by fuel type</h2>
-          <div class="wuk-chart" id="chart"></div>
-
-          <details class="govuk-details wuk-table-details">
-            <summary class="govuk-details__summary">
-              <span class="govuk-details__summary-text">Show the data as a table</span>
-            </summary>
-            <div class="govuk-details__text">
-              <table class="govuk-table" id="data-table"></table>
-            </div>
-          </details>
+        <section class="wuk-section" aria-labelledby="stories-title">
+          <h2 class="govuk-heading-l" id="stories-title">Features</h2>
+          <ul class="wuk-cards">
+            <li class="wuk-card">
+              <span class="wuk-card__icon" data-icon="sun"></span>
+              <h3 class="govuk-heading-m wuk-card__title"><a class="govuk-link wuk-card__link" href="./out-to-play.html">Out to play</a></h3>
+              <p class="govuk-body wuk-card__standfirst">The cars taxed for summer and tucked up for winter.</p>
+            </li>
+            <li class="wuk-card">
+              <span class="wuk-card__icon" data-icon="trophy"></span>
+              <h3 class="govuk-heading-m wuk-card__title"><a class="govuk-link wuk-card__link" href="./bavarian.html">The Bavarian battle</a></h3>
+              <p class="govuk-body wuk-card__standfirst">BMW, Mercedes and Audi: who’s winning?</p>
+            </li>
+            <li class="wuk-card">
+              <span class="wuk-card__icon" data-icon="globe"></span>
+              <h3 class="govuk-heading-m wuk-card__title"><a class="govuk-link wuk-card__link" href="./origins.html">Where cars come from</a></h3>
+              <p class="govuk-body wuk-card__standfirst">If Britain’s cars were 100, where would they be from?</p>
+            </li>
+            <li class="wuk-card">
+              <span class="wuk-card__icon" data-icon="palette"></span>
+              <h3 class="govuk-heading-m wuk-card__title"><a class="govuk-link wuk-card__link" href="./colours.html">Silver to grey</a></h3>
+              <p class="govuk-body wuk-card__standfirst">Thirty years of car colours.</p>
+            </li>
+          </ul>
         </section>
         <div class="wuk-back-to-top">
           <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
@@ -132,11 +159,16 @@
           <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
             <h2 class="govuk-visually-hidden">About the data</h2>
             <p class="govuk-body-s">
-              Source: Department for Transport and Driver and Vehicle Licensing Agency,
+              Sources: Department for Transport and Driver and Vehicle Licensing Agency,
               <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files"
-                >vehicle licensing statistics data files</a
-              >
-              (table VEH0120), data to <span data-latest-quarter>the latest quarter</span>.
+                >vehicle licensing statistics</a
+              >; Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results"
+                >anonymised MOT results</a
+              >; DfT
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/electric-vehicle-charging-infrastructure-statistics-data-tables-evci"
+                >electric vehicle charging statistics</a
+              >.
             </p>
             <p class="govuk-body-s">
               Contains public sector information licensed under the
@@ -144,18 +176,12 @@
                 >Open Government Licence v3.0</a
               >. © Crown copyright.
             </p>
-            <p class="govuk-body-s">
-              This site is not affiliated with or endorsed by DfT or DVLA. “Off the road (SORN)” counts
-              cars with a Statutory Off Road Notification: kept but not used on public roads. Fuel types are grouped:
-              hybrid includes petrol and diesel hybrids, plug-in hybrid includes range-extended electric,
-              and other covers gas, fuel cell and other fuels. Figures shown as “Suppressed” are
-              confidential (1 to 4 vehicles).
-            </p>
+            <p class="govuk-body-s">This site is not affiliated with or endorsed by DfT, DVLA or DVSA.</p>
           </div>
         </div>
       </div>
     </footer>
 
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/home.js"></script>
   </body>
 </html>

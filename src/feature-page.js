@@ -2,11 +2,21 @@
 // and show a clear message if the data can't be loaded.
 
 import './shell.js';
-import { Globe, Palette, Snowflake, Sun, Trophy } from 'lucide';
+import { ClipboardCheck, Globe, Lightbulb, Palette, Search, Snowflake, Sun, Trophy, Zap } from 'lucide';
 import { loadFeature } from './data.js';
 import { icon } from './feature-charts.js';
 
-const ICONS = { sun: Sun, snowflake: Snowflake, trophy: Trophy, globe: Globe, palette: Palette };
+const ICONS = {
+  sun: Sun,
+  snowflake: Snowflake,
+  trophy: Trophy,
+  globe: Globe,
+  palette: Palette,
+  search: Search,
+  lightbulb: Lightbulb,
+  zap: Zap,
+  clipboard: ClipboardCheck,
+};
 
 export const $ = (id) => document.getElementById(id);
 

@@ -241,6 +241,92 @@ export function colours(mot) {
   };
 }
 
+/**
+ * Electric cars in detail, for the Electric page: the fleet, the models, the makes, where
+ * they're from, and how they do at the MOT against other fuels at the same age.
+ */
+export function electricCars(files, quarters, mot) {
+  const n = quarters.length;
+  const last = n - 1;
+  const yearAgo = Math.max(0, last - 4);
+  const fleet = new Map(FUEL_GROUPS.map((g) => [g.id, zeros(n)]));
+  const byMake = new Map();
+  const byOrigin = new Map();
+  const modelRows = [];
+  for (const { path, data } of files) {
+    const electric = zeros(n);
+    let all = zeros(n);
+    for (const v of data.variants) {
+      const values = counted(v.licensed, n);
+      const group = fuelGroupOf(v.fuel);
+      fleet.set(group, add(fleet.get(group), values));
+      all = add(all, values);
+      if (group === 'electric') for (let i = 0; i < n; i++) electric[i] += values[i];
+    }
+    const make = bavarianMake(data.make);
+    const t = byMake.get(make) ?? { make, electric: zeros(n), all: zeros(n) };
+    t.electric = add(t.electric, electric);
+    t.all = add(t.all, all);
+    byMake.set(make, t);
+    const origin = originOf(data.make, data.genModel);
+    byOrigin.set(origin, (byOrigin.get(origin) ?? 0) + electric[last]);
+    if (electric[last] > 0) {
+      const [, makeSlug, file] = path.split('/');
+      modelRows.push({ name: data.genModel, makeSlug, modelSlug: file.replace(/\.json$/, ''), latest: electric[last], yearAgo: electric[yearAgo] });
+    }
+  }
+  const licensed = [...fleet.values()].reduce((acc, v) => add(acc, v), zeros(n));
+  const makes = [...byMake.values()].map((t) => ({ make: t.make, electric: t.electric[last], yearAgo: t.electric[yearAgo], all: t.all[last], share: t.all[last] ? t.electric[last] / t.all[last] : 0 }));
+  const originIds = ORIGINS.map((o) => o.id);
+  const units = apportion(originIds.map((id) => byOrigin.get(id) ?? 0), 100);
+  const bands = mot?.fuelBands && mot.ageBands ? mot.ageBands.map((b, i) => ({ label: b.label, fuels: Object.fromEntries(Object.entries(mot.fuelBands).map(([fuel, list]) => [fuel, list[i]])) })) : null;
+  return {
+    quarters,
+    yearAgoQuarter: quarters[yearAgo],
+    fleet: {
+      licensed,
+      electric: fleet.get('electric'),
+      plugin: fleet.get('plugin'),
+      hybrid: fleet.get('hybrid'),
+    },
+    models: modelRows.sort((a, b) => b.latest - a.latest).slice(0, 15),
+    makes: makes.filter((m) => m.electric > 0).sort((a, b) => b.electric - a.electric).slice(0, 12),
+    mostElectric: makes
+      .filter((m) => m.all >= 20_000)
+      .sort((a, b) => b.share - a.share)
+      .slice(0, 10),
+    origins: ORIGINS.map((o, i) => ({ id: o.id, label: o.label, electric: byOrigin.get(o.id) ?? 0, of100: units[i] })),
+    mot: bands ? { year: mot.year, bands } : null,
+  };
+}
+
+/**
+ * The front door's figures: one small file with a headline number and a mini-chart for each
+ * section, so the home page doesn't download every section's data.
+ */
+export function home({ insights, electric, mot, index }) {
+  const h = insights.headline;
+  const diesel = insights.fuelShare.find((g) => g.id === 'diesel');
+  const ages = mot ? mot.byAge.filter((a) => a.age >= 3 && a.age <= 25 && a.tests) : [];
+  return {
+    quarters: insights.quarters,
+    licensed: insights.fleet.licensed,
+    sorn: h.sorn,
+    makes: index.makes.filter((m) => m.latest > 0).length,
+    models: index.makes.reduce((n, m) => n + m.models.length, 0),
+    diesel: diesel ? { share: diesel.values, peak: h.dieselPeakShare, peakQuarter: h.dieselPeakQuarter } : null,
+    electric: { values: electric.fleet.electric, share: h.electricShare },
+    mot: mot
+      ? {
+          year: mot.year,
+          tests: mot.totals.tests,
+          passRate: mot.totals.pass / mot.totals.tests,
+          byAge: ages.map((a) => ({ age: a.age, passRate: a.pass / a.tests })),
+        }
+      : null,
+  };
+}
+
 /** Every feature's data, keyed by the file name it's written to. */
 export function buildFeatures({ files, insights, mot }) {
   const quarters = files[0].data.quarters;
@@ -249,6 +335,7 @@ export function buildFeatures({ files, insights, mot }) {
     'out-to-play': outToPlay(models, quarters, { hotHatches: insights?.hotHatches }),
     bavarian: bavarian(files, models, quarters, mot),
     origins: origins(models, quarters),
+    'electric-cars': electricCars(files, quarters, mot),
   };
   if (mot) out.colours = colours(mot);
   return out;

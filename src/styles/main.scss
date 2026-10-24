@@ -1298,7 +1298,7 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 // Features index: one card per story.
 .wuk-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(11.5em, 1fr));
   gap: govuk-spacing(6);
   margin: 0;
   padding: 0;
@@ -2031,4 +2031,101 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 .wuk-hero-chip__years {
   font-family: var(--wuk-figure);
   font-size: 14px;
+}
+
+// Fuel marks for dot plots: shape and colour both differ, so no fuel rests on colour alone.
+.wuk-mark--petrol { background: var(--wuk-ink); border-radius: 50%; }
+.wuk-mark--diesel { background: var(--wuk-ink-2); }
+.wuk-mark--hybrid { background: var(--wuk-paper); border: 2px solid var(--wuk-ink); border-radius: 50%; }
+.wuk-mark--electric { background: var(--wuk-pink); transform: rotate(45deg) scale(0.85); }
+.wuk-dotrow__track .wuk-mark--electric { transform: translateX(-50%) rotate(45deg) scale(0.85); }
+
+.wuk-ev-models {
+  margin-bottom: govuk-spacing(2);
+}
+
+// Front door
+
+.wuk-bignum {
+  margin: 0;
+}
+
+.wuk-bignum__value {
+  display: block;
+  font-family: var(--wuk-display);
+  font-size: clamp(56px, 9vw, 104px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.wuk-bignum__label {
+  display: block;
+  max-width: 30em;
+  margin-top: govuk-spacing(2);
+  @include govuk-font($size: 19);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-bignum__chart {
+  --paint: var(--wuk-pink);
+  max-width: 34em;
+  margin: govuk-spacing(3) 0 govuk-spacing(6);
+
+  .wuk-mini {
+    height: 90px;
+  }
+}
+
+.wuk-front__search {
+  max-width: 34em;
+}
+
+.wuk-doors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11.5em, 1fr));
+  gap: govuk-spacing(6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-door {
+  --paint: var(--wuk-ink);
+  position: relative;
+  padding-top: govuk-spacing(3);
+  border-top: 4px solid var(--wuk-ink);
+
+  &:hover {
+    --paint: var(--wuk-pink);
+    border-top-color: var(--wuk-pink);
+  }
+}
+
+.wuk-door__icon svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 1.75;
+}
+
+.wuk-door__title {
+  margin: govuk-spacing(2) 0 govuk-spacing(1);
+}
+
+.wuk-door__value {
+  margin: 0;
+  font-family: var(--wuk-display);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.wuk-door__label {
+  margin: 0 0 govuk-spacing(2);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-door__chart .wuk-mini {
+  height: 56px;
 }

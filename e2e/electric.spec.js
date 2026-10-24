@@ -20,7 +20,7 @@ test('is reachable from the header, which marks the current page', async ({ page
 test('shows the headline figures, the map and every section', async ({ page }) => {
   await open(page);
   await expect(page.locator('.wuk-tile')).toHaveCount(4);
-  for (const name of ['Council by council', 'Top and bottom', 'The national picture', 'Every council', 'Reading the map']) {
+  for (const name of ['The electric surge', 'Britain’s favourite electric cars', 'Who makes them', 'Where they’re from', 'Electric at the MOT', 'Council by council', 'Top and bottom', 'Private plug-ins over time', 'Every council', 'Reading the map']) {
     await expect(page.getByRole('heading', { name, level: 2 })).toBeVisible();
   }
   // Every UK council is drawn, with London's twice (map and inset).
@@ -62,7 +62,7 @@ test('picks a council by clicking the map', async ({ page }) => {
 test('has no WCAG 2.2 AA violations (axe)', async ({ page }) => {
   await open(page);
   await page.getByLabel('Find a council').selectOption({ index: 1 });
-  await page.getByText('Show the data as a table').click();
+  await page.locator('details').evaluateAll((all) => all.forEach((d) => (d.open = true)));
   const results = await new AxeBuilder({ page }).withTags(WCAG_AA).analyze();
   expect(results.violations).toEqual([]);
 });

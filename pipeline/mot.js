@@ -139,6 +139,7 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
   const fuels = new Map(); // first-use year -> Map(fuel -> count)
   const recentByMake = new Map(); // make -> Map(colour -> count), recent cars only
   const recentByFuel = new Map(); // fuel -> Map(colour -> count), recent cars only
+  const fuelBands = new Map(); // fuel -> [outcomes and mileage per age band]
   const areas = new Map();
   const models = new Map();
 
@@ -227,6 +228,17 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     }
     const band = AGE_BANDS.findIndex((b) => age >= b.from && age <= b.to);
     if (band !== -1) countOutcome(m.bands[band], key);
+
+    // By fuel and age band, so fuels compare fairly: electric cars are mostly young.
+    let byFuel = fuelBands.get(fuel);
+    if (!byFuel) fuelBands.set(fuel, (byFuel = AGE_BANDS.map(() => ({ ...outcome(), miles: 0, milesN: 0 }))));
+    if (band !== -1) {
+      countOutcome(byFuel[band], key);
+      if (hasMiles) {
+        byFuel[band].miles += mileage;
+        byFuel[band].milesN++;
+      }
+    }
   }
 
   function result() {
@@ -252,6 +264,12 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
       mileage: { band: MILES_BAND, counts: miles },
       colours: byYear(colours),
       fuels: byYear(fuels),
+      fuelBands: Object.fromEntries(
+        [...fuelBands].map(([fuel, bands]) => [
+          fuel,
+          bands.map((b) => ({ tests: b.tests, pass: b.pass, prs: b.prs, fail: b.fail, meanMiles: mean(b.miles, b.milesN) })),
+        ]),
+      ),
       recentColours: {
         ages: RECENT_AGES,
         byMake: [...recentByMake]

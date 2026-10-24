@@ -20,7 +20,7 @@
       <div class="govuk-width-container wuk-header__inner">
         <a href="./" class="wuk-header__wordmark">What&#8217;s on UK roads</a>
         <nav class="wuk-nav" aria-label="Pages">
-          <a class="wuk-nav__link" href="./">Explore</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
           <a class="wuk-nav__link" href="./insights.html">Insights</a>
           <a class="wuk-nav__link" href="./electric.html" aria-current="page">Electric</a>
           <a class="wuk-nav__link" href="./mot.html">MOT</a>
@@ -60,6 +60,79 @@
             </div>
           </div>
         </div>
+
+        <section class="wuk-section wuk-split" aria-labelledby="surge-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="surge-title">The electric surge</h2>
+            <p class="govuk-body" id="surge-summary"></p>
+            <p class="govuk-body-s">Licensed cars of every keeper, private and company, from DfT table VEH0120.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Licensed plug-in cars</h3>
+            <div class="wuk-chart" id="surge-chart"></div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="models-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="models-title">Britain’s favourite electric cars</h2>
+            <p class="govuk-body" id="models-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+            <ol class="wuk-bars-simple wuk-ev-models" id="ev-models"></ol>
+            <p class="govuk-body-s wuk-column-note"><span class="wuk-then-key" aria-hidden="true"></span> Marker: licensed a year earlier, <span data-year-ago>a year earlier</span></p>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="makes-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="makes-title">Who makes them</h2>
+            <p class="govuk-body" id="makes-summary"></p>
+          </div>
+          <div class="wuk-split__main wuk-ranks">
+            <div>
+              <h3 class="govuk-heading-s">Most battery electric cars</h3>
+              <ol class="wuk-rank" id="ev-makes"></ol>
+            </div>
+            <div>
+              <h3 class="govuk-heading-s">Most electric makes</h3>
+              <p class="govuk-body-s">Share of each make’s licensed cars, for makes with at least 20,000.</p>
+              <ol class="wuk-rank" id="ev-share"></ol>
+            </div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="origin-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="origin-title">Where they’re from</h2>
+            <p class="govuk-body" id="origin-summary"></p>
+            <p class="govuk-body-s">By the make’s home country, as in <a class="govuk-link" href="./origins.html">Where cars come from</a>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">If Britain’s battery electric cars were 100</h3>
+            <ol class="wuk-pictos" id="ev-pictogram"></ol>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="mot-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="mot-title">Electric at the MOT</h2>
+            <p class="govuk-body" id="mot-summary"></p>
+            <p class="govuk-body-s">Share of cars passing their MOT first time in <span data-mot-year>the latest year</span>, by fuel, compared at the same age. Great Britain.</p>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="wuk-legend" id="mot-legend" aria-hidden="true"></ul>
+            <ol class="wuk-dotplot" id="mot-dots"></ol>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="MOT by fuel (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="mot-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
 
         <section class="wuk-section wuk-split" aria-labelledby="map-title">
           <div class="wuk-split__side">
@@ -117,7 +190,7 @@
 
         <section class="wuk-section wuk-split" aria-labelledby="growth-title">
           <div class="wuk-split__side">
-            <h2 class="govuk-heading-l" id="growth-title">The national picture</h2>
+            <h2 class="govuk-heading-l" id="growth-title">Private plug-ins over time</h2>
             <p class="govuk-body" id="growth-summary"></p>
           </div>
           <div class="wuk-split__main">

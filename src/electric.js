@@ -5,7 +5,8 @@ import './shell.js';
 import topology from '../data/geo/councils.json';
 import { createChart } from './chart.js';
 import { createCouncilMap, quintileBreaks, renderMapLegend } from './council-map.js';
-import { loadElectric } from './data.js';
+import { loadElectric, loadFeature } from './data.js';
+import { renderElectricCars } from './electric-cars.js';
 import { el, formatChange, renderTable } from './insight-charts.js';
 import { quarterEndDate } from './quarters.js';
 
@@ -192,6 +193,13 @@ async function start() {
 
   renderHeadline(data);
   renderGrowth(data);
+  // The electric car sections have their own data; if it's missing, they hide rather than block the map.
+  loadFeature('electric-cars')
+    .then(renderElectricCars)
+    .catch((err) => {
+      console.error(err);
+      for (const id of ['surge-title', 'models-title', 'makes-title', 'origin-title', 'mot-title']) $(id).closest('section').hidden = true;
+    });
 
   const known = (v, format) => (v === null ? 'Not known' : format(v));
   renderTable($('council-table'), {

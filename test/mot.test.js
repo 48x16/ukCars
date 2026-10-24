@@ -67,6 +67,13 @@ describe('MOT aggregator', () => {
     expect(diesel.total).toBe(3);
   });
 
+  it('counts outcomes and mileage by fuel and age band', async () => {
+    const s = await summarise(createReadStream(CSV));
+    // The Tesla (electric, 4 years, passed, no mileage) and the C220 D (diesel, 3 years, fixed on the spot).
+    expect(s.fuelBands.electric[0]).toEqual({ tests: 1, pass: 1, prs: 0, fail: 0, meanMiles: null });
+    expect(s.fuelBands.diesel[0]).toEqual({ tests: 1, pass: 0, prs: 1, fail: 0, meanMiles: 30000 });
+  });
+
   it('counts the colours of recent cars by make and by fuel', async () => {
     const s = await summarise(createReadStream(CSV));
     // Only cars aged 3 to 7: the C220 D (3) and the Tesla (4).

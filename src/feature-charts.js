@@ -191,16 +191,21 @@ export function renderChangeDots(list, items, format) {
   );
 }
 
-/** A mini line chart for small multiples, on a shared or own scale. */
-export function miniLine(values, { width = 220, height = 70, top = null, className = '' } = {}) {
+/**
+ * A mini line chart for small multiples, on a shared or own scale. With `zero: false` the
+ * scale fits the data instead of starting at zero, and there's no filled area, which would
+ * suggest a zero baseline.
+ */
+export function miniLine(values, { width = 220, height = 70, top = null, zero = true, className = '' } = {}) {
+  const lo = zero ? 0 : Math.min(...values);
   const x = scaleLinear().domain([0, values.length - 1]).range([2, width - 6]);
-  const y = scaleLinear().domain([0, top ?? (max(values) || 1)]).range([height - 2, 6]);
+  const y = scaleLinear().domain([lo, top ?? (max(values) || 1)]).range([height - 4, 6]);
   const svg = select(document.createElementNS(SVG_NS, 'svg'))
     .attr('class', `wuk-mini ${className}`)
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('preserveAspectRatio', 'none')
     .attr('aria-hidden', 'true');
-  svg.append('path').attr('class', 'wuk-mini__area').attr('d', area().x((_, i) => x(i)).y0(height).y1((v) => y(v))(values));
+  if (zero) svg.append('path').attr('class', 'wuk-mini__area').attr('d', area().x((_, i) => x(i)).y0(height).y1((v) => y(v))(values));
   svg.append('path').attr('class', 'wuk-mini__line').attr('vector-effect', 'non-scaling-stroke').attr('d', line().x((_, i) => x(i)).y((v) => y(v))(values));
   return svg.node();
 }

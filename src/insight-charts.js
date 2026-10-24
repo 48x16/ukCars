@@ -19,7 +19,7 @@ export function el(tag, className, text) {
 }
 
 /** Links into Explore: a model, or a make (which opens at its most licensed model). */
-export const modelLink = (m) => (m.modelSlug ? `./#/${m.makeSlug}/${m.modelSlug}` : `./#/${m.makeSlug}`);
+export const modelLink = (m) => (m.modelSlug ? `./explore.html#/${m.makeSlug}/${m.modelSlug}` : `./explore.html#/${m.makeSlug}`);
 
 /**
  * A mini-chart of one model's licensed cars. Each has its own scale: it shows the shape of

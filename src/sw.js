@@ -36,7 +36,7 @@ self.addEventListener('fetch', (event) => {
   if (request.mode === 'navigate') {
     // Each page is cached under its own URL; the home page is the last resort.
     event.respondWith(networkFirst(request, SHELL_CACHE, new URL('./', self.registration.scope).href));
-  } else if (/\/data\/(index|meta|insights)\.json$/.test(url.pathname)) {
+  } else if (/\/data\/(index|meta|insights|home)\.json$/.test(url.pathname)) {
     event.respondWith(networkFirst(request, DATA_CACHE));
   } else if (url.pathname.includes('/data/')) {
     event.respondWith(staleWhileRevalidate(event, DATA_CACHE));

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { originOf } from '../pipeline/categories.js';
-import { apportion, bavarian, colours, origins, outToPlay, seasons } from '../pipeline/features.js';
+import { apportion, bavarian, colours, electricCars, origins, outToPlay, seasons } from '../pipeline/features.js';
 import { colourYears } from '../src/colour-years.js';
 
 const QUARTERS = ['2024 Q3', '2024 Q4', '2025 Q1', '2025 Q2', '2025 Q3', '2025 Q4', '2026 Q1', '2026 Q2'];
@@ -115,5 +115,28 @@ describe('colours', () => {
     expect(c.makes.find((m) => m.make === 'HONDA').colourful).toBeCloseTo(0.6);
     expect(c.makes.find((m) => m.make === 'MERCEDES').colourful).toBeCloseTo(0.1); // DVSA's name, DVLA's make
     expect(c.fuels[0]).toMatchObject({ fuel: 'electric', WHITE: 0.75 });
+  });
+});
+
+describe('electricCars', () => {
+  const file = (make, genModel, variants) => ({ path: `models/${make.toLowerCase()}/${genModel.toLowerCase().replace(/ /g, '-')}.json`, data: { make, genModel, variants } });
+  const series = (values) => ({ from: 0, values });
+  it('counts the electric fleet, models, makes and origins', () => {
+    const q = ['2025 Q1', '2025 Q2', '2025 Q3', '2025 Q4', '2026 Q1'];
+    const files = [
+      file('TESLA', 'TESLA MODEL 3', [{ fuel: 'Battery electric', licensed: series([10, 20, 30, 40, 50]) }]),
+      file('KIA', 'KIA NIRO', [
+        { fuel: 'Battery electric', licensed: series([5, 5, 5, 5, 10]) },
+        { fuel: 'Petrol', licensed: series([90, 90, 90, 90, 90]) },
+        { fuel: 'Plug-in hybrid electric (petrol)', licensed: series([1, 1, 1, 1, 1]) },
+      ]),
+    ];
+    const e = electricCars(files, q, null);
+    expect(e.fleet.electric).toEqual([15, 25, 35, 45, 60]);
+    expect(e.fleet.plugin).toEqual([1, 1, 1, 1, 1]);
+    expect(e.models.map((m) => [m.name, m.latest, m.yearAgo])).toEqual([['TESLA MODEL 3', 50, 10], ['KIA NIRO', 10, 5]]);
+    expect(e.makes[0]).toMatchObject({ make: 'TESLA', electric: 50, share: 1 });
+    expect(e.origins.find((o) => o.id === 'american').of100).toBe(83);
+    expect(e.mot).toBeNull();
   });
 });

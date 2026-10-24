@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
-async function open(page, path = './') {
+async function open(page, path = './explore.html') {
   await page.goto(path);
   await expect(page.locator('.wuk-chart__hit')).toBeAttached();
 }
@@ -41,7 +41,7 @@ test('finds a model with keyboard-only search', async ({ page }) => {
 });
 
 test('shows cars declared off the road (SORN) alongside the fuel lines', async ({ page }) => {
-  await open(page, './#/ford/ford-fiesta');
+  await open(page, './explore.html#/ford/ford-fiesta');
   await expect(page.locator('.wuk-legend')).toContainText('Off the road (SORN)');
   await expect(page.locator('.wuk-chart__svg .wuk-sorn__area')).toBeAttached();
   await expect(page.locator('#stat-sorn')).toContainText('declared off the road (SORN)');
@@ -54,7 +54,7 @@ test('shows cars declared off the road (SORN) alongside the fuel lines', async (
 });
 
 test('opens a model from a shared link', async ({ page }) => {
-  await open(page, './#/ford/ford-fiesta');
+  await open(page, './explore.html#/ford/ford-fiesta');
   await expect(page.locator('#chart-title')).toContainText('FORD FIESTA');
   await expect(page.locator('#model')).toHaveValue('ford-fiesta');
 });

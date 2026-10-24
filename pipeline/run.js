@@ -12,7 +12,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { download, fetchText, findCsvUrl } from './fetch.js';
-import { buildFeatures } from './features.js';
+import { buildFeatures, home } from './features.js';
 import { buildInsights } from './insights.js';
 import { joinMot } from './mot-join.js';
 import { createAggregator } from './slice.js';
@@ -144,6 +144,10 @@ async function main() {
 
   const features = buildFeatures({ files: result.files, insights, mot: joined });
   for (const [name, data] of Object.entries(features)) await writeJson(join(OUT_DIR, 'features', `${name}.json`), data);
+  await writeJson(
+    join(OUT_DIR, 'home.json'),
+    home({ insights, electric: features['electric-cars'], mot: joined, index: result.index }),
+  );
   console.log(`Wrote features: ${Object.keys(features).join(', ')}`);
 
   console.log(
