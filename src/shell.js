@@ -65,7 +65,7 @@ const QUICK_LINKS = [
   { href: './explore.html', label: 'Explore', icon: Search, pages: ['explore.html'] },
   { href: './electric.html', label: 'Electric', icon: Zap, pages: ['electric.html'] },
   { href: './tools.html', label: 'Tools', icon: Wrench, pages: ['tools.html', 'chargers.html', 'mot-times.html', 'your-car.html', 'make.html'] },
-  { href: './features.html', label: 'Features', icon: Newspaper, pages: ['features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html', 'mini.html', 'suv.html', 'diesel.html', 'plates.html', 'arrivals.html'] },
+  { href: './features.html', label: 'Features', icon: Newspaper, pages: ['features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html', 'mini.html', 'suv.html', 'diesel.html', 'plates.html', 'arrivals.html', 'workhorses.html', 'built-to-last.html', 'endangered.html'] },
 ];
 
 function bottomBar() {

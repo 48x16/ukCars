@@ -15,6 +15,9 @@ const FEATURES = [
   { page: 'diesel', title: 'Peak diesel', sections: ['Rise and fall'], ready: '.wuk-chart__svg' },
   { page: 'plates', title: 'Plate days', sections: ['The sawtooth', 'Plate decoder'], ready: '.wuk-plate' },
   { page: 'arrivals', title: 'The new arrivals', sections: ['Coming in to land', 'Arrivals', 'Best sellers'], ready: '.wuk-board tbody tr' },
+  { page: 'workhorses', title: 'The workhorses', sections: ['High milers', 'Garage queens', 'Diesel did the miles'], ready: '.wuk-odo' },
+  { page: 'built-to-last', title: 'Built to last', sections: ['Everyday champions', 'Cherished classics', 'Feeling their age'], ready: '.wuk-road__average' },
+  { page: 'endangered', title: 'Endangered species', sections: ['Icons in decline', 'Nearly gone'], ready: '.wuk-species' },
   { page: 'mini', title: 'Mini, year by year', sections: ['The road so far', 'Peak Mini', 'Colours', 'Under the bonnet', 'Where Minis live'], ready: '.wuk-map__bubble' },
 ];
 

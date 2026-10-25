@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { originOf } from '../pipeline/categories.js';
-import { apportion, bavarian, colours, combustionCars, electricCars, origins, outToPlay, seasons } from '../pipeline/features.js';
+import { apportion, bavarian, builtToLast, colours, combustionCars, electricCars, endangered, origins, outToPlay, seasons, workhorses } from '../pipeline/features.js';
 import { colourYears } from '../src/colour-years.js';
 
 const QUARTERS = ['2024 Q3', '2024 Q4', '2025 Q1', '2025 Q2', '2025 Q3', '2025 Q4', '2026 Q1', '2026 Q2'];
@@ -162,5 +162,69 @@ describe('combustionCars', () => {
     expect(c.petrolModels[0]).toMatchObject({ name: 'FORD FIESTA', latest: 40_000, fiveYearsAgo: 50_000 });
     expect(c.dieselMakes[0]).toMatchObject({ make: 'LAND ROVER', share: 0.9 });
     expect(c.dieselFallers.map((m) => m.name)).toEqual(['FORD FIESTA', 'LAND ROVER DISCOVERY']); // -75%, then -40%
+  });
+});
+
+describe('workhorses, built to last and endangered', () => {
+  const bands = (rates) => rates.map(([tests, pass]) => ({ tests, pass, prs: 0, fail: tests - pass }));
+  const motModel = (name, { tests, meanMiles, meanAge, old = [0, 0] }) => ({
+    name,
+    makeSlug: 'x',
+    modelSlug: name.toLowerCase(),
+    tests,
+    meanMiles,
+    meanAge,
+    bands: bands([[0, 0], [0, 0], [0, 0], old]),
+  });
+  const mot = {
+    year: 2025,
+    ageBands: [{ from: 3, to: 5, label: '3 to 5 years' }, { from: 6, to: 9, label: '6 to 9 years' }, { from: 10, to: 14, label: '10 to 14 years' }, { from: 15, to: null, label: '15 years or more' }],
+    byAge: [
+      { age: 3, tests: 100, pass: 90, meanMiles: 30_000 },
+      { age: 15, tests: 100, pass: 60, meanMiles: 100_000 },
+      { age: 20, tests: 100, pass: 50, meanMiles: 120_000 },
+    ],
+    fuelBands: { diesel: bands([[2000, 1], [10, 1], [2000, 1], [2000, 1]]).map((b) => ({ ...b, meanMiles: 50_000 })), other: [] },
+    models: [
+      motModel('TAXI', { tests: 9_000, meanMiles: 150_000, meanAge: 10, old: [3_000, 2_400] }),
+      motModel('TOY', { tests: 9_000, meanMiles: 20_000, meanAge: 10, old: [25_000, 15_000] }),
+      motModel('RARE', { tests: 100, meanMiles: 900_000, meanAge: 4 }),
+    ],
+  };
+
+  it('ranks miles a year (average mileage over average age), with the national figure and fuels', () => {
+    const w = workhorses(mot);
+    expect(w.top.map((m) => [m.name, m.milesPerYear])).toEqual([['TAXI', 15_000], ['TOY', 2_000]]);
+    expect(w.bottom[0].name).toBe('TOY');
+    expect(w.national).toBe(Math.round((30_000 * 100 + 100_000 * 100 + 120_000 * 100) / ((3 + 15 + 20) * 100)));
+    expect(w.fuels.diesel).toEqual([50_000, null, 50_000, 50_000]); // a band with few tests is left out
+    expect(w.fuels.other).toBeUndefined();
+  });
+
+  it('ranks first-time passes at 15 or older, and the everyday cars among them', () => {
+    const b = builtToLast(mot);
+    expect(b.national).toBeCloseTo(110 / 200);
+    expect(b.best.map((m) => m.name)).toEqual(['TAXI', 'TOY']);
+    expect(b.everyday.map((m) => m.name)).toEqual(['TOY']); // 20,000 or more tests that age
+  });
+
+  it('finds icons by cars lost and the nearly gone by share, without repeats', () => {
+    const quarters = Array.from({ length: 12 }, (_, i) => `${2024 + Math.floor(i / 4)} Q${(i % 4) + 1}`);
+    const falling = (from, to) => quarters.map((_, i) => Math.round(from + ((to - from) * i) / 11));
+    const e = endangered(
+      [
+        model('FORD', 'FORD FOCUS', falling(1_000_000, 700_000)),
+        model('ROVER', 'ROVER 25', falling(60_000, 2_000)),
+        model('TESLA', 'TESLA MODEL 3', falling(10_000, 90_000)),
+        model('FORD', 'FORD MODEL MISSING', falling(900_000, 0)),
+      ],
+      quarters,
+    );
+    expect(e.icons.map((m) => m.name)).toEqual(['FORD FOCUS']);
+    expect(e.nearlyGone.map((m) => m.name)).toEqual(['ROVER 25']);
+    const focus = e.icons[0];
+    expect(focus.fall).toBeCloseTo(0.3);
+    expect(focus.perDay).toBe(Math.round((focus.values[7] - 700_000) / 365));
+    expect(focus.goneBy).toBeGreaterThan(2026);
   });
 });

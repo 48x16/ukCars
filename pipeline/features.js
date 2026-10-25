@@ -393,6 +393,108 @@ export function home({ insights, electric, mot, index }) {
   };
 }
 
+/** Models need this many MOT tests to rank as workhorses (or the opposite). */
+export const MIN_WORKHORSE_TESTS = 5_000;
+/** Models need this many tests at 15 years or older to rank as built to last... */
+export const MIN_OLD_TESTS = 2_000;
+/** ...and this many to count as an everyday car, not a cherished few. */
+export const EVERYDAY_OLD_TESTS = 20_000;
+const RANKED = 12;
+
+const slugsOf = (m) => ({ name: m.name, makeSlug: m.makeSlug, modelSlug: m.modelSlug });
+const passRate = (o) => (o.tests ? o.pass / o.tests : 0);
+
+/**
+ * The workhorses: the models doing the most miles a year (average mileage at the MOT over
+ * average age), and the fewest. Plus each fuel's average mileage by age band.
+ */
+export function workhorses(mot) {
+  const rows = mot.models
+    .filter((m) => m.tests >= MIN_WORKHORSE_TESTS && m.meanMiles && m.meanAge >= 3)
+    .map((m) => ({ ...slugsOf(m), milesPerYear: Math.round(m.meanMiles / m.meanAge), meanMiles: m.meanMiles, meanAge: m.meanAge, tests: m.tests }))
+    .sort((a, b) => b.milesPerYear - a.milesPerYear);
+  const aged = mot.byAge.filter((a) => a.age >= 3 && a.meanMiles);
+  const national = Math.round(sum(aged.map((a) => a.meanMiles * a.tests)) / sum(aged.map((a) => a.age * a.tests)));
+  return {
+    year: mot.year,
+    national,
+    ranked: rows.length,
+    top: rows.slice(0, RANKED),
+    bottom: rows.slice(-RANKED).reverse(),
+    ageBands: mot.ageBands.map((b) => b.label),
+    fuels: Object.fromEntries(Object.entries(mot.fuelBands).filter(([id]) => id !== 'other').map(([id, bands]) => [id, bands.map((b) => (b.tests >= 1_000 ? b.meanMiles : null))])),
+  };
+}
+
+/** Built to last: first-time MOT pass rates at 15 years or older, best and worst. */
+export function builtToLast(mot) {
+  const old = mot.ageBands.length - 1; // 15 years or more
+  const rows = mot.models
+    .filter((m) => m.bands[old].tests >= MIN_OLD_TESTS)
+    .map((m) => ({ ...slugsOf(m), rate: passRate(m.bands[old]), tests: m.bands[old].tests, oldShare: m.bands[old].tests / m.tests }))
+    .sort((a, b) => b.rate - a.rate);
+  const olds = mot.byAge.filter((a) => a.age >= mot.ageBands[old].from);
+  return {
+    year: mot.year,
+    band: mot.ageBands[old].label,
+    national: sum(olds.map((a) => a.pass)) / sum(olds.map((a) => a.tests)),
+    ranked: rows.length,
+    best: rows.slice(0, RANKED),
+    worst: rows.slice(-RANKED).reverse(),
+    everyday: rows.filter((m) => m.tests >= EVERYDAY_OLD_TESTS).slice(0, RANKED),
+  };
+}
+
+/** Icons in decline: models with this many licensed at their peak, by the most lost since. */
+export const ICON_PEAK = 200_000;
+/** Endangered: once-common models with this many licensed at their peak... */
+export const ENDANGERED_PEAK = 50_000;
+/** ...and at least this share of them gone since. */
+export const ENDANGERED_FALL = 0.4;
+
+/**
+ * Endangered species: once-common models disappearing from the road fastest, with how many
+ * go each day and, if the last two years' fall carried on, the year the last one would go.
+ */
+export function endangered(models, quarters) {
+  const species = speciesOf(models, quarters);
+  const icons = species.filter((m) => m.peak >= ICON_PEAK).sort((a, b) => b.peak - b.latest - (a.peak - a.latest)).slice(0, RANKED);
+  return {
+    quarters: [quarters[0], quarters.at(-1)],
+    icons,
+    // Not already among the icons.
+    nearlyGone: species
+      .filter((m) => m.peak >= ENDANGERED_PEAK && m.fall >= ENDANGERED_FALL && !icons.includes(m))
+      .sort((a, b) => b.fall - a.fall)
+      .slice(0, RANKED),
+  };
+}
+
+/** Every declining model: its peak since the data began, what's left, and how fast it's going. */
+function speciesOf(models, quarters) {
+  const n = quarters.length;
+  const lastYear = Number(quarters[n - 1].slice(0, 4)) + (Number(quarters[n - 1].slice(-1)) - 0.5) / 4;
+  return models
+    .filter((m) => !/MODEL MISSING$|^OTHER /.test(m.name))
+    .map((m) => {
+      const peak = Math.max(...m.licensed);
+      const latest = m.licensed[n - 1];
+      const before = m.licensed[Math.max(0, n - 9)]; // two years earlier
+      const perQuarter = (before - latest) / Math.min(8, n - 1);
+      return {
+        ...slugsOf(m),
+        peak,
+        peakQuarter: quarters[m.licensed.indexOf(peak)],
+        latest,
+        fall: peak ? 1 - latest / peak : 0,
+        perDay: Math.round((m.licensed[Math.max(0, n - 5)] - latest) / 365),
+        goneBy: perQuarter > 0 ? Math.floor(lastYear + latest / perQuarter / 4) : null,
+        values: m.licensed,
+      };
+    })
+    .filter((m) => m.perDay > 0);
+}
+
 /** Every feature's data, keyed by the file name it's written to. */
 export function buildFeatures({ files, insights, mot }) {
   const quarters = files[0].data.quarters;
@@ -403,7 +505,12 @@ export function buildFeatures({ files, insights, mot }) {
     origins: origins(models, quarters),
     'electric-cars': electricCars(files, quarters, mot),
     'petrol-diesel': combustionCars(files, quarters, mot),
+    endangered: endangered(models, quarters),
   };
-  if (mot) out.colours = colours(mot);
+  if (mot) {
+    out.colours = colours(mot);
+    out.workhorses = workhorses(mot);
+    out['built-to-last'] = builtToLast(mot);
+  }
   return out;
 }
