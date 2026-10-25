@@ -103,3 +103,15 @@ test('Top Trumps: plays two models head to head, and asks for two', async ({ pag
   await expect(page.locator('#play-summary')).toContainText(/wins|draw/i);
   await noViolations(page);
 });
+
+test('plug-ins near you: finds a neighbourhood from a postcode, and explains a bad one', async ({ page }) => {
+  await page.goto('./plugins.html');
+  await page.getByLabel('Postcode').fill('not a postcode');
+  await page.getByRole('button', { name: 'Show my neighbourhood' }).click();
+  await expect(page.locator('#form-errors')).toContainText('Enter a full postcode');
+  await page.getByLabel('Postcode').fill('w6 0aa');
+  await page.getByRole('button', { name: 'Show my neighbourhood' }).click();
+  await expect(page.locator('#result-title')).toContainText('Hammersmith and Fulham');
+  await expect(page).toHaveURL(/#W60AA$/);
+  await noViolations(page);
+});

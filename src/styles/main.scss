@@ -3116,3 +3116,12 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 .wuk-trump__row--won {
   border-left-color: var(--wuk-pink);
 }
+
+// Plug-ins near you: your own neighbourhood among its neighbours.
+.wuk-road__model--mine .wuk-road__fill {
+  background: var(--wuk-pink);
+}
+
+.wuk-road__model--mine .wuk-road__name {
+  font-weight: 700;
+}

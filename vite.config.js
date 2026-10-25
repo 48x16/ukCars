@@ -24,7 +24,7 @@ function serviceWorker() {
         (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || latinFont.test(f)),
       );
       // HTML pages are emitted after this hook runs, so they're listed by name.
-      const pages = ['tools.html', 'mot-times.html', 'your-car.html', 'explore.html', 'chargers.html', 'petrol-diesel.html', 'insights.html', 'electric.html', 'mot.html', 'features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html', 'mini.html', 'make.html', 'suv.html', 'diesel.html', 'plates.html', 'arrivals.html', 'workhorses.html', 'built-to-last.html', 'endangered.html', 'trumps.html'];
+      const pages = ['tools.html', 'mot-times.html', 'your-car.html', 'explore.html', 'chargers.html', 'petrol-diesel.html', 'insights.html', 'electric.html', 'mot.html', 'features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html', 'mini.html', 'make.html', 'suv.html', 'diesel.html', 'plates.html', 'arrivals.html', 'workhorses.html', 'built-to-last.html', 'endangered.html', 'trumps.html', 'plugins.html'];
       const precache = ['./', ...new Set([...pages, ...files, ...PUBLIC_SHELL])].map((f) => (f === './' ? f : `./${f}`));
       const version = createHash('sha256').update(precache.join('\n')).digest('hex').slice(0, 12);
       let source = readFileSync('src/sw.js', 'utf8');
@@ -60,6 +60,7 @@ export default defineConfig({
         mini: 'mini.html',
         make: 'make.html',
         trumps: 'trumps.html',
+        plugins: 'plugins.html',
         suv: 'suv.html',
         diesel: 'diesel.html',
         plates: 'plates.html',
