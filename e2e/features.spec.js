@@ -22,6 +22,7 @@ const FEATURES = [
   { page: 'faults', title: 'Why cars fail', sections: ['What fails', 'The usual suspects', 'As cars age', 'Petrol, diesel, electric', 'Model by model'], ready: '#age-table .wuk-heat__cell' },
   { page: 'driving', title: 'Learning to drive', sections: ['Half of tests pass', 'The younger, the likelier', 'Manual or automatic', 'The wait', 'The usual faults', 'Centre to centre'], ready: '#years-table tbody tr' },
   { page: 'motoring', title: 'Life with the car', sections: ['The car comes home', 'Learning later', 'Fewer miles', 'Alone at the wheel', 'The car itself', 'Where it sleeps'], ready: '#households-table tbody tr' },
+  { page: 'offences', title: 'Caught out', sections: ['Fewer drink-drive crashes', 'When it happens', 'Breathalysed', 'Region by region', 'Drink and drugs in court', 'Speeding, phones and seat belts'], ready: '#drink-table tbody tr' },
   { page: 'mini', title: 'Mini, year by year', sections: ['The road so far', 'Peak Mini', 'Colours', 'Under the bonnet', 'Where Minis live'], ready: '.wuk-map__bubble' },
 ];
 

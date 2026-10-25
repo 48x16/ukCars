@@ -1,0 +1,637 @@
+{
+ "sources": {
+  "homeOffice": "https://www.gov.uk/government/statistics/police-powers-and-procedures-roads-policing-to-december-2024",
+  "moj": "https://www.gov.uk/government/collections/criminal-justice-statistics"
+ },
+ "breath": {
+  "trend": [
+   {
+    "year": 2002,
+    "tests": 464272,
+    "positive": 82623
+   },
+   {
+    "year": 2003,
+    "tests": 428820,
+    "positive": 82434
+   },
+   {
+    "year": 2004,
+    "tests": 466292,
+    "positive": 79639
+   },
+   {
+    "year": 2005,
+    "tests": 478303,
+    "positive": 80132
+   },
+   {
+    "year": 2006,
+    "tests": 475877,
+    "positive": 77337
+   },
+   {
+    "year": 2007,
+    "tests": 475197,
+    "positive": 73240
+   },
+   {
+    "year": 2008,
+    "tests": 552693,
+    "positive": 68936
+   },
+   {
+    "year": 2009,
+    "tests": 647380,
+    "positive": 71552
+   },
+   {
+    "year": 2010,
+    "tests": 574234,
+    "positive": 61816
+   },
+   {
+    "year": 2011,
+    "tests": 540656,
+    "positive": 60399
+   },
+   {
+    "year": 2012,
+    "tests": 551375,
+    "positive": 58165
+   },
+   {
+    "year": 2013,
+    "tests": 524688,
+    "positive": 51645
+   },
+   {
+    "year": 2014,
+    "tests": 470954,
+    "positive": 48841
+   },
+   {
+    "year": 2015,
+    "tests": 409111,
+    "positive": 45842
+   },
+   {
+    "year": 2016,
+    "tests": 366053,
+    "positive": 44587
+   },
+   {
+    "year": 2017,
+    "tests": 315072,
+    "positive": 41387
+   },
+   {
+    "year": 2018,
+    "tests": 311716,
+    "positive": 45149
+   },
+   {
+    "year": 2019,
+    "tests": 274425,
+    "positive": 44377
+   },
+   {
+    "year": 2020,
+    "tests": 225521,
+    "positive": 37757
+   },
+   {
+    "year": 2021,
+    "tests": 205703,
+    "positive": 34647
+   },
+   {
+    "year": 2022,
+    "tests": 241021,
+    "positive": 39810
+   },
+   {
+    "year": 2023,
+    "tests": 240322,
+    "positive": 38061
+   }
+  ],
+  "trendNote": "To 2023 from the old police returns; from 2023 a new collection that is not comparable with earlier years.",
+  "months": {
+   "year": 2024,
+   "months": [
+    {
+     "month": "January",
+     "tests": 13611,
+     "positive": 2001
+    },
+    {
+     "month": "February",
+     "tests": 12317,
+     "positive": 1925
+    },
+    {
+     "month": "March",
+     "tests": 12614,
+     "positive": 1996
+    },
+    {
+     "month": "April",
+     "tests": 12175,
+     "positive": 2078
+    },
+    {
+     "month": "May",
+     "tests": 12578,
+     "positive": 2156
+    },
+    {
+     "month": "June",
+     "tests": 11977,
+     "positive": 1991
+    },
+    {
+     "month": "July",
+     "tests": 13322,
+     "positive": 2051
+    },
+    {
+     "month": "August",
+     "tests": 11943,
+     "positive": 2056
+    },
+    {
+     "month": "September",
+     "tests": 11624,
+     "positive": 1876
+    },
+    {
+     "month": "October",
+     "tests": 12815,
+     "positive": 1936
+    },
+    {
+     "month": "November",
+     "tests": 13903,
+     "positive": 2076
+    },
+    {
+     "month": "December",
+     "tests": 28216,
+     "positive": 2681
+    }
+   ]
+  },
+  "forces": {
+   "year": 2024,
+   "total": null,
+   "forces": [
+    {
+     "name": "Cheshire",
+     "tests": 7567,
+     "positive": 827,
+     "perThousand": 6.63839478403066
+    },
+    {
+     "name": "Cleveland",
+     "tests": 6048,
+     "positive": 505,
+     "perThousand": 10.0738046101647
+    },
+    {
+     "name": "Cumbria",
+     "tests": 5558,
+     "positive": 475,
+     "perThousand": 10.883527845226
+    },
+    {
+     "name": "Derbyshire",
+     "tests": 4241,
+     "positive": 651,
+     "perThousand": 3.86766934846962
+    },
+    {
+     "name": "Devon and Cornwall",
+     "tests": 10775,
+     "positive": 1404,
+     "perThousand": 5.85546590760265
+    },
+    {
+     "name": "Dorset",
+     "tests": 3243,
+     "positive": 516,
+     "perThousand": 4.05926044605552
+    },
+    {
+     "name": "Durham",
+     "tests": 6058,
+     "positive": 858,
+     "perThousand": 9.31283627978478
+    },
+    {
+     "name": "Dyfed-Powys",
+     "tests": 4980,
+     "positive": 780,
+     "perThousand": 9.49984643822525
+    },
+    {
+     "name": "Essex",
+     "tests": 8061,
+     "positive": 672,
+     "perThousand": 4.17752810153347
+    },
+    {
+     "name": "Gwent",
+     "tests": 4038,
+     "positive": 590,
+     "perThousand": 6.71114169184591
+    },
+    {
+     "name": "Hampshire and Isle of Wight",
+     "tests": 7690,
+     "positive": 934,
+     "perThousand": 3.72826973861872
+    },
+    {
+     "name": "Kent",
+     "tests": 10278,
+     "positive": 1774,
+     "perThousand": 5.3207460433487
+    },
+    {
+     "name": "Leicestershire",
+     "tests": 3631,
+     "positive": 933,
+     "perThousand": 3.08925575396218
+    },
+    {
+     "name": "Lincolnshire",
+     "tests": 3038,
+     "positive": 306,
+     "perThousand": 3.84799531856791
+    },
+    {
+     "name": "Merseyside",
+     "tests": 10995,
+     "positive": 1588,
+     "perThousand": 7.4515042279408
+    },
+    {
+     "name": "Metropolitan Police",
+     "tests": 12186,
+     "positive": 2609,
+     "perThousand": 1.34286540766147
+    },
+    {
+     "name": "North Yorkshire",
+     "tests": 5608,
+     "positive": 963,
+     "perThousand": 6.64005749664623
+    },
+    {
+     "name": "Northamptonshire",
+     "tests": 5210,
+     "positive": 780,
+     "perThousand": 6.40299281537505
+    },
+    {
+     "name": "Northumbria",
+     "tests": 6295,
+     "positive": 933,
+     "perThousand": 4.16940156006488
+    },
+    {
+     "name": "South Yorkshire",
+     "tests": 5078,
+     "positive": 1089,
+     "perThousand": 3.54950255937448
+    },
+    {
+     "name": "Staffordshire",
+     "tests": 6369,
+     "positive": 1297,
+     "perThousand": 5.40855892348532
+    },
+    {
+     "name": "Sussex",
+     "tests": 9316,
+     "positive": 990,
+     "perThousand": 5.29381647458871
+    },
+    {
+     "name": "Thames Valley",
+     "tests": 11861,
+     "positive": 1721,
+     "perThousand": 4.49246099065942
+    },
+    {
+     "name": "Warwickshire",
+     "tests": 2077,
+     "positive": 326,
+     "perThousand": 3.28531635998969
+    },
+    {
+     "name": "West Mercia",
+     "tests": 6696,
+     "positive": 1179,
+     "perThousand": 4.99398126809535
+    },
+    {
+     "name": "West Midlands",
+     "tests": 6823,
+     "positive": 1722,
+     "perThousand": 2.24691719864783
+    },
+    {
+     "name": "West Yorkshire",
+     "tests": 4927,
+     "positive": 1547,
+     "perThousand": 2.0232125346373
+    },
+    {
+     "name": "Wiltshire",
+     "tests": 5561,
+     "positive": 1010,
+     "perThousand": 7.24489463570335
+    }
+   ]
+  }
+ },
+ "offences": {
+  "years": [
+   2011,
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024
+  ],
+  "total": [
+   2282105,
+   2300999,
+   2251139,
+   2338348,
+   2403475,
+   2391407,
+   2390934,
+   2478779,
+   2645758,
+   2372101,
+   2772173,
+   2939696,
+   3196635,
+   3531572
+  ],
+  "offences": [
+   {
+    "code": "816",
+    "label": "Speeding",
+    "counts": [
+     1494183,
+     1590384,
+     1659846,
+     1863317,
+     1944978,
+     1970207,
+     2013830,
+     2101647,
+     2253948,
+     2006382,
+     2371813,
+     2495584,
+     2715590,
+     3028022
+    ]
+   },
+   {
+    "code": "820",
+    "label": "Obstruction and parking",
+    "counts": [
+     125806,
+     97963,
+     56920,
+     47445,
+     44466,
+     38688,
+     32883,
+     31708,
+     32140,
+     24177,
+     18282,
+     15827,
+     17636,
+     18954
+    ]
+   },
+   {
+    "code": "804b",
+    "label": "Handheld phone at the wheel",
+    "counts": [
+     162412,
+     133674,
+     113732,
+     97385,
+     86371,
+     79929,
+     52993,
+     38545,
+     28321,
+     17873,
+     19614,
+     37882,
+     45604,
+     47713
+    ]
+   },
+   {
+    "code": "804a",
+    "label": "Careless driving",
+    "counts": [
+     5759,
+     6264,
+     8508,
+     15041,
+     16437,
+     16755,
+     15334,
+     18451,
+     24621,
+     30183,
+     41939,
+     42693,
+     46529,
+     57775
+    ]
+   },
+   {
+    "code": "825b",
+    "label": "No seat belt",
+    "counts": [
+     137033,
+     133209,
+     86277,
+     45324,
+     29646,
+     19629,
+     18467,
+     21577,
+     39745,
+     48189,
+     50364,
+     48301,
+     49106,
+     48829
+    ]
+   },
+   {
+    "code": "817-819",
+    "label": "Ignoring signs and signals",
+    "counts": [
+     146498,
+     127943,
+     116149,
+     98283,
+     125865,
+     100436,
+     95717,
+     102017,
+     92819,
+     68524,
+     78874,
+     119619,
+     142386,
+     152123
+    ]
+   },
+   {
+    "code": "807-810",
+    "label": "Licence and insurance",
+    "counts": [
+     94604,
+     92625,
+     87478,
+     76151,
+     72184,
+     85892,
+     91342,
+     95922,
+     102239,
+     114453,
+     111073,
+     102076,
+     101734,
+     102321
+    ]
+   },
+   {
+    "code": "813, 815",
+    "label": "Vehicle test and condition",
+    "counts": [
+     82035,
+     84086,
+     87051,
+     68870,
+     60829,
+     58324,
+     50902,
+     49080,
+     51892,
+     41022,
+     55280,
+     51664,
+     51810,
+     49455
+    ]
+   }
+  ],
+  "retraining": [
+   317609,
+   310732,
+   810220,
+   1024186,
+   1088765,
+   1102323,
+   1085183,
+   1112412,
+   1250737,
+   1056362,
+   1310675,
+   1474634,
+   1643614,
+   1793294
+  ]
+ },
+ "courts": {
+  "period": "Year ending June",
+  "years": [
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "series": [
+   {
+    "id": "drink",
+    "label": "Drink driving",
+    "convicted": [
+     36516,
+     35136,
+     35556,
+     27763,
+     34861,
+     35506,
+     32711,
+     30424,
+     28730,
+     27414
+    ]
+   },
+   {
+    "id": "drug",
+    "label": "Drug driving",
+    "convicted": [
+     7718,
+     9900,
+     11282,
+     10440,
+     20908,
+     20331,
+     17218,
+     18778,
+     21395,
+     22009
+    ]
+   },
+   {
+    "id": "refused",
+    "label": "Refusing a test",
+    "convicted": [
+     5907,
+     5787,
+     6147,
+     5123,
+     6969,
+     7934,
+     7567,
+     7552,
+     7611,
+     8023
+    ]
+   }
+  ]
+ }
+}

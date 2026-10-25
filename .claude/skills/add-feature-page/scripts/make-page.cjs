@@ -51,6 +51,16 @@ const SOURCES = {
               >, vehicle miles by vehicle type, road type and local authority, Great Britain.
             </p>
 `,
+  offences: `            <p class="govuk-body-s">
+              Sources: Department for Transport,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/road-safety-statistics-data-tables">road safety statistics</a>
+              (drink-drive collisions, Great Britain; breath tests); Home Office,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistics/police-powers-and-procedures-roads-policing-to-december-2024">police powers and procedures: roads policing</a>
+              (England and Wales); Ministry of Justice,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/collections/criminal-justice-statistics">criminal justice statistics</a>
+              (England and Wales). Traffic from DfT road traffic statistics.
+            </p>
+`,
   nts: `            <p class="govuk-body-s">
               Source: Department for Transport,
               <a class="govuk-footer__link" href="https://www.gov.uk/government/collections/national-travel-survey-statistics"

@@ -71,6 +71,9 @@ jobs:
       - name: Life with the car, from the National Travel Survey (DfT)
         run: npm run travel-survey
 
+      - name: Drink-driving and motoring offences (DfT, plus the committed Home Office and MoJ summary)
+        run: npm run offences
+
       - name: Postcodes for the finder tools
         run: npm run postcodes
 

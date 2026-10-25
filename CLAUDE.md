@@ -23,8 +23,10 @@ npm run build && npm run test:e2e   # Playwright + axe (WCAG 2.2 AA), uses Edge 
   chargers, fuel-prices, registrations, traffic) must run after it. `data:cached` and
   `data:fixture` already chain them in order: add any new pipeline to both, and to
   `.github/workflows/data-and-deploy.yml`.
-- `public/data/` is git-ignored and built fresh. The big yearly MOT summaries in `data/mot/`
-  and the maps in `data/geo/` are committed, because their sources are gigabytes.
+- `public/data/` is git-ignored and built fresh. Some summaries are committed instead, built by
+  hand and read by the weekly build: the yearly MOT summaries in `data/mot/` and the maps in
+  `data/geo/` (their sources are gigabytes), and `data/offences/annual.json` (Home Office and
+  MoJ files that are renamed with every edition: `npm run offences-annual`).
 - Before running `data:fixture` locally, back up `public/data/` and restore it afterwards.
 - After thousands of data files change, the Vite dev server hangs: restart it.
 - No Python on this machine; Playwright uses `channel: 'msedge'`; axe needs `browser.newContext()`.
