@@ -3148,3 +3148,22 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 .wuk-defects .wuk-road__model {
   grid-template-columns: minmax(10em, 1.6fr) 1fr 3.5em;
 }
+
+// Learning to drive: the top ten faults, each with its place the year before.
+.wuk-faults {
+  margin: 0 0 govuk-spacing(4);
+  padding-left: 1.75em;
+
+  li {
+    padding: govuk-spacing(1) 0;
+    border-bottom: 1px solid var(--wuk-rule);
+  }
+}
+
+
+.wuk-faults__move {
+  margin-left: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+  font-size: 14px;
+  white-space: nowrap;
+}

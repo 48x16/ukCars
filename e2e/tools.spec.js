@@ -11,7 +11,7 @@ const noViolations = async (page) => expect((await new AxeBuilder({ page }).with
 test('the Tools page and the home page link to every tool', async ({ page }) => {
   for (const path of ['./tools.html', './']) {
     await page.goto(path);
-    for (const name of ['Chargers near you', 'Quiet times for an MOT', 'Your car', 'Any make, year by year', 'Top Trumps']) {
+    for (const name of ['Chargers near you', 'Quiet times for an MOT', 'Your car', 'Any make, year by year', 'Top Trumps', 'Your test centre']) {
       await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
     }
   }
@@ -113,5 +113,16 @@ test('plug-ins near you: finds a neighbourhood from a postcode, and explains a b
   await page.getByRole('button', { name: 'Show my neighbourhood' }).click();
   await expect(page.locator('#result-title')).toContainText('Hammersmith and Fulham');
   await expect(page).toHaveURL(/#W60AA$/);
+  await noViolations(page);
+});
+
+test('your test centre: opens on the busiest centre, and switches to another', async ({ page }) => {
+  await page.goto('./test-centre.html');
+  await expect(page.locator('#pass-summary')).toContainText('car tests at');
+  const first = await page.locator('#centre').inputValue();
+  const other = await page.locator('#centre option').evaluateAll((options, current) => options.map((o) => o.value).find((v) => v !== current), first);
+  await page.locator('#centre').selectOption(other);
+  await expect(page).toHaveURL(new RegExp(`#${other}$`));
+  await expect(page.locator('#pass-summary')).not.toContainText(await page.locator(`#centre option[value="${first}"]`).evaluate((o) => o.textContent.split(' (')[0]));
   await noViolations(page);
 });

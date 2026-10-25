@@ -2,11 +2,12 @@
 // every generated sentence (elements whose id ends in -summary, plus the hero), axe WCAG 2.2 AA
 // violations with their targets, sideways overflow, and console errors.
 //
-//   node .claude/skills/check-page/scripts/check-page.mjs <page> [--base URL] [--ready SELECTOR]
+//   node .claude/skills/check-page/scripts/check-page.mjs <page> [--base URL] [--ready SELECTOR] [--hash ID]
 //
 // <page> is the file name without .html (e.g. faults). --base defaults to the dev server
 // (http://localhost:5173); use http://localhost:4173 for `vite preview`. --ready is a selector
-// that only exists once the data has drawn (defaults to the first filled -summary element).
+// that only exists once the data has drawn (defaults to the first filled -summary element);
+// --hash opens the page at #ID (a tool's chosen item).
 // Exits 1 if axe finds violations, the page scrolls sideways, or the console logs errors.
 
 import { createRequire } from 'node:module';
@@ -25,6 +26,7 @@ if (!page) {
 }
 const base = option('--base', 'http://localhost:5173');
 const ready = option('--ready', null);
+const hash = option('--hash', '');
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 const browser = await chromium.launch({ channel: 'msedge' });
@@ -35,8 +37,8 @@ for (const [label, viewport] of [['desktop', { width: 1280, height: 900 }], ['ph
   const errors = [];
   tab.on('pageerror', (e) => errors.push(e.message));
   tab.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-  await tab.goto(`${base}/${page}.html`);
-  if (ready) await tab.waitForSelector(ready, { timeout: 20_000 });
+  await tab.goto(`${base}/${page}.html${hash ? `#${hash}` : ''}`);
+  if (ready) await tab.waitForSelector(ready, { state: 'attached', timeout: 20_000 }); // may sit in a closed <details>
   else await tab.waitForFunction(() => [...document.querySelectorAll('[id$="-summary"]')].some((n) => n.textContent.trim()), null, { timeout: 20_000 }).catch(() => {});
 
   if (label === 'desktop') {

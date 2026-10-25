@@ -51,6 +51,14 @@ const SOURCES = {
               >, vehicle miles by vehicle type, road type and local authority, Great Britain.
             </p>
 `,
+  driving: `            <p class="govuk-body-s">
+              Source: Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/driving-test-and-theory-test-data-cars"
+                >driving test and theory test data: cars</a
+              >
+              (tables DRT121 and DRT122), Great Britain, to <span data-latest-quarter>the latest month</span>. Centres where only one examiner tested are left out by DVSA.
+            </p>
+`,
   mot: `            <p class="govuk-body-s">
               Source: Driver and Vehicle Standards Agency,
               <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results"
