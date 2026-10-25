@@ -51,6 +51,15 @@ const SOURCES = {
               >, vehicle miles by vehicle type, road type and local authority, Great Britain.
             </p>
 `,
+  nts: `            <p class="govuk-body-s">
+              Source: Department for Transport,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/collections/national-travel-survey-statistics"
+                >National Travel Survey</a
+              >
+              (tables NTS0101, 0201, 0203, 0205, 0303, 0901, 0904, 0905, 0908, 0909), England, to <span data-latest-quarter>the latest year</span>.
+              Survey estimates: some early years cover Great Britain, and 2020 to 2022 were affected by the pandemic.
+            </p>
+`,
   driving: `            <p class="govuk-body-s">
               Source: Driver and Vehicle Standards Agency,
               <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/driving-test-and-theory-test-data-cars"

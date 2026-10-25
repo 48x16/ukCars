@@ -68,6 +68,9 @@ jobs:
       - name: Driving tests, pass rates and waits by test centre (DVSA)
         run: npm run driving-tests
 
+      - name: Life with the car, from the National Travel Survey (DfT)
+        run: npm run travel-survey
+
       - name: Postcodes for the finder tools
         run: npm run postcodes
 
