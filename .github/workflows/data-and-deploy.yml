@@ -59,6 +59,9 @@ jobs:
       - name: Weekly pump prices (DESNZ)
         run: npm run fuel-prices
 
+      - name: New Minis, year by year (VEH0160)
+        run: npm run mini
+
       - name: Postcodes for the finder tools
         run: npm run postcodes
 

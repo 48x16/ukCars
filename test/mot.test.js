@@ -135,6 +135,23 @@ describe('MOT aggregator', () => {
     expect(aggregator.result().rows).toMatchObject({ read: 1, malformed: 1, cars: 0 });
   });
 
+  it('takes a closer look at spotlight makes: areas, engine sizes (electric in band 0), colours by year', () => {
+    const aggregator = createMotAggregator();
+    aggregator.header(['test_date', 'test_class_id', 'test_type', 'test_result', 'test_mileage', 'postcode_area', 'make', 'model', 'colour', 'fuel_type', 'cylinder_capacity', 'first_use_date', 'completed_date']);
+    const test = (area, make, colour, fuel, cc) => aggregator.row(['2025-03-01', '4', 'NT', 'P', '30000', area, make, 'X', colour, fuel, cc, '2015-01-01', '2025-03-01T10:00:00.000Z']);
+    test('BN', 'MINI', 'RED', 'PE', '1598');
+    test('BN', 'MINI', 'RED', 'PE', '1499');
+    test('KT', 'MINI', 'GREY', 'EL', '');
+    test('KT', 'FORD', 'BLUE', 'PE', '998');
+    const mini = aggregator.result().spotlight.MINI;
+    expect(mini.tests).toBe(3);
+    expect(mini.areas).toEqual({ BN: 2, KT: 1 });
+    expect(mini.engines.counts[0]).toBe(1);
+    expect(mini.engines.counts[15]).toBe(1);
+    expect(mini.engines.counts[16]).toBe(1);
+    expect(mini.colours).toEqual({ years: [2015], series: [{ name: 'RED', total: 2, values: [2] }, { name: 'GREY', total: 1, values: [1] }] });
+  });
+
   it('rejects a file without the expected columns', () => {
     expect(() => createMotAggregator().header(['test_id', 'make'])).toThrow(/missing columns: test_date/);
   });

@@ -122,6 +122,7 @@ body {
 // The asymmetric magazine grid: a narrow column for titles and notes, a wide one for content.
 .wuk-split {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); // so wide tables scroll in their box, not the page
   gap: govuk-spacing(4) govuk-spacing(7);
 
   @include govuk-media-query($from: desktop) {
@@ -2484,4 +2485,277 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
       color: var(--wuk-ink);
     }
   }
+}
+
+// Mini, year by year: a road down the page, one stretch per year. Its width (--w0 at the top of
+// the stretch, --w1 at the bottom, 0 to 1) is that year's total, so it narrows or widens
+// towards the next year. White dashes run down the middle.
+
+.wuk-road {
+  --road: 44px;
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  overflow-x: clip; // years slide in from the right
+  list-style: none;
+
+  @include govuk-media-query($from: tablet) {
+    --road: 88px;
+  }
+}
+
+.wuk-road__year,
+.wuk-road__end {
+  position: relative;
+  padding: 0 0 govuk-spacing(6) calc(var(--road) + #{govuk-spacing(4)});
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1px; // overlaps the stretch above, so no hairline seam between years
+    bottom: 0;
+    left: 0;
+    width: var(--road);
+    background: var(--wuk-ink);
+    clip-path: polygon(
+      calc(50% - var(--w0) * 50%) 0,
+      calc(50% + var(--w0) * 50%) 0,
+      calc(50% + var(--w1) * 50%) 100%,
+      calc(50% - var(--w1) * 50%) 100%
+    );
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--road) / 2 - 1px);
+    width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--wuk-paper) 0 10px, transparent 10px 22px);
+  }
+}
+
+// The year so far: the same road, greyed.
+.wuk-road__year--partial::before,
+.wuk-road__end::before {
+  background: var(--wuk-ink-3);
+}
+
+.wuk-road__dot {
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  left: calc(var(--road) / 2 - 10px);
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 4px solid var(--wuk-ink);
+  border-radius: 50%;
+  background: var(--wuk-paper);
+}
+
+.wuk-road__dot--new {
+  background: var(--wuk-pink);
+}
+
+.wuk-road__when {
+  margin: 0;
+  font-family: var(--wuk-figure);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.02em;
+}
+
+.wuk-road__total {
+  margin: govuk-spacing(1) 0 govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: bold);
+  font-family: var(--wuk-display);
+  font-weight: 600;
+}
+
+.wuk-road__change {
+  font-family: var(--wuk-figure);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--wuk-ink-2);
+}
+
+.wuk-road__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: govuk-spacing(1) govuk-spacing(2);
+  margin: 0 0 govuk-spacing(3);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-road__tag {
+  padding: 2px govuk-spacing(2);
+  border: 2px solid var(--wuk-ink);
+  @include govuk-font($size: 16, $weight: bold);
+}
+
+.wuk-road__tag--new {
+  border-color: var(--wuk-pink);
+  background: var(--wuk-pink);
+  color: var(--wuk-paper);
+}
+
+.wuk-road__tag--end {
+  border-color: var(--wuk-ink-3);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-road__models {
+  max-width: 34em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-road__model {
+  display: grid;
+  grid-template-columns: minmax(6em, 9.5em) 1fr 4.5em;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin-bottom: 2px;
+  @include govuk-font($size: 16);
+}
+
+.wuk-road__track {
+  height: 10px;
+  background: var(--wuk-wash);
+}
+
+.wuk-road__fill {
+  display: block;
+  min-width: 2px;
+  height: 100%;
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-road__value {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+}
+
+.wuk-road__electric {
+  margin: govuk-spacing(2) 0 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// The road runs on past the latest year, tapering away under a little car.
+.wuk-road__end {
+  --w1: 0;
+  height: 56px;
+  padding-bottom: 0;
+
+  svg {
+    position: absolute;
+    z-index: 1;
+    top: 4px;
+    left: calc(var(--road) / 2 - 14px);
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    border-radius: 50%;
+    background: var(--wuk-paper);
+    color: var(--wuk-pink);
+  }
+}
+
+// Where the browser can, each year slides in as it scrolls into view.
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wuk-road__year > :not(.wuk-road__dot) {
+      animation: wuk-road-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+@keyframes wuk-road-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+.wuk-road__colour {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin: govuk-spacing(1) 0 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-road__swatch {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 50%;
+}
+
+.wuk-engines {
+  margin-top: govuk-spacing(2);
+}
+
+// Licensed against off the road (SORN), as in the line chart: ink, and the chart's pale grey.
+.wuk-fill--licensed { color: #fff; background: var(--wuk-ink); }
+.wuk-fill--sorn { color: #111; background: #d4d4d4; }
+
+// Peak Mini: a column of blocks per year, one per model on sale; the peak in pink.
+.wuk-peak {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 3px;
+  align-items: end;
+  max-width: 40em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-peak__year {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.wuk-peak__stack {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 3px;
+}
+
+.wuk-peak__block {
+  height: 14px;
+  border-radius: 2px;
+  background: var(--wuk-ink);
+}
+
+.wuk-peak__year--peak .wuk-peak__block {
+  background: var(--wuk-pink);
+}
+
+.wuk-peak__label {
+  margin-top: govuk-spacing(1);
+  font-family: var(--wuk-figure);
+  font-size: 12px;
+  text-align: center;
+}
+
+// Only every fifth year (and the peak) is labelled, so the labels fit on a phone.
+.wuk-peak__label--quiet {
+  visibility: hidden;
 }

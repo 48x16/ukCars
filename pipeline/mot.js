@@ -90,6 +90,11 @@ export const MAX_MILES = 300_000;
 export const MIN_MODEL_TESTS = 100;
 /** Ages counted as "recent cars" for colours by make and by fuel: what people choose now. */
 export const RECENT_AGES = { from: 3, to: 7 };
+/** Makes with a feature page of their own get a closer look: areas, engine sizes, colours by year. */
+export const SPOTLIGHT_MAKES = ['MINI'];
+/** Engine sizes in 100 cc bands (electric cars in band 0), up to MAX_CC, the last meaning "or more". */
+export const CC_BAND = 100;
+export const MAX_CC = 5_000;
 
 // DVSA fuel codes, plus the spelled-out values that also appear in the data.
 const FUELS = {
@@ -183,6 +188,10 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
   // Busy times count every car test, retests too: each takes a slot at the test centre.
   const busy = new Map(); // area -> { grid: weekday x hour, month }
   const ageMiles = Array.from({ length: MAX_AGE + 1 }, () => zeros(MAX_MILES / AGE_MILES_BAND + 1));
+  const spotlight = new Map(
+    SPOTLIGHT_MAKES.map((make) => [make, { tests: 0, areas: new Map(), cc: zeros(MAX_CC / CC_BAND + 1), colours: new Map(), miles: zeros(MAX_MILES / MILES_BAND + 1) }]),
+  );
+  let ccCol = -1; // not in every year's file, so optional
 
   function countBusy(f) {
     const area = f[col.postcode_area].trim().toUpperCase();
@@ -200,6 +209,7 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     const names = fields.map((f) => f.trim().toLowerCase());
     col = Object.fromEntries(COLUMNS.map((c) => [c, names.indexOf(c)]));
     width = names.length;
+    ccCol = names.indexOf('cylinder_capacity');
     const missing = COLUMNS.filter((c) => col[c] === -1);
     if (missing.length) throw new Error(`MOT file is missing columns: ${missing.join(', ')}`);
   }
@@ -269,6 +279,17 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
     }
 
     const make = f[col.make].trim().toUpperCase();
+    const spot = spotlight.get(make);
+    if (spot) {
+      spot.tests++;
+      if (areaName) tally(spot.areas, areaName);
+      // Electric cars' engine size is blank (or 0): they go in the 0 cc band.
+      const cc = fuel === 'electric' ? 0 : ccCol === -1 || f[ccCol].trim() === '' ? NaN : Number(f[ccCol]);
+      if (cc >= 0) spot.cc[Math.min(Math.round(cc / CC_BAND), spot.cc.length - 1)]++;
+      if (!spot.colours.has(year)) spot.colours.set(year, new Map());
+      tally(spot.colours.get(year), colour);
+      if (hasMiles) spot.miles[Math.min(Math.floor(mileage / MILES_BAND), spot.miles.length - 1)]++;
+    }
     const model = f[col.model].trim().toUpperCase();
     const modelKey = `${make}\t${model}`;
     let m = models.get(modelKey);
@@ -360,6 +381,18 @@ export function createMotAggregator({ minModelTests = MIN_MODEL_TESTS } = {}) {
           bands: m.bands.map(outcomeOf),
         })),
       modelsLeftOut: [...models.values()].filter((m) => m.tests < minModelTests).length,
+      spotlight: Object.fromEntries(
+        [...spotlight].map(([make, s]) => [
+          make,
+          {
+            tests: s.tests,
+            areas: Object.fromEntries([...s.areas].sort(([a], [b]) => a.localeCompare(b))),
+            engines: { band: CC_BAND, counts: s.cc },
+            colours: byYear(s.colours),
+            mileage: { band: MILES_BAND, counts: s.miles },
+          },
+        ]),
+      ),
     };
   }
 

@@ -11,6 +11,7 @@ const FEATURES = [
   { page: 'bavarian', title: 'The Bavarian battle', sections: ['The race', 'What they run on', 'The electric race', 'Best sellers'], ready: '.wuk-podium' },
   { page: 'origins', title: 'Where cars come from', sections: ['If Britain’s cars were 100', 'Then and now', 'Country by country'], ready: '.wuk-picto' },
   { page: 'colours', title: 'Silver to grey', sections: ['Colour of the year', 'Rise and fall', 'Which makes dare', 'Electric shades'], ready: '.wuk-chip' },
+  { page: 'mini', title: 'Mini, year by year', sections: ['The road so far', 'Peak Mini', 'Colours', 'Under the bonnet', 'Where Minis live'], ready: '.wuk-map__bubble' },
 ];
 
 test('the Features index links to every feature, and the header marks it', async ({ page }) => {
