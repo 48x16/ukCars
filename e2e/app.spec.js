@@ -33,7 +33,7 @@ test('finds a model with keyboard-only search', async ({ page }) => {
   await expect(search).toHaveAttribute('aria-expanded', 'true');
 
   await search.press('ArrowDown');
-  await expect(search).toHaveAttribute('aria-activedescendant', 'search-option-0');
+  await expect(search).toHaveAttribute('aria-activedescendant', 'search-results-option-0');
   await search.press('Enter');
 
   await expect(page.locator('#chart-title')).toContainText('FORD FIESTA');

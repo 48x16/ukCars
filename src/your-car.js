@@ -3,7 +3,7 @@
 // mileage sits. Nothing typed here leaves the device; the choice is kept in the URL's #.
 
 import './shell.js';
-import { loadIndex, loadModel, loadMot } from './data.js';
+import { loadIndex, loadMakeStory, loadModel, loadMot } from './data.js';
 import { displayName, miniLine } from './feature-charts.js';
 import { drawIcons, fill } from './feature-page.js';
 import { clearErrors, showErrors } from './form-errors.js';
@@ -117,6 +117,29 @@ function renderRarity(entry, file, versionIndex) {
   $('rare-chart').append(el('p', 'govuk-body-s wuk-your-chart__note', `${name}s known to DVLA each quarter, ${file.quarters[0]} to ${file.quarters[n - 1]}.`));
 }
 
+/**
+ * Sold new: how many of the model were first registered in Great Britain in the car's year,
+ * and where that put it among all models, plus its best year since 2001.
+ */
+async function renderSold(entry, year) {
+  const box = $('sold-summary');
+  box.hidden = true;
+  const story = await loadMakeStory(entry.makeSlug).catch(() => null);
+  const model = story?.models.find((m) => m.id === entry.modelSlug);
+  if (!model || chosen !== entry) return;
+  const name = displayName(entry.label);
+  const best = model.values.indexOf(Math.max(...model.values));
+  const i = story.years.indexOf(year);
+  const partial = story.partial?.year === year;
+  const inYear =
+    i === -1 || !model.values[i]
+      ? ''
+      : `In ${year}${partial ? ' so far' : ''}, ${count.format(model.values[i])} new ${name} cars were registered in Great Britain` +
+        (model.ranks?.[i] ? `: the ${ordinal(model.ranks[i])} best seller of the year. ` : '. ');
+  box.textContent = inYear + `Its best year since ${story.years[0]} was ${story.years[best]}, with ${count.format(model.values[best])}.`;
+  box.hidden = false;
+}
+
 function renderMot(entry, year) {
   const tiles = $('mot-tiles');
   const say = (text) => {
@@ -187,6 +210,7 @@ async function show() {
   history.replaceState(null, '', `#${chosen.makeSlug}/${chosen.modelSlug}/${year ?? ''}/${miles ?? ''}/${version}`);
   $('results').hidden = false;
   renderRarity(chosen, file, versionIndex);
+  renderSold(chosen, year);
   renderMot(chosen, year);
   renderMileage(year, miles);
   $('rare-title').scrollIntoView({ block: 'start' });

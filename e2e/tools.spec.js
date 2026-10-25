@@ -81,3 +81,25 @@ test('your car: explains what it needs', async ({ page }) => {
   await expect(page.locator('#miles-error')).toContainText('Enter the mileage as a number');
   await noViolations(page);
 });
+
+test('any make, year by year: draws the road for the chosen make', async ({ page }) => {
+  await page.goto('./make.html');
+  await expect(page.getByRole('heading', { name: 'Any make, year by year', level: 1 })).toBeVisible();
+  await expect(page.locator('.wuk-road__year').first()).toBeVisible();
+  const first = await page.locator('#make option').first().getAttribute('value');
+  await page.locator('#make').selectOption(first);
+  await expect(page).toHaveURL(new RegExp(`#${first}$`));
+  await expect(page.locator('#road-summary')).toContainText('The best year was');
+  await noViolations(page);
+});
+
+test('Top Trumps: plays two models head to head, and asks for two', async ({ page }) => {
+  await page.goto('./trumps.html');
+  await page.getByRole('button', { name: 'Play' }).click();
+  await expect(page.locator('#form-errors')).toContainText('Choose the first car');
+  await page.goto('./trumps.html#ford/ford-fiesta/ford/ford-focus');
+  await expect(page.locator('.wuk-trump')).toHaveCount(2);
+  await expect(page.locator('.wuk-trump').first()).toContainText('On the road');
+  await expect(page.locator('#play-summary')).toContainText(/wins|draw/i);
+  await noViolations(page);
+});
