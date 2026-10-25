@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="description"
+      content="See how many of each car are licensed on UK roads, by make, model and fuel type, using DfT vehicle licensing statistics."
+    />
+    <title>Explore – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html" aria-current="page">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero">
+          <div class="wuk-split__side">
+            <h1 class="govuk-heading-xl">Explore</h1>
+            <p class="govuk-body-l">
+              Licensed cars in the UK by make, model and fuel type, from
+              <span data-first-quarter>2014 Q3</span> to <span data-latest-quarter>the latest quarter</span>.
+            </p>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT and DVLA, table VEH0120</li>
+              <li><b>Covers</b> Cars, United Kingdom</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <form class="wuk-filters" id="filters">
+              <div class="govuk-form-group wuk-search" id="search">
+                <label class="govuk-label govuk-label--m" for="search-input">Find a car</label>
+                <div class="govuk-hint" id="search-hint">Type a make or model, for example Fiesta or Tesla Model 3</div>
+                <div class="wuk-search__field">
+                  <span class="wuk-search__icon"></span>
+                  <input
+                    class="govuk-input wuk-search__input"
+                    id="search-input"
+                    type="text"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="search-results"
+                    aria-describedby="search-hint"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button class="wuk-search__clear" type="button" hidden>
+                    <span class="govuk-visually-hidden">Clear search</span>
+                  </button>
+                  <ul class="wuk-search__results" id="search-results" role="listbox" aria-label="Matching cars" hidden></ul>
+                </div>
+                <div class="govuk-visually-hidden wuk-search__status" aria-live="polite"></div>
+              </div>
+    
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="make">Make</label>
+                <select class="govuk-select" id="make" name="make"></select>
+              </div>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="model">Model</label>
+                <select class="govuk-select" id="model" name="model"></select>
+              </div>
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="variant">Variant</label>
+                <select class="govuk-select" id="variant" name="variant"></select>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">The data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+
+
+        <section class="wuk-results" id="results" aria-labelledby="chart-title">
+          <p class="wuk-stat">
+            <span class="wuk-stat__value" id="stat-value"></span>
+            <span class="wuk-stat__label" id="stat-label"></span>
+            <span class="wuk-stat__sorn" id="stat-sorn"></span>
+            <span class="wuk-stat__change" id="stat-change"></span>
+          </p>
+
+          <h2 class="govuk-heading-m" id="chart-title">Licensed cars by fuel type</h2>
+          <div class="wuk-chart" id="chart"></div>
+
+          <details class="govuk-details wuk-table-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Show the data as a table</span>
+            </summary>
+            <div class="govuk-details__text">
+              <table class="govuk-table" id="data-table"></table>
+            </div>
+          </details>
+        </section>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Department for Transport and Driver and Vehicle Licensing Agency,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files"
+                >vehicle licensing statistics data files</a
+              >
+              (table VEH0120), data to <span data-latest-quarter>the latest quarter</span>.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT or DVLA. “Off the road (SORN)” counts
+              cars with a Statutory Off Road Notification: kept but not used on public roads. Fuel types are grouped:
+              hybrid includes petrol and diesel hybrids, plug-in hybrid includes range-extended electric,
+              and other covers gas, fuel cell and other fuels. Figures shown as “Suppressed” are
+              confidential (1 to 4 vehicles).
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

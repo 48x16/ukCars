@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="description"
+      content="What's changed on UK roads since 2014: the cars disappearing fastest, the fastest growing, the rise and fall of diesel, the electric surge, and more."
+    />
+    <title>Insights – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html" aria-current="page">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero">
+          <div class="wuk-split__side">
+            <h1 class="govuk-heading-xl">Insights</h1>
+            <p class="govuk-body-l">What's changed on UK roads, from 2014 Q3 to <span data-latest-quarter>the latest quarter</span>.</p>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT and DVLA, table VEH0120</li>
+              <li><b>Covers</b> Cars, United Kingdom</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <h2 class="govuk-visually-hidden">Headline figures</h2>
+            <ul class="wuk-tiles" id="tiles"></ul>
+          </div>
+        </div>
+
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">The insights could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+
+
+        <section class="wuk-section wuk-split" aria-labelledby="dying-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="dying-title">Quickest dying cars</h2>
+              <p class="govuk-body">
+                The biggest falls in licensed cars over the last <span data-years>5</span> years, among models with at
+                least <span data-min-base>10,000</span> on the road at the start. Each mini-chart has its own scale.
+              </p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="dying-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="dying-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="growing-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="growing-title">Fastest growing cars</h2>
+              <p class="govuk-body">
+                The biggest rises over the same <span data-years>5</span> years, among models with at least
+                <span data-min-base>10,000</span> on the road at the start.
+              </p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="growing-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="growing-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="fuel-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="fuel-title">The rise and fall of diesel</h2>
+              <p class="govuk-body" id="fuel-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+              <h3 class="govuk-heading-s">Share of licensed cars by fuel type</h3>
+              <div class="wuk-chart" id="fuel-chart"></div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="electric-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="electric-title">The electric surge</h2>
+              <p class="govuk-body" id="electric-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+              <h3 class="govuk-heading-s">Licensed electrified cars</h3>
+              <div class="wuk-chart" id="electric-chart"></div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="arrivals-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="arrivals-title">New arrivals</h2>
+              <p class="govuk-body"><span id="arrivals-rule"></span> The big figure is cars licensed now.</p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="arrivals-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="arrivals-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="lost-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="lost-title">Lost makes</h2>
+              <p class="govuk-body"><span id="lost-rule"></span></p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="lost-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="lost-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="extinct-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="extinct-title">Nearly extinct</h2>
+              <p class="govuk-body">
+                Cars with fewer than 20 left, licensed or declared off the road, that had at least 25 in
+                <span data-first-quarter>2014 Q3</span>. The biggest falls first. Each mini-chart has its own scale.
+              </p>
+              <p class="govuk-body-s">“At least” means DVLA hides some counts of 1 to 4, so there may be a few more.</p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="extinct-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="extinct-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="super-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="super-title">Supercars and luxury</h2>
+              <p class="govuk-body">
+                Licensed cars from a hand-picked list of supercar and luxury makes, since
+                <span data-first-quarter>2014 Q3</span>. Biggest first.
+              </p>
+          </div>
+          <div class="wuk-split__main">
+              <ol class="wuk-movers" id="super-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="super-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="hot-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="hot-title">Hot hatch heroes</h2>
+              <p class="govuk-body">
+                A hand-picked list of 1980s and 1990s hot hatches, matched on DVLA's variant names so that modern cars
+                with the same badges aren't counted.
+              </p>
+              <p class="govuk-body" id="hot-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+              <h3 class="govuk-heading-s">All hot hatch heroes combined</h3>
+              <div class="wuk-chart" id="hot-chart"></div>
+              <h3 class="govuk-heading-s">Still known to DVLA, by car</h3>
+              <p class="govuk-body-s">
+                Licensed plus declared off the road. Some totals have grown, perhaps as stored cars are restored and
+                declared; DfT doesn't say why.
+              </p>
+              <ul class="wuk-legend wuk-bars-legend" aria-hidden="true">
+                <li class="wuk-legend__item"><span class="wuk-swatch wuk-swatch--sorn"></span>Off the road (SORN)</li>
+                <li class="wuk-legend__item"><span class="wuk-swatch wuk-swatch--licensed"></span>Licensed</li>
+              </ul>
+              <ol class="wuk-bars" id="hot-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="hot-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="garage-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="garage-title">Garage queens</h2>
+              <p class="govuk-body">
+                The models with the biggest share of cars declared off the road (SORN): kept, but not driven. Models with
+                at least <span data-min-sorn>2,000</span> off the road.
+              </p>
+          </div>
+          <div class="wuk-split__main">
+              <ul class="wuk-legend wuk-bars-legend" aria-hidden="true">
+                <li class="wuk-legend__item"><span class="wuk-swatch wuk-swatch--sorn"></span>Off the road (SORN)</li>
+                <li class="wuk-legend__item"><span class="wuk-swatch wuk-swatch--licensed"></span>Licensed</li>
+              </ul>
+              <ol class="wuk-bars" id="garage-list"></ol>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="garage-table"></table></div>
+              </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="makes-title">
+          <div class="wuk-split__side">
+              <h2 class="govuk-heading-l" id="makes-title">Make leaderboard</h2>
+              <p class="govuk-body">
+                Where the biggest makes ranked by licensed cars, then and now. The biggest climber is in pink. Hover over or
+                tab to a make to follow it.
+              </p>
+          </div>
+          <div class="wuk-split__main">
+              <div class="wuk-slope-wrap" id="makes-chart"></div>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">Show the data as a table</span>
+                </summary>
+                <div class="govuk-details__text"><table class="govuk-table" id="makes-table"></table></div>
+              </details>
+          </div>
+        </section>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Department for Transport and Driver and Vehicle Licensing Agency,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files"
+                >vehicle licensing statistics data files</a
+              >
+              (table VEH0120), data to <span data-latest-quarter>the latest quarter</span>.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT or DVLA. Models are DVLA's generic models, all variants
+              combined. The hot hatch and supercar lists are our own choices, not DfT categories. On this page, figures
+              suppressed for confidentiality (1 to 4 vehicles) are counted as zero.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/insights.js"></script>
+  </body>
+</html>

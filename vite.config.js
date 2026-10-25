@@ -17,12 +17,15 @@ function serviceWorker() {
     name: 'ukcars-service-worker',
     apply: 'build',
     generateBundle(_, bundle) {
-      // Inter ships a font file per script; browsers fetch only the subsets a page needs.
-      // Precache the Latin one; any other is cached the first time it's used.
+      // Fonts ship a file per script; browsers fetch only the subsets a page needs.
+      // Precache the Latin ones; any other is cached the first time it's used.
+      const latinFont = /(inter|inter-tight)-latin-wght-normal|ibm-plex-mono-latin-(400|600)-normal/;
       const files = Object.keys(bundle).filter(
-        (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || /inter-latin-wght-normal/.test(f)),
+        (f) => !f.endsWith('.map') && (!f.endsWith('.woff2') || latinFont.test(f)),
       );
-      const precache = ['./', ...files, ...PUBLIC_SHELL].map((f) => (f === './' ? f : `./${f}`));
+      // HTML pages are emitted after this hook runs, so they're listed by name.
+      const pages = ['tools.html', 'mot-times.html', 'your-car.html', 'explore.html', 'chargers.html', 'petrol-diesel.html', 'insights.html', 'electric.html', 'mot.html', 'features.html', 'out-to-play.html', 'bavarian.html', 'origins.html', 'colours.html', 'mini.html', 'make.html', 'suv.html', 'diesel.html', 'plates.html', 'arrivals.html', 'workhorses.html', 'built-to-last.html', 'endangered.html', 'trumps.html'];
+      const precache = ['./', ...new Set([...pages, ...files, ...PUBLIC_SHELL])].map((f) => (f === './' ? f : `./${f}`));
       const version = createHash('sha256').update(precache.join('\n')).digest('hex').slice(0, 12);
       let source = readFileSync('src/sw.js', 'utf8');
       for (const [line, value] of [
@@ -41,6 +44,37 @@ export default defineConfig({
   // Relative base so the build works under the GitHub Pages project path (/ukCars/).
   base: './',
   plugins: [serviceWorker()],
+  build: {
+    rolldownOptions: {
+      input: {
+        home: 'index.html',
+        explore: 'explore.html',
+        insights: 'insights.html',
+        electric: 'electric.html',
+        mot: 'mot.html',
+        features: 'features.html',
+        'out-to-play': 'out-to-play.html',
+        bavarian: 'bavarian.html',
+        origins: 'origins.html',
+        colours: 'colours.html',
+        mini: 'mini.html',
+        make: 'make.html',
+        trumps: 'trumps.html',
+        suv: 'suv.html',
+        diesel: 'diesel.html',
+        plates: 'plates.html',
+        arrivals: 'arrivals.html',
+        'workhorses': 'workhorses.html',
+        'built-to-last': 'built-to-last.html',
+        'endangered': 'endangered.html',
+        chargers: 'chargers.html',
+        'petrol-diesel': 'petrol-diesel.html',
+        tools: 'tools.html',
+        'mot-times': 'mot-times.html',
+        'your-car': 'your-car.html',
+      },
+    },
+  },
   test: {
     include: ['test/**/*.test.js'],
     environment: 'node',

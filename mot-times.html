@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="The busiest and quietest days, hours and months for car MOTs in your postcode area, from a year of DVSA results." />
+    <title>Quiet times for an MOT – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html">Features</a>
+          <a class="wuk-nav__link" href="./tools.html" aria-current="page">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Tool</p>
+            <h1 class="govuk-heading-xl">Quiet times for an MOT</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DVSA MOT results</li>
+              <li><b>Year</b> <span data-year>the latest year</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">When are test centres near you busiest, and when are they quiet? From every car MOT in a year.</p>
+            <div class="govuk-error-summary" id="form-errors" hidden tabindex="-1">
+              <div role="alert">
+                <h2 class="govuk-error-summary__title">There is a problem</h2>
+                <div class="govuk-error-summary__body">
+                  <ul class="govuk-list govuk-error-summary__list" id="form-error-list"></ul>
+                </div>
+              </div>
+            </div>
+            <form class="wuk-finder" id="finder" novalidate>
+              <div class="govuk-form-group" id="postcode-group">
+                <label class="govuk-label govuk-label--m" for="postcode">Postcode or postcode area</label>
+                <div class="govuk-hint" id="postcode-hint">For example, BN1 1AA or BN. Only the area letters are used.</div>
+                <p class="govuk-error-message" id="postcode-error" hidden></p>
+                <input class="govuk-input govuk-input--width-10" id="postcode" name="postcode" type="text" autocomplete="postal-code" spellcheck="false" aria-describedby="postcode-hint" />
+              </div>
+              <button class="govuk-button wuk-button" type="submit">Show quiet times</button>
+            </form>
+          </div>
+        </div>
+
+        <section class="wuk-section wuk-split" aria-labelledby="results-title" id="results-section" hidden>
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="results-title">Your area</h2>
+            <div id="results-summary" role="status"></div>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Tests by day and hour</h3>
+            <p class="govuk-body-s">Car tests finishing in each hour, Monday to Saturday. Darker is busier.</p>
+            <div class="wuk-table-scroll wuk-heat-wrap" role="region" aria-label="Tests by day and hour (scrolls sideways)" tabindex="0">
+              <table class="govuk-table wuk-heat" id="heat"></table>
+            </div>
+            <h3 class="govuk-heading-s">Tests by month</h3>
+            <ol class="wuk-months" id="months"></ol>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="about-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="about-title">About these times</h2>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="govuk-list govuk-list--bullet">
+              <li><b>These are tests carried out, not waiting times.</b> A quiet hour suggests a better chance of a slot; it can’t say whether your garage has one.</li>
+              <li><b>Times are when each test finished</b>, in UK time. Retests count too: each takes a slot.</li>
+              <li><b>The postcode area</b> is where the test centre is. Opening hours vary, and few centres open on Sundays, so Sundays aren’t shown.</li>
+              <li><b>Quietest times</b> only count hours when test centres in the area are clearly open.</li>
+            </ul>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results"
+                >anonymised MOT tests and results</a
+              >.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/mot-times.js"></script>
+  </body>
+</html>

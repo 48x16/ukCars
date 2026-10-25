@@ -2,7 +2,7 @@
   "name": "ukcars",
   "private": true,
   "version": "0.1.0",
-  "description": "What's on UK roads: licensed cars by make, model and fuel type, from DfT vehicle licensing statistics.",
+  "description": "Rev Counter: Britain's cars, by the numbers, from DfT, DVLA and DVSA statistics.",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -14,20 +14,32 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "data": "node pipeline/run.js",
-    "data:fixture": "node pipeline/run.js --csv test/fixtures/mini_VEH0120_UK.csv --min-rows 1 --fresh",
+    "data:fixture": "node pipeline/run.js --csv test/fixtures/mini_VEH0120_UK.csv --min-rows 1 --fresh && node pipeline/electric.js --fixture && node pipeline/postcodes.js --fixture && node pipeline/chargers.js --fixture && node pipeline/fuel-prices.js --fixture && node pipeline/registrations.js --fixture",
+    "electric": "node pipeline/electric.js",
+    "postcodes": "node pipeline/postcodes.js",
+    "chargers": "node --env-file-if-exists=.env pipeline/chargers.js",
+    "fuel-prices": "node pipeline/fuel-prices.js",
+    "registrations": "node pipeline/registrations.js",
+    "mot": "node pipeline/mot.js",
+    "geo": "node pipeline/geo.js",
     "test:e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "d3": "^7.9.0",
     "govuk-frontend": "^6.6.0",
-    "lucide": "^1.61.0"
+    "lucide": "^1.61.0",
+    "topojson-client": "^3.1.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "csv-parse": "^7.0.3",
     "sass-embedded": "^1.106.1",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
   }

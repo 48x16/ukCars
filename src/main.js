@@ -1,6 +1,4 @@
-import '@fontsource-variable/inter';
-import './styles/main.scss';
-import { createElement, WifiOff } from 'lucide';
+import './shell.js';
 import { createChart, formatCount } from './chart.js';
 import { loadIndex, loadMeta, loadModel } from './data.js';
 import { quarterEndDate } from './quarters.js';
@@ -152,19 +150,4 @@ function showMeta(meta) {
   for (const node of document.querySelectorAll('[data-first-quarter]')) node.textContent = meta.firstQuarter;
 }
 
-function watchConnection() {
-  $('offline').querySelector('.wuk-offline__icon').append(createElement(WifiOff, { 'aria-hidden': 'true' }));
-  const update = () => {
-    $('offline').hidden = navigator.onLine;
-  };
-  addEventListener('online', update);
-  addEventListener('offline', update);
-  update();
-}
-
-watchConnection();
 start();
-
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch((err) => console.error('Service worker not registered', err));
-}

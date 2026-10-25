@@ -53,6 +53,23 @@ jobs:
           # Refuses data older than what's already live.
           PREVIOUS_META_URL: ${{ steps.pages.outputs.base_url }}/data/meta.json
 
+      - name: Plug-in vehicles and public chargers by council
+        run: npm run electric
+
+      - name: Weekly pump prices (DESNZ)
+        run: npm run fuel-prices
+
+      - name: New cars since 2001, the stories built on them, and each make year by year (VEH0160)
+        run: npm run registrations
+
+      - name: Postcodes for the finder tools
+        run: npm run postcodes
+
+      - name: Chargers near you (Open Charge Map)
+        run: npm run chargers
+        env:
+          OCM_API_KEY: ${{ secrets.OCM_API_KEY }}
+
       - name: Build
         run: npm run build
 

@@ -113,7 +113,7 @@ export function createSearch(root, entries, onSelect) {
     listbox.replaceChildren(
       ...results.map((entry, i) => {
         const option = document.createElement('li');
-        option.id = `search-option-${i}`;
+        option.id = `${listbox.id}-option-${i}`; // unique when a page has two searches
         option.className = 'wuk-search__option';
         option.setAttribute('role', 'option');
         const name = document.createElement('span');

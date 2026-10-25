@@ -1,22 +1,34 @@
-// GOV.UK Frontend, with our own veneer on top.
+// House style: a car-magazine feel (after The Road Rat), with a little "Instrument panel".
 //
-// This is not a government service, so the GOV.UK brand stays out: no crown, no GOV.UK
-// header, and not the GDS Transport typeface. We keep GOV.UK Frontend's accessible
-// components, spacing and its yellow focus state, which keyboard users rely on.
+// GOV.UK Frontend supplies the accessible behaviour: components, spacing, form patterns and
+// the yellow focus state keyboard users rely on. The look is ours. This is not a government
+// service, so the GOV.UK brand stays out: no crown, no GOV.UK header, no GDS Transport.
 //
-// Palette: black and white throughout; pink (#ca357c, 4.87:1 on white) used sparingly.
+// - Pure white, near-black ink, generous whitespace, an asymmetric magazine grid.
+// - All sans: Inter Tight for the wordmark and headings, Inter for reading,
+//   IBM Plex Mono for figures in charts and tables and for small-caps credits.
+// - Pink is the one accent: link underlines, the current page, and the key figure.
+// - Contrast on white: ink 18.9:1, ink-2 8.9:1, ink-3 4.0:1, pink 4.9:1.
+
+$paper: #fff;
+$ink: #111;
 
 // Settings are configured once on `base`; everything imported after it shares them.
 @use "govuk-frontend/dist/govuk/base" as * with (
   $govuk-font-family: ("Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
   $govuk-functional-colours: (
-    brand: (name: "black"),
-    link: (name: "black"),
-    link-visited: (name: "black", variant: "tint-25"),
-    link-hover: (name: "black"),
-    link-active: (name: "black"),
-    template-background: (name: "white"),
-    surface-background: (name: "black", variant: "tint-95")
+    brand: $ink,
+    text: $ink,
+    link: $ink,
+    link-visited: #4a4a4a,
+    link-hover: $ink,
+    link-active: $ink,
+    template-background: $paper,
+    body-background: $paper,
+    surface-background: #f2f2f2,
+    // Errors wear the house pink (GOV.UK's magenta, 4.9:1 on white) rather than red. The
+    // message text, "Error:" prefix and summary still carry the meaning, not colour alone.
+    error: #ca357c
   )
 );
 
@@ -28,7 +40,11 @@
 @use "govuk-frontend/dist/govuk/components/label";
 @use "govuk-frontend/dist/govuk/components/hint";
 @use "govuk-frontend/dist/govuk/components/input";
+@use "govuk-frontend/dist/govuk/components/button";
+@use "govuk-frontend/dist/govuk/components/error-message";
 @use "govuk-frontend/dist/govuk/components/select";
+@use "govuk-frontend/dist/govuk/components/fieldset";
+@use "govuk-frontend/dist/govuk/components/radios";
 @use "govuk-frontend/dist/govuk/components/details";
 @use "govuk-frontend/dist/govuk/components/table";
 @use "govuk-frontend/dist/govuk/components/error-summary";
@@ -37,32 +53,97 @@
 @use "govuk-frontend/dist/govuk/overrides";
 
 :root {
-  --wuk-ink: #{govuk-colour("black")};
-  --wuk-ink-2: #{govuk-colour("black", "tint-25")};
-  --wuk-ink-3: #{govuk-colour("black", "tint-50")};
-  --wuk-rule: #{govuk-colour("black", "tint-80")};
-  --wuk-wash: #{govuk-colour("black", "tint-95")};
-  --wuk-paper: #{govuk-colour("white")};
+  --wuk-ink: #{$ink};
+  --wuk-ink-2: #4a4a4a;
+  --wuk-ink-3: #7f7f7f;
+  --wuk-rule: #d4d4d4;
+  --wuk-wash: #f2f2f2;
+  --wuk-paper: #{$paper};
   --wuk-pink: #{govuk-colour("magenta")};
   --wuk-focus: #{govuk-functional-colour(focus)};
+  --wuk-display: "Inter Tight Variable", "Inter Variable", system-ui, sans-serif;
+  --wuk-figure: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 body {
   background: var(--wuk-paper);
 }
 
+// Headings: Inter Tight, firm but not shouty. The wordmark is the only heavy, capitalised line.
 .govuk-heading-xl,
 .govuk-heading-l,
-.govuk-heading-m {
+.govuk-heading-m,
+.govuk-heading-s {
+  font-family: var(--wuk-display);
+  font-weight: 650;
   letter-spacing: -0.02em;
 }
 
-// Header: a black band with a thin pink rule, in place of the GOV.UK header.
-
-.wuk-header {
-  background: var(--wuk-ink);
-  border-bottom: 4px solid var(--wuk-pink);
+.govuk-heading-xl {
+  font-weight: 700;
+  letter-spacing: -0.035em;
 }
+
+// Pink is the accent on links: ink text, pink underline.
+.govuk-link:link,
+.govuk-link:visited {
+  text-decoration-color: var(--wuk-pink);
+}
+
+// Small-caps credits, as in a magazine: "DATA DfT VEH0120 · UPDATED 2026 Q2".
+.wuk-credits {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--wuk-ink-2);
+
+  b {
+    font-weight: 600;
+    color: var(--wuk-ink);
+  }
+}
+
+// An uppercase pull quote for the narrow column.
+.wuk-pullquote {
+  margin: 0;
+  font-family: var(--wuk-display);
+  font-size: 24px;
+  font-weight: 450;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+// The asymmetric magazine grid: a narrow column for titles and notes, a wide one for content.
+.wuk-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); // so wide tables scroll in their box, not the page
+  gap: govuk-spacing(4) govuk-spacing(7);
+
+  @include govuk-media-query($from: desktop) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+.wuk-split__side > :last-child,
+.wuk-split__main > :last-child {
+  margin-bottom: 0;
+}
+
+// Figures in tables line up in Plex Mono.
+.govuk-table__cell--numeric,
+.govuk-table__header--numeric {
+  font-family: var(--wuk-figure);
+  font-size: 0.875em;
+}
+
+// Header: a heavy capitalised wordmark over one thin black rule.
 
 .wuk-header__inner {
   display: flex;
@@ -70,7 +151,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: govuk-spacing(2) govuk-spacing(4);
-  padding: govuk-spacing(3) 0;
+  padding: govuk-spacing(4) 0 govuk-spacing(3);
+  border-bottom: 1px solid var(--wuk-ink);
 }
 
 .wuk-offline {
@@ -80,8 +162,8 @@ body {
   margin: 0;
   padding: 2px govuk-spacing(2);
   @include govuk-font($size: 16, $weight: bold);
-  color: var(--wuk-ink);
-  background: var(--wuk-paper);
+  color: var(--wuk-paper);
+  background: var(--wuk-ink);
 
   &[hidden] {
     display: none;
@@ -93,30 +175,94 @@ body {
   }
 }
 
-.wuk-header__wordmark {
-  @include govuk-font($size: 24, $weight: bold);
+// Sticks to the bottom of the screen while the page scrolls, and rests at the end of the content.
+.wuk-back-to-top {
+  position: sticky;
+  bottom: govuk-spacing(3);
+  display: flex;
+  justify-content: flex-end;
+  margin-top: govuk-spacing(6);
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A black circle with a white arrow; the link's name is visually hidden text.
+.wuk-back-to-top__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
   color: var(--wuk-paper);
-  text-decoration: none;
+  background: var(--wuk-ink);
+  border-radius: 50%;
+  pointer-events: auto;
+
+  &:link,
+  &:visited,
+  &:hover {
+    color: var(--wuk-paper);
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 3px var(--wuk-paper), 0 0 0 5px var(--wuk-pink);
+  }
+
+  &:focus {
+    outline: 3px solid transparent;
+    color: var(--wuk-ink);
+    background: var(--wuk-focus);
+    box-shadow: 0 0 0 3px var(--wuk-ink);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
+  }
+}
+
+.wuk-header__wordmark {
+  font-family: var(--wuk-display);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
   letter-spacing: -0.02em;
+  word-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wuk-ink);
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
+    text-decoration-color: var(--wuk-pink);
     text-decoration-thickness: 3px;
   }
 
   &:focus {
     @include govuk-focused-text;
   }
+
+  @include govuk-media-query($until: tablet) {
+    font-size: 22px;
+  }
 }
 
-// Filters: one row above everything they scope.
+// Filters: search, then make and model side by side, then the (long) variant list.
 
 .wuk-filters {
   display: grid;
   gap: 0 govuk-spacing(4);
 
   @include govuk-media-query($from: tablet) {
-    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr;
+
+    .govuk-form-group:has(#variant) {
+      grid-column: 1 / -1;
+    }
   }
 
   .govuk-select {
@@ -264,7 +410,9 @@ body {
 .wuk-stat__value {
   display: block;
   @include govuk-font($size: 48, $weight: bold);
-  letter-spacing: -0.03em;
+  font-family: var(--wuk-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .wuk-stat__label {
@@ -329,7 +477,8 @@ body {
 
   text {
     fill: var(--wuk-ink-2);
-    font-size: 14px;
+    font-family: var(--wuk-figure);
+    font-size: 13px;
   }
 
   .domain,
@@ -441,8 +590,9 @@ body {
 }
 
 .wuk-tooltip__value {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--wuk-figure);
+  font-size: 15px;
+  font-weight: 600;
   text-align: right;
 }
 
@@ -467,9 +617,2502 @@ body {
   }
 }
 
-// Footer: white, with a black rule, in place of the GOV.UK footer's colours.
+// Header navigation: ink links on paper; the current page is underlined in pink.
+
+// Wraps on narrow screens, so the links never push the page wider than the phone.
+.wuk-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: govuk-spacing(1) govuk-spacing(5);
+  margin-left: auto;
+
+  @include govuk-media-query($until: tablet) {
+    gap: govuk-spacing(1) govuk-spacing(4);
+    margin-left: 0;
+  }
+}
+
+.wuk-nav__link {
+  @include govuk-font($size: 19, $weight: bold);
+  color: var(--wuk-ink);
+  text-decoration: none;
+  padding: 2px 0;
+  border-bottom: 4px solid transparent;
+
+  &:hover {
+    border-bottom-color: var(--wuk-ink);
+  }
+
+  &[aria-current="page"] {
+    border-bottom-color: var(--wuk-pink);
+  }
+
+  &:focus {
+    @include govuk-focused-text;
+  }
+}
+
+// Insights page
+
+// Each section opens with a hairline, then the narrow column names it and the wide one shows it.
+.wuk-section {
+  margin-top: govuk-spacing(9);
+  padding-top: govuk-spacing(4);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-hero {
+  margin-bottom: govuk-spacing(7);
+
+  .govuk-body-l {
+    @include govuk-font($size: 24);
+  }
+
+  .wuk-credits {
+    margin-top: govuk-spacing(5);
+  }
+}
+
+.wuk-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
+  gap: govuk-spacing(4);
+  margin: govuk-spacing(6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-tile {
+  padding: govuk-spacing(3) 0 govuk-spacing(4);
+  border-top: 1px solid var(--wuk-ink);
+
+  &:first-child {
+    border-top: 4px solid var(--wuk-pink);
+    padding-top: calc(#{govuk-spacing(3)} - 3px);
+  }
+}
+
+.wuk-tile__value {
+  display: block;
+  @include govuk-font($size: 36, $weight: bold);
+  font-family: var(--wuk-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.wuk-tile__label {
+  display: block;
+  margin-top: govuk-spacing(1);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Mover cards: rank, name, change, before/after, and a mini-chart.
+
+.wuk-movers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+  gap: govuk-spacing(4);
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-mover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: govuk-spacing(3) 0 govuk-spacing(2) govuk-spacing(7);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-mover__rank {
+  position: absolute;
+  top: govuk-spacing(3);
+  left: 0;
+  @include govuk-font($size: 19, $weight: bold);
+  font-family: var(--wuk-figure);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-mover__name {
+  @include govuk-font($size: 19, $weight: bold);
+}
+
+.wuk-mover__name {
+  text-decoration-color: var(--wuk-pink);
+  text-decoration-thickness: 2px;
+}
+
+.wuk-mover__change {
+  margin: govuk-spacing(1) 0 0;
+  @include govuk-font($size: 36, $weight: bold);
+  font-family: var(--wuk-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.wuk-mover__detail {
+  margin: 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-mover__chart {
+  margin-top: auto;
+  padding-top: govuk-spacing(3);
+}
+
+.wuk-mover__plot {
+  position: relative;
+  height: 56px;
+}
+
+.wuk-spark {
+  display: block;
+  width: 100%;
+  height: 56px;
+}
+
+.wuk-spark__area {
+  fill: var(--wuk-wash);
+}
+
+.wuk-spark__line {
+  fill: none;
+  stroke: var(--wuk-ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.wuk-mover__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--wuk-pink);
+  border: 2px solid var(--wuk-paper);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Split bars: share off the road (dark) against licensed (light).
+
+.wuk-bars-legend {
+  margin-bottom: govuk-spacing(4);
+}
+
+.wuk-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+}
+
+// SORN is mid-grey and licensed is black, matching the SORN area and fuel lines in charts.
+.wuk-swatch--sorn {
+  background: var(--wuk-ink-3);
+}
+
+.wuk-swatch--licensed {
+  background: var(--wuk-ink);
+}
+
+.wuk-bars {
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-bar {
+  display: grid;
+  grid-template-columns: minmax(8em, 14em) 3.5em 1fr;
+  grid-template-areas:
+    "name value track"
+    ". . detail";
+  align-items: center;
+  gap: 0 govuk-spacing(3);
+  padding: govuk-spacing(2) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name value"
+      "track track"
+      "detail detail";
+  }
+}
+
+.wuk-bar__name {
+  grid-area: name;
+  @include govuk-font($size: 19, $weight: bold);
+}
+
+.wuk-bar__value {
+  grid-area: value;
+  @include govuk-font($size: 19, $weight: bold);
+  font-family: var(--wuk-figure);
+  font-size: 17px;
+  text-align: right;
+}
+
+.wuk-bar__track {
+  grid-area: track;
+  display: flex;
+  gap: 2px;
+  height: 16px;
+}
+
+.wuk-bar__sorn {
+  background: var(--wuk-ink-3);
+}
+
+.wuk-bar__licensed {
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-bar__detail {
+  grid-area: detail;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Slope (rank) chart
+
+.wuk-slope-wrap {
+  max-width: 640px;
+  margin-bottom: govuk-spacing(4);
+}
+
+.wuk-slope {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  @include govuk-font($size: 16);
+}
+
+.wuk-slope__head {
+  fill: var(--wuk-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.wuk-slope__label {
+  fill: var(--wuk-ink);
+  font-size: 14px;
+
+  @include govuk-media-query($until: tablet) {
+    font-size: 13px;
+  }
+
+  font-variant-numeric: tabular-nums;
+}
+
+.wuk-slope__line {
+  stroke: var(--wuk-ink-3);
+  stroke-width: 2;
+}
+
+.wuk-slope__dot {
+  fill: var(--wuk-ink-3);
+  stroke: var(--wuk-paper);
+  stroke-width: 2;
+}
+
+.wuk-slope__make--up .wuk-slope__line,
+.wuk-slope__make--down .wuk-slope__line {
+  stroke: var(--wuk-ink);
+}
+
+.wuk-slope__make--up .wuk-slope__dot,
+.wuk-slope__make--down .wuk-slope__dot {
+  fill: var(--wuk-ink);
+}
+
+.wuk-slope__make--down .wuk-slope__line {
+  stroke-dasharray: 6 4;
+}
+
+.wuk-slope__make--climber {
+  .wuk-slope__line {
+    stroke: var(--wuk-pink);
+    stroke-width: 3;
+  }
+
+  .wuk-slope__dot {
+    fill: var(--wuk-pink);
+  }
+
+  .wuk-slope__label {
+    font-weight: 700;
+  }
+}
+
+.wuk-slope__hit {
+  stroke: transparent;
+  stroke-width: 24;
+}
+
+.wuk-slope__make {
+  cursor: default;
+  outline: none;
+  transition: opacity 120ms;
+}
+
+.wuk-slope--focus .wuk-slope__make:not(.is-active) {
+  opacity: 0.2;
+}
+
+.wuk-slope__make.is-active {
+  .wuk-slope__label {
+    font-weight: 700;
+  }
+
+  .wuk-slope__line {
+    stroke-width: 4;
+  }
+}
+
+.wuk-slope__make:focus-visible .wuk-slope__label {
+  paint-order: stroke;
+  stroke: var(--wuk-focus);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
+// Footer: white, opened by the same thin black rule as the header.
 
 .wuk-footer {
   background: var(--wuk-paper);
   border-top: 1px solid var(--wuk-ink);
+}
+
+// Electric page
+
+// Council map: five greys, light (low) to dark (high). Shade is backed by the legend's
+// labelled ranges, the council list and the table, so no value rests on shade alone.
+.wuk-map {
+  position: relative;
+}
+
+.wuk-map__svg {
+  display: block;
+  width: 100%;
+  max-height: 85vh;
+  font-family: var(--wuk-display);
+}
+
+.wuk-map__council {
+  stroke: var(--wuk-paper);
+  stroke-width: 0.5px;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  cursor: pointer;
+
+  &:hover {
+    stroke: var(--wuk-pink);
+    stroke-width: 1.5px;
+  }
+}
+
+$wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
+
+@each $i, $colour in $wuk-map-steps {
+  .wuk-map__council[data-step="#{$i}"],
+  .wuk-map__bubble[data-step="#{$i}"],
+  .wuk-map__swatch[data-step="#{$i}"] {
+    fill: $colour;
+    background: $colour;
+  }
+}
+
+.wuk-map__council[data-step="none"],
+.wuk-map__bubble[data-step="none"],
+.wuk-map__swatch[data-step="none"] {
+  fill: var(--wuk-paper);
+  background: var(--wuk-paper);
+  stroke: var(--wuk-ink-3);
+}
+
+.wuk-map__swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--wuk-rule);
+
+  &[data-step="none"] {
+    border-color: var(--wuk-ink-3);
+  }
+}
+
+.wuk-map__picked {
+  fill: none;
+  stroke: var(--wuk-pink);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.wuk-map__inset-frame {
+  fill: var(--wuk-paper);
+  stroke: var(--wuk-ink);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.wuk-map__inset-marker {
+  fill: none;
+  stroke: var(--wuk-ink);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.wuk-map__inset-label {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--wuk-ink);
+}
+
+.wuk-map__legend {
+  @include govuk-font($size: 16);
+}
+
+.wuk-map__tooltip {
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
+}
+
+.wuk-map__summary {
+  margin-top: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-council-select {
+  width: 100%;
+}
+
+// The picked council's facts, with the figures in Plex Mono.
+.wuk-council:not(:empty) {
+  padding-top: govuk-spacing(3);
+  border-top: 4px solid var(--wuk-pink);
+}
+
+.wuk-council__name {
+  margin-bottom: govuk-spacing(2);
+}
+
+.wuk-council__facts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: govuk-spacing(1) govuk-spacing(3);
+  margin: 0;
+  @include govuk-font($size: 16);
+
+  dt {
+    color: var(--wuk-ink-2);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--wuk-figure);
+    font-weight: 600;
+    text-align: right;
+  }
+}
+
+.wuk-council__note {
+  margin-top: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+// Top and bottom ten, side by side when there's room.
+.wuk-ranks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+  gap: govuk-spacing(6);
+}
+
+.wuk-rank {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: rank;
+  @include govuk-font($size: 16);
+}
+
+.wuk-rank__item {
+  display: grid;
+  grid-template-columns: 2em 1fr auto;
+  gap: govuk-spacing(2);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-rule);
+  counter-increment: rank;
+
+  &::before {
+    content: counter(rank);
+    color: var(--wuk-ink-3);
+    font-family: var(--wuk-figure);
+  }
+}
+
+.wuk-rank__value {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+}
+
+// Wide tables scroll sideways inside their box rather than widening the page.
+.wuk-table-scroll {
+  overflow-x: auto;
+}
+
+.wuk-table-scroll:focus-visible {
+  outline: 3px solid var(--wuk-focus);
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px var(--wuk-ink);
+}
+
+// MOT page
+
+// White land with a light coast, so even the lightest bubble (outlined) stands out.
+.wuk-map__land {
+  fill: var(--wuk-paper);
+  stroke: var(--wuk-ink-3);
+  stroke-width: 0.5px;
+  vector-effect: non-scaling-stroke;
+}
+
+.wuk-map__bubble {
+  stroke: var(--wuk-ink-3);
+  stroke-width: 0.75px;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+
+  &:hover {
+    stroke: var(--wuk-pink);
+    stroke-width: 2px;
+  }
+}
+
+.wuk-map__bubble-labels text {
+  font-family: var(--wuk-figure);
+  font-size: 9px;
+  fill: var(--wuk-ink-2);
+}
+
+.wuk-map__note {
+  margin-bottom: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+// Paint chart: bands in their own colours, parted by thin white lines.
+.wuk-paint__band {
+  stroke: var(--wuk-paper);
+  stroke-width: 0.75px;
+}
+
+.wuk-paint__frame {
+  fill: none;
+  stroke: var(--wuk-rule);
+}
+
+.wuk-paint__labels text {
+  font-family: var(--wuk-display);
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.wuk-paint__crosshair {
+  stroke: var(--wuk-pink);
+  stroke-width: 2px;
+}
+
+.wuk-paint__swatch {
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--wuk-ink-3);
+}
+
+.wuk-paint__legend {
+  @include govuk-font($size: 16);
+}
+
+// Tests by month: plain horizontal bars, the figure beside each.
+.wuk-months {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  @include govuk-font($size: 16);
+}
+
+.wuk-month {
+  display: grid;
+  grid-template-columns: 6.5em 1fr 7.5em;
+  align-items: center;
+  gap: govuk-spacing(2);
+  padding: 3px 0;
+}
+
+.wuk-month__track {
+  display: block;
+  height: 14px;
+}
+
+.wuk-month__bar {
+  display: block;
+  height: 100%;
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-month__value {
+  white-space: nowrap;
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+}
+
+// Features
+// Feature pages open like a magazine story: a kicker, a big title, a standfirst, then the
+// lead infographic. Every graphic below is HTML or SVG built from the data.
+
+.wuk-kicker {
+  margin: 0 0 govuk-spacing(2);
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wuk-pink);
+}
+
+.wuk-standfirst {
+  margin: 0 0 govuk-spacing(5);
+  @include govuk-font($size: 24);
+  font-family: var(--wuk-display);
+  line-height: 1.35;
+}
+
+// Features index: one card per story.
+.wuk-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11.5em, 1fr));
+  gap: govuk-spacing(6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-card {
+  position: relative;
+  padding-top: govuk-spacing(3);
+  border-top: 4px solid var(--wuk-ink);
+
+  &:hover {
+    border-top-color: var(--wuk-pink);
+  }
+}
+
+.wuk-card__icon svg {
+  width: 40px;
+  height: 40px;
+  stroke-width: 1.5;
+}
+
+.wuk-card__title {
+  margin: govuk-spacing(2) 0;
+}
+
+// The whole card is the link's target, for a bigger hit area.
+.wuk-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+// Out to play: summer against winter.
+.wuk-season-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  gap: govuk-spacing(4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-season-tile {
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+
+  &--quiet {
+    color: var(--wuk-ink-2);
+  }
+}
+
+.wuk-season-tile__label {
+  margin: 0 0 govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-season-tile__row {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin: 0;
+}
+
+.wuk-season-tile__icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+.wuk-season-tile__row--winter .wuk-season-tile__icon {
+  color: var(--wuk-pink);
+}
+
+.wuk-season-tile__value {
+  min-width: 2.6em;
+  @include govuk-font($size: 27, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-season-tile__words {
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Sun (summer) and snowflake (winter) markers, in the legend and on the dumbbells.
+.wuk-season-key,
+.wuk-dumbbell__end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.wuk-season-key--summer,
+.wuk-dumbbell__end--summer {
+  background: var(--wuk-paper);
+  border: 2px solid var(--wuk-ink);
+}
+
+.wuk-season-key--winter,
+.wuk-dumbbell__end--winter {
+  color: var(--wuk-paper);
+  background: var(--wuk-pink);
+}
+
+.wuk-dumbbells {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-dumbbell {
+  display: grid;
+  grid-template-columns: minmax(9em, 14em) 1fr 6.5em;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 16);
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr auto;
+
+    .wuk-dumbbell__track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}
+
+.wuk-dumbbell__track {
+  position: relative;
+  height: 28px;
+  margin: 0 12px;
+  background: linear-gradient(var(--wuk-rule), var(--wuk-rule)) center / 100% 1px no-repeat;
+}
+
+.wuk-dumbbell__bar {
+  position: absolute;
+  top: 12px;
+  height: 4px;
+  background: var(--wuk-ink);
+}
+
+.wuk-dumbbell__end {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+}
+
+.wuk-dumbbell__figures {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.wuk-dumbbell-scale,
+.wuk-dotrow-scale {
+  color: var(--wuk-ink-2);
+}
+
+// Sawtooth small multiples.
+.wuk-saws {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14em, 1fr));
+  gap: govuk-spacing(5);
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-saw {
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-saw__title {
+  margin-bottom: govuk-spacing(2);
+}
+
+.wuk-saw__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wuk-saw__winter {
+  fill: var(--wuk-wash);
+}
+
+.wuk-saw__area {
+  fill: var(--wuk-pink);
+  opacity: 0.08;
+}
+
+.wuk-saw__line {
+  fill: none;
+  stroke: var(--wuk-pink);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
+
+.wuk-saw__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 govuk-spacing(3);
+  margin: govuk-spacing(2) 0 0;
+  @include govuk-font($size: 16);
+}
+
+.wuk-saw__fact--winter {
+  font-weight: 700;
+}
+
+.wuk-saw__turnout {
+  margin: govuk-spacing(1) 0 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// Bavarian battle: the podium, and a line style per make.
+.wuk-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: govuk-spacing(2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-podium__step {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  max-width: 11em;
+  text-align: center;
+}
+
+.wuk-podium__name {
+  @include govuk-font($size: 24, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-podium__value {
+  margin-bottom: govuk-spacing(2);
+  @include govuk-font($size: 16);
+  font-family: var(--wuk-figure);
+}
+
+.wuk-podium__block {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  height: calc(var(--height) * 170px);
+  padding-top: govuk-spacing(2);
+  font-family: var(--wuk-display);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--wuk-paper);
+  background: var(--wuk-ink-2);
+}
+
+.wuk-podium__step--1 .wuk-podium__block {
+  background: var(--wuk-ink);
+  box-shadow: inset 0 6px 0 var(--wuk-pink);
+}
+
+.wuk-line--bmw { stroke: var(--wuk-ink); }
+.wuk-line--mercedes { stroke: var(--wuk-ink-2); stroke-dasharray: 7 4; stroke-linecap: butt; }
+.wuk-line--audi { stroke: var(--wuk-pink); stroke-width: 3; }
+.wuk-dot--bmw { fill: var(--wuk-ink); }
+.wuk-dot--mercedes { fill: var(--wuk-ink-2); }
+.wuk-dot--audi { fill: var(--wuk-pink); }
+
+// 100% bars, one per row.
+.wuk-stacks {
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-stackrow {
+  display: grid;
+  grid-template-columns: 9em 1fr;
+  align-items: center;
+  gap: govuk-spacing(1) govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  @include govuk-font($size: 16);
+}
+
+.wuk-stackrow__extra {
+  grid-column: 2;
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  color: var(--wuk-ink-2);
+}
+
+.wuk-stack {
+  display: flex;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.wuk-stack__seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-right: 2px solid var(--wuk-paper);
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.wuk-stacks--paint .wuk-stack__seg {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+}
+
+.wuk-fill--petrol { color: #fff; background: #111; }
+.wuk-fill--diesel { color: #fff; background: #6b6b6b; }
+.wuk-fill--hybrid { color: #111; background: #b8b8b8; }
+.wuk-fill--plugin { color: #111; background: #e2e2e2; }
+.wuk-fill--electric { color: #fff; background: var(--wuk-pink); }
+.wuk-fill--other { color: #111; background: #f2f2f2; }
+
+.wuk-fill-key {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--wuk-rule);
+}
+
+// Best sellers: one column per make.
+.wuk-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  gap: govuk-spacing(5);
+}
+
+.wuk-column-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--wuk-ink-2);
+}
+
+.wuk-bars-simple {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-bar-simple {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px govuk-spacing(2);
+  margin-bottom: govuk-spacing(2);
+  @include govuk-font($size: 16);
+}
+
+.wuk-bar-simple__value {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+}
+
+.wuk-bar-simple__track {
+  position: relative;
+  grid-column: 1 / -1;
+  height: 10px;
+  background: var(--wuk-wash);
+}
+
+.wuk-bar-simple__now {
+  display: block;
+  height: 100%;
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-bar-simple__then,
+.wuk-then-key {
+  position: absolute;
+  top: -3px;
+  width: 3px;
+  height: 16px;
+  background: var(--wuk-pink);
+}
+
+.wuk-then-key {
+  position: static;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+// MOT dot plot: one row per age band, one mark per make.
+.wuk-dotplot {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-dotrow {
+  display: grid;
+  grid-template-columns: 9.5em 1fr;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(2) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 16);
+}
+
+.wuk-dotrow__track {
+  position: relative;
+  height: 20px;
+  margin: 0 8px;
+  background: linear-gradient(var(--wuk-rule), var(--wuk-rule)) center / 100% 1px no-repeat;
+}
+
+.wuk-mark {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+.wuk-dotrow__track .wuk-mark {
+  position: absolute;
+  top: 3px;
+  transform: translateX(-50%);
+}
+
+.wuk-mark--bmw { background: var(--wuk-ink); border-radius: 50%; }
+.wuk-mark--mercedes { background: var(--wuk-ink-2); }
+.wuk-mark--audi { background: var(--wuk-pink); transform: rotate(45deg) scale(0.85); }
+.wuk-dotrow__track .wuk-mark--audi { transform: translateX(-50%) rotate(45deg) scale(0.85); }
+
+// Origins: a pictogram of 100 cars.
+.wuk-pictos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-picto {
+  display: grid;
+  grid-template-columns: 8.5em 1fr 2.5em;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 16);
+}
+
+.wuk-picto__cars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+  }
+}
+
+.wuk-picto--highlight {
+  .wuk-picto__cars,
+  .wuk-picto__value {
+    color: var(--wuk-pink);
+  }
+}
+
+.wuk-picto__value {
+  font-family: var(--wuk-display);
+  font-size: 24px;
+  font-weight: 700;
+  text-align: right;
+}
+
+// Then and now.
+.wuk-changes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-change {
+  display: grid;
+  grid-template-columns: 8.5em 1fr 8.5em;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  @include govuk-font($size: 16);
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr auto;
+
+    .wuk-change__track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}
+
+.wuk-change__track {
+  position: relative;
+  height: 20px;
+  margin: 0 8px;
+  background: linear-gradient(var(--wuk-wash), var(--wuk-wash)) center / 100% 2px no-repeat;
+}
+
+.wuk-change__bar {
+  position: absolute;
+  top: 8px;
+  height: 4px;
+  background: var(--wuk-ink-3);
+}
+
+.wuk-change--up .wuk-change__bar {
+  background: var(--wuk-pink);
+}
+
+.wuk-change__dot,
+.wuk-change-key {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.wuk-change__dot {
+  position: absolute;
+  top: 3px;
+  transform: translateX(-50%);
+}
+
+.wuk-change__dot--from,
+.wuk-change-key--from {
+  background: var(--wuk-paper);
+  border: 2px solid var(--wuk-ink);
+}
+
+.wuk-change__dot--to,
+.wuk-change-key--to {
+  background: var(--wuk-ink);
+}
+
+.wuk-change__figures {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+// Small multiples.
+.wuk-multiples {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11em, 1fr));
+  gap: govuk-spacing(5) govuk-spacing(4);
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-multiple {
+  --paint: var(--wuk-ink);
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-multiple--highlight {
+  --paint: var(--wuk-pink);
+  border-top: 4px solid var(--wuk-pink);
+}
+
+.wuk-multiple__title {
+  margin: 0;
+}
+
+.wuk-multiple__value {
+  margin: 0;
+  @include govuk-font($size: 27, $weight: bold);
+  font-family: var(--wuk-display);
+}
+
+.wuk-multiple__change,
+.wuk-multiple__makes {
+  margin: 0 0 govuk-spacing(1);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-mini {
+  display: block;
+  width: 100%;
+  height: 70px;
+  margin: govuk-spacing(1) 0;
+}
+
+.wuk-mini__area {
+  fill: var(--paint);
+  opacity: 0.18;
+}
+
+.wuk-mini__line {
+  fill: none;
+  stroke: var(--paint);
+  stroke-width: 2.5px;
+}
+
+.wuk-multiple--paint .wuk-mini__area {
+  opacity: 0.85;
+}
+
+.wuk-multiple--paint .wuk-mini__line {
+  stroke: var(--wuk-ink);
+  stroke-width: 1px;
+}
+
+// Colours: paint chips by year, eras, and the hero's era chips.
+.wuk-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.2em, 1fr));
+  gap: govuk-spacing(1);
+  margin: 0 0 govuk-spacing(5);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-chip {
+  text-align: center;
+}
+
+.wuk-chip__paint {
+  display: block;
+  aspect-ratio: 1;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 4px;
+}
+
+.wuk-chip__year {
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+}
+
+.wuk-eras {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-era {
+  display: grid;
+  grid-template-columns: 32px 8em 1fr;
+  align-items: center;
+  gap: govuk-spacing(3);
+  padding: govuk-spacing(1) 0;
+  border-bottom: 1px solid var(--wuk-wash);
+  @include govuk-font($size: 19);
+}
+
+.wuk-era__paint {
+  width: 32px;
+  height: 20px;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 3px;
+}
+
+.wuk-era__name {
+  font-weight: 700;
+}
+
+.wuk-era__years {
+  font-family: var(--wuk-figure);
+}
+
+.wuk-hero-chips {
+  display: flex;
+  min-height: 220px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 4px;
+
+  @include govuk-media-query($until: tablet) {
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+.wuk-hero-chip {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: govuk-spacing(3);
+  border-right: 2px solid var(--wuk-paper);
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.wuk-hero-chip__name {
+  font-family: var(--wuk-display);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.wuk-hero-chip__years {
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+}
+
+// Fuel marks for dot plots: shape and colour both differ, so no fuel rests on colour alone.
+.wuk-mark--petrol { background: var(--wuk-ink); border-radius: 50%; }
+.wuk-mark--diesel { background: var(--wuk-ink-2); }
+.wuk-mark--hybrid { background: var(--wuk-paper); border: 2px solid var(--wuk-ink); border-radius: 50%; }
+.wuk-mark--electric { background: var(--wuk-pink); transform: rotate(45deg) scale(0.85); }
+.wuk-dotrow__track .wuk-mark--electric { transform: translateX(-50%) rotate(45deg) scale(0.85); }
+
+.wuk-ev-models {
+  margin-bottom: govuk-spacing(2);
+}
+
+// Front door
+
+.wuk-bignum {
+  margin: 0;
+}
+
+.wuk-bignum__value {
+  display: block;
+  font-family: var(--wuk-display);
+  font-size: clamp(56px, 9vw, 104px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.wuk-bignum__label {
+  display: block;
+  max-width: 30em;
+  margin-top: govuk-spacing(2);
+  @include govuk-font($size: 19);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-bignum__chart {
+  --paint: var(--wuk-pink);
+  max-width: 34em;
+  margin: govuk-spacing(3) 0 govuk-spacing(6);
+
+  .wuk-mini {
+    height: 90px;
+  }
+}
+
+.wuk-front__search {
+  max-width: 34em;
+}
+
+.wuk-doors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11.5em, 1fr));
+  gap: govuk-spacing(6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-door {
+  --paint: var(--wuk-ink);
+  position: relative;
+  padding-top: govuk-spacing(3);
+  border-top: 4px solid var(--wuk-ink);
+
+  &:hover {
+    --paint: var(--wuk-pink);
+    border-top-color: var(--wuk-pink);
+  }
+}
+
+.wuk-door__icon svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 1.75;
+}
+
+.wuk-door__title {
+  margin: govuk-spacing(2) 0 govuk-spacing(1);
+}
+
+.wuk-door__value {
+  margin: 0;
+  font-family: var(--wuk-display);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.wuk-door__label {
+  margin: 0 0 govuk-spacing(2);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-door__chart .wuk-mini {
+  height: 56px;
+}
+
+// Chargers near you
+
+// Buttons in the house style: black, with GOV.UK's focus state.
+.wuk-button.govuk-button {
+  color: var(--wuk-paper);
+  background-color: var(--wuk-ink);
+  box-shadow: 0 2px 0 var(--wuk-pink);
+
+  &:hover {
+    background-color: #333;
+  }
+
+  &:focus:not(:active):not(:hover) {
+    color: var(--wuk-ink);
+    background-color: var(--wuk-focus);
+    box-shadow: 0 2px 0 var(--wuk-ink);
+  }
+}
+
+// A button that looks like a link, for a secondary action.
+.wuk-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.wuk-finder__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11em, 1fr));
+  gap: 0 govuk-spacing(5);
+}
+
+.wuk-chargers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-charger {
+  padding: govuk-spacing(3) 0;
+  border-top: 1px solid var(--wuk-rule);
+}
+
+.wuk-charger__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: govuk-spacing(2);
+}
+
+.wuk-charger__name {
+  margin: 0;
+}
+
+.wuk-charger__place {
+  margin: govuk-spacing(1) 0 govuk-spacing(2);
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-charger__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px govuk-spacing(3);
+  margin: 0 0 govuk-spacing(2);
+  @include govuk-font($size: 16);
+
+  dt {
+    color: var(--wuk-ink-2);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.wuk-charger__links {
+  margin: 0;
+  @include govuk-font($size: 16);
+}
+
+// Speed bands, darkest and pink for the fastest. Always a word, never colour alone.
+.wuk-speed {
+  padding: 2px govuk-spacing(2);
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 2px solid var(--wuk-ink);
+
+  &--ultra {
+    color: var(--wuk-paper);
+    background: var(--wuk-pink);
+    border-color: var(--wuk-pink);
+  }
+
+  &--rapid {
+    color: var(--wuk-paper);
+    background: var(--wuk-ink);
+  }
+
+  &--fast {
+    color: var(--wuk-ink);
+    background: var(--wuk-paper);
+  }
+
+  &--slow,
+  &--unknown {
+    color: var(--wuk-ink-2);
+    border-color: var(--wuk-ink-3);
+  }
+}
+
+.wuk-finder__options .govuk-select {
+  width: 100%;
+  min-width: 0;
+}
+
+// Petrol and diesel: where a litre goes.
+.wuk-fill--duty { color: #fff; background: var(--wuk-ink); }
+.wuk-fill--vat { color: #fff; background: var(--wuk-pink); }
+.wuk-fill--rest { color: #111; background: #d4d4d4; }
+
+.wuk-tank {
+  margin-top: 0;
+  margin-bottom: govuk-spacing(5);
+}
+
+// Tools
+
+// MOT busy times: a real table, its cells shaded in the map's five greys.
+.wuk-heat {
+  margin-bottom: govuk-spacing(5);
+  font-family: var(--wuk-figure);
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 6px 4px;
+    text-align: center;
+    border-bottom: 0;
+  }
+}
+
+.wuk-heat__cell {
+  min-width: 2.6em;
+  border: 2px solid var(--wuk-paper);
+}
+
+@each $i, $colour in $wuk-map-steps {
+  .wuk-heat__cell[data-step="#{$i}"] {
+    background: $colour;
+    color: if($i >= 3, #fff, #111);
+  }
+}
+
+// Your car: where your mileage sits.
+.wuk-meter {
+  height: 14px;
+  margin: govuk-spacing(2) 0 govuk-spacing(3);
+  background: var(--wuk-wash);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.wuk-meter__fill {
+  display: block;
+  height: 100%;
+  background: var(--wuk-pink);
+}
+
+.wuk-meter__value {
+  margin: 0;
+}
+
+.wuk-your-chart {
+  --paint: var(--wuk-pink);
+  margin-top: govuk-spacing(3);
+
+  .wuk-mini {
+    height: 90px;
+  }
+}
+
+.wuk-your-chart__note {
+  color: var(--wuk-ink-2);
+}
+
+.wuk-version-select {
+  width: 100%;
+  max-width: 34em;
+}
+
+// The phone menu: a Menu button that shows and hides the links. Only once the script has run
+// (.wuk-js), so without JavaScript the links still show, wrapped.
+.wuk-menu-button {
+  display: none;
+}
+
+@include govuk-media-query($until: tablet) {
+  .wuk-js {
+    .wuk-menu-button {
+      display: inline-flex;
+      align-items: center;
+      gap: govuk-spacing(1);
+      margin-left: auto;
+      padding: govuk-spacing(1) govuk-spacing(2);
+      @include govuk-font($size: 19, $weight: bold);
+      color: var(--wuk-ink);
+      background: none;
+      border: 2px solid var(--wuk-ink);
+      cursor: pointer;
+
+      svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      &[aria-expanded="true"] {
+        color: var(--wuk-paper);
+        background: var(--wuk-pink);
+        border-color: var(--wuk-pink);
+      }
+
+      // Keyboard focus keeps GOV.UK's yellow (users need to see where they are); a tap or
+      // click doesn't flash it.
+      &:focus {
+        outline: none;
+      }
+
+      &:focus-visible {
+        @include govuk-focused-text;
+      }
+    }
+
+    .wuk-nav {
+      display: none;
+      flex-basis: 100%;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .wuk-nav--open {
+      display: flex;
+    }
+
+    .wuk-nav__link {
+      padding: govuk-spacing(2) 0;
+      border-bottom: 1px solid var(--wuk-rule);
+
+      &[aria-current="page"] {
+        border-bottom: 1px solid var(--wuk-rule);
+        box-shadow: inset 4px 0 0 var(--wuk-pink);
+        padding-left: govuk-spacing(2);
+      }
+    }
+  }
+}
+
+// The phone's bottom bar: black, so it reads as the app's own controls, with the current page
+// in pink. Shown on small screens once the script has run.
+.wuk-tabbar {
+  display: none;
+}
+
+@include govuk-media-query($until: tablet) {
+  .wuk-js {
+    .govuk-template__body {
+      padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    }
+
+    .wuk-back-to-top {
+      bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+
+    .wuk-tabbar {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 10;
+      display: block;
+      padding-bottom: env(safe-area-inset-bottom);
+      background: var(--wuk-ink);
+      box-shadow: 0 -1px 0 var(--wuk-ink-2);
+    }
+  }
+}
+
+.wuk-tabbar__list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    flex: 1;
+  }
+}
+
+.wuk-tabbar__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 64px;
+  justify-content: center;
+  font-family: var(--wuk-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: #cfcfcf;
+  text-decoration: none;
+  border-top: 3px solid transparent;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:link,
+  &:visited {
+    color: #cfcfcf;
+  }
+
+  &[aria-current="page"] {
+    color: var(--wuk-paper);
+    border-top-color: var(--wuk-pink);
+
+    svg {
+      color: var(--wuk-pink);
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    color: var(--wuk-ink);
+    background: var(--wuk-focus);
+    outline: none;
+
+    svg {
+      color: var(--wuk-ink);
+    }
+  }
+}
+
+// Mini, year by year: a road down the page, one stretch per year. Its width (--w0 at the top of
+// the stretch, --w1 at the bottom, 0 to 1) is that year's total, so it narrows or widens
+// towards the next year. White dashes run down the middle.
+
+.wuk-road {
+  --road: 44px;
+  margin: 0 0 govuk-spacing(4);
+  padding: 0;
+  overflow-x: clip; // years slide in from the right
+  list-style: none;
+
+  @include govuk-media-query($from: tablet) {
+    --road: 88px;
+  }
+}
+
+.wuk-road__year,
+.wuk-road__end {
+  position: relative;
+  padding: 0 0 govuk-spacing(6) calc(var(--road) + #{govuk-spacing(4)});
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1px; // overlaps the stretch above, so no hairline seam between years
+    bottom: 0;
+    left: 0;
+    width: var(--road);
+    background: var(--wuk-ink);
+    clip-path: polygon(
+      calc(50% - var(--w0) * 50%) 0,
+      calc(50% + var(--w0) * 50%) 0,
+      calc(50% + var(--w1) * 50%) 100%,
+      calc(50% - var(--w1) * 50%) 100%
+    );
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--road) / 2 - 1px);
+    width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--wuk-paper) 0 10px, transparent 10px 22px);
+  }
+}
+
+// The year so far: the same road, greyed.
+.wuk-road__year--partial::before,
+.wuk-road__end::before {
+  background: var(--wuk-ink-3);
+}
+
+.wuk-road__dot {
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  left: calc(var(--road) / 2 - 10px);
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 4px solid var(--wuk-ink);
+  border-radius: 50%;
+  background: var(--wuk-paper);
+}
+
+.wuk-road__dot--new {
+  background: var(--wuk-pink);
+}
+
+.wuk-road__when {
+  margin: 0;
+  font-family: var(--wuk-figure);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.02em;
+}
+
+.wuk-road__total {
+  margin: govuk-spacing(1) 0 govuk-spacing(2);
+  @include govuk-font($size: 19, $weight: bold);
+  font-family: var(--wuk-display);
+  font-weight: 600;
+}
+
+.wuk-road__change {
+  font-family: var(--wuk-figure);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--wuk-ink-2);
+}
+
+.wuk-road__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: govuk-spacing(1) govuk-spacing(2);
+  margin: 0 0 govuk-spacing(3);
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-road__tag {
+  padding: 2px govuk-spacing(2);
+  border: 2px solid var(--wuk-ink);
+  @include govuk-font($size: 16, $weight: bold);
+}
+
+.wuk-road__tag--new {
+  border-color: var(--wuk-pink);
+  background: var(--wuk-pink);
+  color: var(--wuk-paper);
+}
+
+.wuk-road__tag--end {
+  border-color: var(--wuk-ink-3);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-road__models {
+  max-width: 34em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-road__model {
+  display: grid;
+  grid-template-columns: minmax(6em, 9.5em) 1fr 4.5em;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin-bottom: 2px;
+  @include govuk-font($size: 16);
+}
+
+.wuk-road__track {
+  height: 10px;
+  background: var(--wuk-wash);
+}
+
+.wuk-road__fill {
+  display: block;
+  min-width: 2px;
+  height: 100%;
+  background: var(--wuk-ink);
+  border-radius: 0 4px 4px 0;
+}
+
+.wuk-road__value {
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  text-align: right;
+}
+
+.wuk-road__electric {
+  margin: govuk-spacing(2) 0 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+// The road runs on past the latest year, tapering away under a little car.
+.wuk-road__end {
+  --w1: 0;
+  height: 56px;
+  padding-bottom: 0;
+
+  svg {
+    position: absolute;
+    z-index: 1;
+    top: 4px;
+    left: calc(var(--road) / 2 - 14px);
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    border-radius: 50%;
+    background: var(--wuk-paper);
+    color: var(--wuk-pink);
+  }
+}
+
+// Where the browser can, each year slides in as it scrolls into view.
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wuk-road__year > :not(.wuk-road__dot) {
+      animation: wuk-road-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+@keyframes wuk-road-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+.wuk-road__colour {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  margin: govuk-spacing(1) 0 0;
+  @include govuk-font($size: 16);
+  color: var(--wuk-ink-2);
+}
+
+.wuk-road__swatch {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--wuk-ink-3);
+  border-radius: 50%;
+}
+
+.wuk-engines {
+  margin-top: govuk-spacing(2);
+}
+
+// Licensed against off the road (SORN), as in the line chart: ink, and the chart's pale grey.
+.wuk-fill--licensed { color: #fff; background: var(--wuk-ink); }
+.wuk-fill--sorn { color: #111; background: #d4d4d4; }
+
+// Peak Mini: a column of blocks per year, one per model on sale; the peak in pink.
+.wuk-peak {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 3px;
+  align-items: end;
+  max-width: 40em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-peak__year {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.wuk-peak__stack {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 3px;
+}
+
+.wuk-peak__block {
+  height: 14px;
+  border-radius: 2px;
+  background: var(--wuk-ink);
+}
+
+.wuk-peak__year--peak .wuk-peak__block {
+  background: var(--wuk-pink);
+}
+
+.wuk-peak__label {
+  margin-top: govuk-spacing(1);
+  font-family: var(--wuk-figure);
+  font-size: 12px;
+  text-align: center;
+}
+
+// Only every fifth year (and the peak) is labelled, so the labels fit on a phone.
+.wuk-peak__label--quiet {
+  visibility: hidden;
+}
+
+// The SUV takeover: one 100% bar a year, the SUVs in pink.
+.wuk-fill--suv { color: #fff; background: var(--wuk-pink); }
+.wuk-fill--hatch { color: #fff; background: #111; }
+.wuk-fill--saloon { color: #fff; background: #6b6b6b; }
+.wuk-fill--mpv { color: #111; background: #b8b8b8; }
+.wuk-fill--sports { color: #111; background: #e2e2e2; }
+.wuk-fill--none { color: #111; background: #fff; }
+
+.wuk-lanes .wuk-stackrow {
+  grid-template-columns: 5.5em 1fr;
+  padding: 1px 0;
+}
+
+.wuk-lanes .wuk-stack {
+  height: 22px;
+  border: 1px solid var(--wuk-rule);
+  border-radius: 2px;
+}
+
+.wuk-lanes .wuk-stack__seg {
+  font-size: 12px;
+}
+
+.wuk-columns--wide {
+  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+}
+
+.wuk-leader-notes {
+  margin-top: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+// Peak diesel: moments on the timeline.
+.wuk-moments {
+  margin: govuk-spacing(4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-moment {
+  display: grid;
+  grid-template-columns: 3.5em 1fr;
+  gap: 0 govuk-spacing(2);
+  padding: govuk-spacing(2) 0;
+  border-top: 1px solid var(--wuk-rule);
+  @include govuk-font($size: 16);
+}
+
+.wuk-moment__year {
+  grid-row: span 2;
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+}
+
+.wuk-moment__value {
+  color: var(--wuk-ink-2);
+}
+
+// Plate days: a column per quarter; the plate quarters in ink, the rest grey, the quietest pink.
+.wuk-saw-cols {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 220px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--wuk-ink);
+}
+
+.wuk-saw-col {
+  display: flex;
+  flex: 1 1 0;
+  align-items: flex-end;
+  min-width: 0;
+  height: 100%;
+}
+
+.wuk-saw-col__bar {
+  display: block;
+  width: 100%;
+  background: #b8b8b8;
+}
+
+.wuk-saw-col--plate .wuk-saw-col__bar {
+  background: var(--wuk-ink);
+}
+
+.wuk-saw-col--low .wuk-saw-col__bar {
+  background: var(--wuk-pink);
+}
+
+.wuk-saw-axis {
+  position: relative;
+  height: 1.5em;
+  margin-bottom: govuk-spacing(4);
+  font-family: var(--wuk-figure);
+  font-size: 12px;
+}
+
+.wuk-saw-axis__tick {
+  position: absolute;
+  top: 2px;
+}
+
+// Number plates: black on the white front plate, in the figure font.
+.wuk-plates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5em, 1fr));
+  gap: govuk-spacing(2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-plate {
+  display: flex;
+  align-items: baseline;
+  gap: govuk-spacing(2);
+  @include govuk-font($size: 16);
+}
+
+.wuk-plate__id {
+  padding: 2px 8px;
+  border: 2px solid var(--wuk-ink);
+  border-radius: 4px;
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+// The arrivals board: white on black, like the one at the airport.
+.wuk-board {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111;
+  color: #fff;
+  font-family: var(--wuk-figure);
+  font-size: 16px;
+
+  th,
+  td {
+    padding: govuk-spacing(2) govuk-spacing(3);
+    border-bottom: 1px solid #333;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th {
+    color: #cfcfcf;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  tbody th {
+    font-weight: 600;
+  }
+}
+
+.wuk-board__num {
+  text-align: right;
+}
+
+.wuk-board th.wuk-board__num {
+  text-align: right;
+}
+
+.wuk-board__status--hot {
+  color: #ff8fc8; // the house pink, lightened to read on black (7.6:1)
+}
+
+// The workhorses: a milometer, white digits in black boxes.
+.wuk-odo {
+  display: inline-flex;
+  gap: 3px;
+  margin: govuk-spacing(5) 0 govuk-spacing(2);
+}
+
+.wuk-odo__digit {
+  min-width: 1.15em;
+  padding: 4px 2px;
+  border-radius: 4px;
+  background: #111;
+  color: #fff;
+  font-family: var(--wuk-figure);
+  font-size: clamp(36px, 7vw, 64px);
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+// The last digit turns, as on a real milometer.
+.wuk-odo__digit:last-child {
+  background: var(--wuk-pink);
+}
+
+.wuk-fuel-band .wuk-road__model {
+  grid-template-columns: 5em 1fr 4.5em;
+}
+
+// Built to last: the average for all cars of that age, marked on each bar.
+.wuk-road__track {
+  position: relative;
+}
+
+.wuk-road__average {
+  position: absolute;
+  top: -3px;
+  width: 3px;
+  height: 16px;
+  background: var(--wuk-pink);
+}
+
+// Endangered species: a row of cars per model, solid for those left.
+.wuk-species-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17em, 1fr));
+  gap: govuk-spacing(5) govuk-spacing(4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-species {
+  padding-top: govuk-spacing(2);
+  border-top: 1px solid var(--wuk-ink);
+}
+
+.wuk-species__title {
+  margin-bottom: govuk-spacing(2);
+}
+
+.wuk-species__cars {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+  max-width: 16em;
+  color: var(--wuk-ink);
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+// Lost cars fade right back, so the ones left stand out.
+.wuk-species__car--gone {
+  color: #d9d9d9;
+  stroke-width: 1.5;
+}
+
+.wuk-species__left {
+  margin: govuk-spacing(2) 0 govuk-spacing(1);
+  font-family: var(--wuk-display);
+  @include govuk-font($size: 24, $weight: bold);
+  font-weight: 600;
+}
+
+.wuk-species__facts {
+  margin: 0;
+  color: var(--wuk-ink-2);
+}
+
+// Rows whose names are links get room for a 24px tap target each (WCAG 2.2, target size).
+.wuk-road__models--links .wuk-road__model {
+  min-height: 24px;
+  margin-bottom: 4px;
+}
+
+.wuk-road__models--links .govuk-link {
+  display: inline-block;
+  min-height: 24px;
+  line-height: 24px;
+}
+
+// Top Trumps: two cards side by side (stacked on phones), the winning category in pink.
+.wuk-trumps-form .wuk-search {
+  max-width: 30em;
+}
+
+.wuk-trumps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+  gap: govuk-spacing(4);
+}
+
+.wuk-trump {
+  overflow: hidden;
+  border: 3px solid var(--wuk-ink);
+  border-radius: 12px;
+}
+
+.wuk-trump--winner {
+  border-color: var(--wuk-pink);
+}
+
+.wuk-trump__head {
+  padding: govuk-spacing(3);
+  background: var(--wuk-ink);
+  color: #fff;
+}
+
+.wuk-trump--winner .wuk-trump__head {
+  background: var(--wuk-pink);
+}
+
+.wuk-trump__name {
+  margin: 0;
+  @include govuk-font($size: 24, $weight: bold);
+  font-family: var(--wuk-display);
+  font-weight: 700;
+}
+
+.wuk-trump__score {
+  margin: govuk-spacing(1) 0 0;
+  font-family: var(--wuk-figure);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.wuk-trump__rows {
+  margin: 0;
+  padding: 0 govuk-spacing(3);
+}
+
+.wuk-trump__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: govuk-spacing(2);
+  padding: govuk-spacing(2) 0 govuk-spacing(2) govuk-spacing(2);
+  border-bottom: 1px solid var(--wuk-rule);
+  border-left: 4px solid transparent;
+  @include govuk-font($size: 16);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  dt {
+    color: var(--wuk-ink-2);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--wuk-figure);
+    font-weight: 600;
+    text-align: right;
+  }
+}
+
+.wuk-trump__row--won {
+  border-left-color: var(--wuk-pink);
 }

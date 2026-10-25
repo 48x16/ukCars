@@ -7,11 +7,14 @@
 // Set PREVIOUS_META_URL (the deployed meta.json) in CI so an older publication can't replace newer data.
 
 import { createReadStream } from 'node:fs';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { download, fetchText, findCsvUrl } from './fetch.js';
+import { buildFeatures, home } from './features.js';
+import { buildInsights } from './insights.js';
+import { joinMot } from './mot-join.js';
 import { createAggregator } from './slice.js';
 import { CSV_FILE_NAME, SOURCE_PAGE_URL } from './sources.js';
 import { SchemaError, validateFile, validateHeader, validateRow } from './validate.js';
@@ -19,6 +22,7 @@ import { SchemaError, validateFile, validateHeader, validateRow } from './valida
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(ROOT, 'public', 'data');
 const CACHE_PATH = join(ROOT, '.cache', CSV_FILE_NAME);
+const MOT_DIR = join(ROOT, 'data', 'mot');
 const MAX_REPORTED_ROW_ERRORS = 50;
 
 /** Validates and slices a CSV stream. Throws SchemaError listing every problem found. */
@@ -78,6 +82,12 @@ async function previousLatestQuarter() {
   }
 }
 
+/** The newest yearly MOT summary (written by `npm run mot` and committed), or null. */
+export async function latestMotSummary(dir = MOT_DIR) {
+  const years = (await readdir(dir).catch(() => [])).filter((f) => /^\d{4}\.json$/.test(f)).sort();
+  return years.length ? JSON.parse(await readFile(join(dir, years.at(-1)), 'utf8')) : null;
+}
+
 async function writeJson(path, data) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, JSON.stringify(data));
@@ -118,6 +128,37 @@ async function main() {
     builtAt: new Date().toISOString(),
   });
   for (const { path, data } of result.files) await writeJson(join(OUT_DIR, path), data);
+  const insights = buildInsights(result);
+  await writeJson(join(OUT_DIR, 'insights.json'), insights);
+
+  const mot = await latestMotSummary();
+  let joined = null;
+  if (mot) {
+    joined = joinMot(mot, result.index);
+    // Busy times and mileage spreads are only for the tools, so they get their own files; each
+    // make's spotlight goes in its own file, from pipeline/registrations.js.
+    const { busy, ageMiles, spotlight, ...site } = joined;
+    await writeJson(join(OUT_DIR, 'mot.json'), site);
+    if (busy) {
+      const geo = JSON.parse(await readFile(join(ROOT, 'data', 'geo', 'gb.json'), 'utf8'));
+      const names = Object.fromEntries(geo.areas.map((a) => [a.area, a.name]));
+      const areas = Object.fromEntries(Object.entries(busy.areas).filter(([area]) => names[area]).map(([area, b]) => [area, { name: names[area], ...b }]));
+      await writeJson(join(OUT_DIR, 'tools', 'mot-times.json'), { year: mot.year, note: busy.note, areas });
+    }
+    if (ageMiles) await writeJson(join(OUT_DIR, 'tools', 'mileage.json'), { year: mot.year, ...ageMiles });
+    const share = joined.match.testsMatched / joined.match.testsInModels;
+    console.log(`Joined ${mot.year} MOT results: ${(share * 100).toFixed(1)}% of tests matched to a DVLA model`);
+  } else {
+    console.log('No MOT summary in data/mot/, so no mot.json');
+  }
+
+  const features = buildFeatures({ files: result.files, insights, mot: joined });
+  for (const [name, data] of Object.entries(features)) await writeJson(join(OUT_DIR, 'features', `${name}.json`), data);
+  await writeJson(
+    join(OUT_DIR, 'home.json'),
+    home({ insights, electric: features['electric-cars'], mot: joined, index: result.index }),
+  );
+  console.log(`Wrote features: ${Object.keys(features).join(', ')}`);
 
   console.log(
     `Wrote ${result.files.length} model files for ${result.index.makes.length} makes ` +

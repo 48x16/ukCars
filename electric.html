@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta
+      name="description"
+      content="Where the UK's plug-in vehicles are, and where the public chargers are: every council mapped, from DfT data."
+    />
+    <title>Electric – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html" aria-current="page">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero">
+          <div class="wuk-split__side">
+            <h1 class="govuk-heading-xl">Plugging in</h1>
+            <p class="govuk-body-l">
+              Where the UK's plug-in vehicles live, and where the public chargers are, council by council.
+            </p>
+            <p class="govuk-body"><a class="govuk-link" href="./chargers.html">Find chargers near you</a>, fastest first.</p>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT VEH0145 and EVCI0102, ONS</li>
+              <li><b>Covers</b> Privately kept plug-ins, United Kingdom</li>
+              <li><b>Updated</b> <span data-plug-in-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <h2 class="govuk-visually-hidden">Headline figures</h2>
+            <ul class="wuk-tiles" id="tiles"></ul>
+          </div>
+        </div>
+
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">The electric data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+
+        <section class="wuk-section wuk-split" aria-labelledby="surge-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="surge-title">The electric surge</h2>
+            <p class="govuk-body" id="surge-summary"></p>
+            <p class="govuk-body-s">Licensed cars of every keeper, private and company, from DfT table VEH0120.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Licensed plug-in cars</h3>
+            <div class="wuk-chart" id="surge-chart"></div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="models-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="models-title">Britain’s favourite electric cars</h2>
+            <p class="govuk-body" id="models-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+            <ol class="wuk-bars-simple wuk-ev-models" id="ev-models"></ol>
+            <p class="govuk-body-s wuk-column-note"><span class="wuk-then-key" aria-hidden="true"></span> Marker: licensed a year earlier, <span data-year-ago>a year earlier</span></p>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="makes-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="makes-title">Who makes them</h2>
+            <p class="govuk-body" id="makes-summary"></p>
+          </div>
+          <div class="wuk-split__main wuk-ranks">
+            <div>
+              <h3 class="govuk-heading-s">Most battery electric cars</h3>
+              <ol class="wuk-rank" id="ev-makes"></ol>
+            </div>
+            <div>
+              <h3 class="govuk-heading-s">Most electric makes</h3>
+              <p class="govuk-body-s">Share of each make’s licensed cars, for makes with at least 20,000.</p>
+              <ol class="wuk-rank" id="ev-share"></ol>
+            </div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="origin-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="origin-title">Where they’re from</h2>
+            <p class="govuk-body" id="origin-summary"></p>
+            <p class="govuk-body-s">By the make’s home country, as in <a class="govuk-link" href="./origins.html">Where cars come from</a>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">If Britain’s battery electric cars were 100</h3>
+            <ol class="wuk-pictos" id="ev-pictogram"></ol>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="mot-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="mot-title">Electric at the MOT</h2>
+            <p class="govuk-body" id="mot-summary"></p>
+            <p class="govuk-body-s">Share of cars passing their MOT first time in <span data-mot-year>the latest year</span>, by fuel, compared at the same age. Great Britain.</p>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="wuk-legend" id="mot-legend" aria-hidden="true"></ul>
+            <ol class="wuk-dotplot" id="mot-dots"></ol>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="MOT by fuel (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="mot-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="map-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="map-title">Council by council</h2>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Shade the map by</legend>
+                <div class="govuk-radios govuk-radios--small" id="metric">
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="metric-people" name="metric" type="radio" value="people" checked />
+                    <label class="govuk-label govuk-radios__label" for="metric-people">Plug-ins per 1,000 people</label>
+                  </div>
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="metric-charger" name="metric" type="radio" value="charger" />
+                    <label class="govuk-label govuk-radios__label" for="metric-charger">Plug-ins per public charger</label>
+                  </div>
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="metric-chargers" name="metric" type="radio" value="chargers" />
+                    <label class="govuk-label govuk-radios__label" for="metric-chargers">Public chargers per 100,000 people</label>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <p class="govuk-body" id="metric-note"></p>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="council">Find a council</label>
+              <select class="govuk-select wuk-council-select" id="council" name="council"></select>
+            </div>
+            <div class="wuk-council" id="council-card" aria-live="polite"></div>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s" id="map-heading">Plug-ins per 1,000 people</h3>
+            <ul class="wuk-legend wuk-map__legend" id="map-legend"></ul>
+            <div id="map"></div>
+            <p class="govuk-body-s wuk-map__summary" id="map-summary"></p>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="ranks-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="ranks-title">Top and bottom</h2>
+            <p class="govuk-body">The ten highest and lowest councils for <span data-metric-label>the shading above</span>.</p>
+          </div>
+          <div class="wuk-split__main wuk-ranks">
+            <div>
+              <h3 class="govuk-heading-s">Highest</h3>
+              <ol class="wuk-rank" id="rank-high"></ol>
+            </div>
+            <div>
+              <h3 class="govuk-heading-s">Lowest</h3>
+              <ol class="wuk-rank" id="rank-low"></ol>
+            </div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="growth-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="growth-title">Private plug-ins over time</h2>
+            <p class="govuk-body" id="growth-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Privately kept plug-in vehicles, United Kingdom</h3>
+            <div class="wuk-chart" id="growth-chart"></div>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="table-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="table-title">Every council</h2>
+            <p class="govuk-body">All the figures behind the map.</p>
+          </div>
+          <div class="wuk-split__main">
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="Every council (scrolls sideways)" tabindex="0"><table class="govuk-table" id="council-table"></table></div>
+            </details>
+          </div>
+        </section>
+
+        <section class="wuk-section wuk-split" aria-labelledby="notes-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="notes-title">Reading the map</h2>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="govuk-list govuk-list--bullet">
+              <li>
+                <b>Plug-ins</b> are battery electric, plug-in hybrid and range-extended vehicles of every kind, not just
+                cars, licensed at the end of <span data-plug-in-quarter>the latest quarter</span>.
+              </li>
+              <li>
+                <b>Only privately kept vehicles count.</b> Company vehicles are registered where the company is, often a
+                leasing firm's office, so about half the UK's plug-ins would pile up in a few places.
+              </li>
+              <li>
+                <b>Public chargers</b> are counted on <span data-chargers-date>the latest date</span>. Most plug-in owners
+                with a driveway charge at home, so few public chargers per plug-in doesn't always mean charging is hard.
+              </li>
+              <li>
+                <b>Councils</b> are each small area's best fit. <span id="unplaced"></span> Populations are DfT's, from
+                ONS mid-2024 estimates.
+              </li>
+            </ul>
+          </div>
+        </section>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Sources: Department for Transport,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files"
+                >vehicle licensing statistics</a
+              >
+              (table VEH0145) and
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/electric-vehicle-charging-infrastructure-statistics-data-tables-evci"
+                >electric vehicle charging infrastructure statistics</a
+              >
+              (table EVCI0102, chargers data from Zapmap); Office for National Statistics,
+              <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/postcode-to-oa-2021-to-lsoa-to-msoa-to-lad-november-2025-best-fit-lookup-in-the-uk"
+                >postcode lookup</a
+              >
+              and local authority boundaries.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. Source: Office for National Statistics licensed under the Open Government Licence v3.0. Contains OS
+              data © Crown copyright and database right 2026.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, ONS or Zapmap. Figures suppressed for confidentiality
+              (1 to 4 vehicles) are counted as zero.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/electric.js"></script>
+  </body>
+</html>

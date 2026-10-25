@@ -1,0 +1,15 @@
+LSOA21CD,LSOA21NM,Fuel,Keepership,2026 Q2,2026 Q1,2025 Q4,2025 Q3,2025 Q2,2025 Q1
+E01001872,Hammersmith and Fulham 001A,Total,Private,120,110,104,98,90,85
+E01001872,Hammersmith and Fulham 001A,Battery electric,Private,70,64,60,55,50,46
+E01001873,Hammersmith and Fulham 001B,Total,Private,80,75,70,66,60,55
+E01001873,Hammersmith and Fulham 001B,Battery electric,Private,50,47,44,41,37,35
+E01001873,Hammersmith and Fulham 001B,Total,Company,900,880,860,850,820,800
+E01031349,Adur 001A,Total,Private,310,280,260,240,220,200
+E01031349,Adur 001A,Battery electric,Private,190,170,150,140,125,110
+S01013491,"Cults, Bieldside and Milltimber West - 03",Total,Private,260,240,220,200,180,160
+S01013491,"Cults, Bieldside and Milltimber West - 03",Battery electric,Private,150,140,128,115,104,92
+W01000003,Isle of Anglesey 001A,Total,Private,95,90,82,75,70,64
+W01000003,Isle of Anglesey 001A,Battery electric,Private,[c],[c],40,36,33,30
+N21000001,Dunsilly_A,Total,Private,40,36,33,30,27,25
+N21000001,Dunsilly_A,Battery electric,Private,22,20,18,16,14,13
+Miscellaneous,Miscellaneous,Total,Private,12,11,10,9,8,7

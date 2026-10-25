@@ -22,6 +22,8 @@ import { totalAt } from './series.js';
 
 const HEIGHT = 340;
 const NARROW = 520;
+/** Years from the first date to the last: longer charts get a year label every five years, not two. */
+const yearsShown = (dates) => (dates.at(-1) - dates[0]) / (365.25 * 24 * 3600 * 1000);
 const LABEL_GAP = 16;
 const count = new Intl.NumberFormat('en-GB');
 const tickCount = format('.3~s');
@@ -51,7 +53,15 @@ function seriesKey(id) {
   return svg.node();
 }
 
-export function createChart(root) {
+/**
+ * `formatValue` and `formatTick` format tooltip values and y-axis ticks; `totalLabel` names
+ * the tooltip's total row, or null to leave it out (e.g. for shares, which sum to 100%).
+ * The x axis is time by default; `formatX` makes it numeric (e.g. ages), with ticks so formatted.
+ */
+export function createChart(
+  root,
+  { formatValue = formatCount, formatTick = tickCount, totalLabel = 'Total licensed', formatX = null } = {},
+) {
   const legend = el('ul', 'wuk-legend');
   const frame = el('div', 'wuk-chart__frame');
   const tooltip = el('div', 'wuk-tooltip');
@@ -86,7 +96,7 @@ export function createChart(root) {
     const m = { top: 16, right: directLabels ? 156 : 16, bottom: 32, left: 52 };
     const { dates, series, sorn, plotted } = data;
 
-    const x = scaleUtc()
+    const x = (formatX ? scaleLinear() : scaleUtc())
       .domain([dates[0], dates[dates.length - 1]])
       .range([m.left, width - m.right]);
     const y = scaleLinear()
@@ -113,12 +123,16 @@ export function createChart(root) {
       .append('g')
       .attr('class', 'wuk-chart__axis')
       .attr('transform', `translate(0,${HEIGHT - m.bottom})`)
-      .call(axisBottom(x).ticks(utcYear.every(narrow ? 4 : 2)).tickFormat(year).tickSizeOuter(0));
+      .call(
+        formatX
+          ? axisBottom(x).ticks(narrow ? 5 : 10).tickFormat(formatX).tickSizeOuter(0)
+          : axisBottom(x).ticks(utcYear.every(narrow ? 4 : yearsShown(dates) > 16 ? 5 : 2)).tickFormat(year).tickSizeOuter(0),
+      );
     svg
       .append('g')
       .attr('class', 'wuk-chart__axis wuk-chart__axis--y')
       .attr('transform', `translate(${m.left},0)`)
-      .call(axisLeft(y).ticks(5).tickFormat(tickCount).tickSize(0).tickPadding(8))
+      .call(axisLeft(y).ticks(5).tickFormat(formatTick).tickSize(0).tickPadding(8))
       .call((g) => g.select('.domain').remove());
 
     if (sorn) {
@@ -233,13 +247,13 @@ export function createChart(root) {
       const name = el('span', 'wuk-tooltip__label');
       if (key) name.append(key);
       name.append(el('span', null, label));
-      node.append(el('span', 'wuk-tooltip__value', formatCount(value)), name);
+      node.append(el('span', 'wuk-tooltip__value', formatValue(value)), name);
       return node;
     };
     const ordered = [...data.series].sort((a, b) => (b.values[i] ?? -1) - (a.values[i] ?? -1));
     const rows = ordered.map((s) => row(s.values[i], s.label, seriesKey(s.id)));
-    if (ordered.length > 1) {
-      rows.push(row(totalAt(data.series, i), 'Total licensed', null, 'wuk-tooltip__row--total'));
+    if (totalLabel && ordered.length > 1) {
+      rows.push(row(totalAt(data.series, i), totalLabel, null, 'wuk-tooltip__row--total'));
     }
     // SORN sits apart from the licensed figures: it isn't part of their total.
     if (data.sorn) {
@@ -248,7 +262,7 @@ export function createChart(root) {
     tooltip.replaceChildren(el('p', 'wuk-tooltip__title', data.quarters[i]), ...rows);
   }
 
-  // Keyboard: focus the chart, then use arrow keys, Home and End to move between quarters.
+  // Keyboard: focus the chart, then use arrow keys, Home and End to move between points.
   svg.on('focus', () => showFocus(data.dates.length - 1));
   svg.on('blur', hideFocus);
   svg.on('keydown', (event) => {
@@ -264,8 +278,8 @@ export function createChart(root) {
 
   return {
     /**
-     * `quarters` are labels, `dates` their quarter-end dates, `series` from seriesByFuel,
-     * and `sorn` from sornSeries (or null).
+     * `quarters` are labels, `dates` their quarter-end dates (or numbers, with `formatX`),
+     * `series` from seriesByFuel, and `sorn` from sornSeries (or null).
      */
     update({ quarters, dates, series, sorn, summary }) {
       data = { quarters, dates, series, sorn, plotted: sorn ? [...series, sorn] : series, focusIndex: null };

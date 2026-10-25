@@ -2,7 +2,7 @@ import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { processCsv } from '../pipeline/run.js';
+import { latestMotSummary, processCsv } from '../pipeline/run.js';
 import { SchemaError } from '../pipeline/validate.js';
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/mini_VEH0120_UK.csv', import.meta.url));
@@ -74,5 +74,21 @@ describe('processCsv', () => {
     const csv = `${HEADER}\nCars,FORD,FORD KA,KA,Ammonia,Licensed,1,2,3,4`;
     const { warnings } = await processCsv(fromText(csv), { minRows: 1 });
     expect(warnings).toEqual(['new fuel type "Ammonia" (1 rows)']);
+  });
+});
+
+describe('latestMotSummary', () => {
+  it('reads the newest year in the folder', async () => {
+    const { mkdtemp, writeFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    const { tmpdir } = await import('node:os');
+    const dir = await mkdtemp(join(tmpdir(), 'mot-'));
+    await writeFile(join(dir, '2024.json'), '{"year":2024}');
+    await writeFile(join(dir, '2025.json'), '{"year":2025}');
+    await writeFile(join(dir, 'notes.json'), '{"year":0}');
+    expect(await latestMotSummary(dir)).toEqual({ year: 2025 });
+  });
+  it('is null when there are no summaries', async () => {
+    expect(await latestMotSummary('no/such/folder')).toBeNull();
   });
 });

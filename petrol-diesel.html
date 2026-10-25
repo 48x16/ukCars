@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Petrol and diesel cars on UK roads: the rise and fall of diesel, the favourite cars of each, twenty years of pump prices, and the MOT by fuel." />
+    <title>Petrol and diesel – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html" aria-current="page">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero wuk-feature-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Petrol and diesel</p>
+            <h1 class="govuk-heading-xl">Fill her up</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT and DVLA, VEH0120; DESNZ; DVSA MOT</li>
+              <li><b>Covers</b> Licensed cars, United Kingdom</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">Most of Britain still runs on petrol and diesel. The number of diesel cars peaked in 2018 and has fallen since; petrol cars are holding on; and the price at the pump has had quite a ride.</p>
+            <div id="hero-graphic"></div>
+          </div>
+        </div>
+        <section class="wuk-section wuk-split" aria-labelledby="fleet-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="fleet-title">The rise and fall of diesel</h2>
+            <p class="govuk-body" id="fleet-summary"></p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Licensed cars by fuel</h3>
+            <div class="wuk-chart" id="fleet-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="favourites-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="favourites-title">Britain’s favourites</h2>
+            <p class="govuk-body" id="favourites-summary"></p>
+            <p class="govuk-body-s"><span class="wuk-then-key" aria-hidden="true"></span> Marker: licensed in <span data-five-years-ago>five years ago</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-columns">
+              <div>
+                <h3 class="govuk-heading-s">Petrol</h3>
+                <ol class="wuk-bars-simple" id="petrol-models"></ol>
+              </div>
+              <div>
+                <h3 class="govuk-heading-s">Diesel</h3>
+                <ol class="wuk-bars-simple" id="diesel-models"></ol>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="strongholds-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="strongholds-title">Diesel strongholds</h2>
+            <p class="govuk-body" id="strongholds-summary"></p>
+            <p class="govuk-body-s">Diesel’s share of each make’s licensed cars, five years ago and now. Makes with at least 20,000 cars.</p>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="wuk-legend" aria-hidden="true">
+              <li class="wuk-legend__item"><span class="wuk-change-key wuk-change-key--from"></span><span data-five-years-ago>Five years ago</span></li>
+              <li class="wuk-legend__item"><span class="wuk-change-key wuk-change-key--to"></span><span data-latest-quarter>Now</span></li>
+            </ul>
+            <ol class="wuk-changes" id="strongholds"></ol>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="fallers-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="fallers-title">Disappearing diesels</h2>
+            <p class="govuk-body" id="fallers-summary"></p>
+            <p class="govuk-body-s">Diesel versions with at least 10,000 licensed five years ago.</p>
+          </div>
+          <div class="wuk-split__main">
+            <ol class="wuk-rank" id="fallers"></ol>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="pump-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="pump-title">At the pump</h2>
+            <p class="govuk-body" id="pump-summary"></p>
+            <p class="govuk-body-s">UK average pump prices each week, in pence per litre.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Pump prices since 2003</h3>
+            <div class="wuk-chart" id="pump-chart"></div>
+            <h3 class="govuk-heading-s">A 55-litre tank</h3>
+            <ul class="wuk-tiles wuk-tank" id="tank"></ul>
+            <h3 class="govuk-heading-s">Where a litre goes, <span data-latest-week>this week</span></h3>
+            <ul class="wuk-legend" aria-hidden="true">
+              <li class="wuk-legend__item"><span class="wuk-fill-key wuk-fill--duty"></span>Fuel duty</li>
+              <li class="wuk-legend__item"><span class="wuk-fill-key wuk-fill--vat"></span>VAT</li>
+              <li class="wuk-legend__item"><span class="wuk-fill-key wuk-fill--rest"></span>Fuel, refining, delivery and the forecourt</li>
+            </ul>
+            <ul class="wuk-stacks" id="litre"></ul>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="mot-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="mot-title">At the MOT</h2>
+            <p class="govuk-body" id="mot-summary"></p>
+            <p class="govuk-body-s">Share of cars passing their MOT first time in <span data-mot-year>the latest year</span>, by fuel, compared at the same age. Great Britain.</p>
+          </div>
+          <div class="wuk-split__main">
+            <ul class="wuk-legend" id="mot-legend" aria-hidden="true"></ul>
+            <ol class="wuk-dotplot" id="mot-dots"></ol>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="MOT by fuel (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="mot-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Department for Transport and Driver and Vehicle Licensing Agency,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files"
+                >vehicle licensing statistics</a
+              >
+              (table VEH0120), data to <span data-latest-quarter>the latest quarter</span>.
+            </p>
+            <p class="govuk-body-s">
+              Pump prices: Department for Energy Security and Net Zero,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistics/weekly-road-fuel-prices">weekly road fuel prices</a>
+              (accredited official statistics), to <span data-latest-week>the latest week</span>.
+            </p>
+            <p class="govuk-body-s">
+              Source: Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results"
+                >anonymised MOT tests and results</a
+              >.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/petrol-diesel.js"></script>
+  </body>
+</html>

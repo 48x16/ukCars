@@ -1,0 +1,47 @@
+# Boils a year of DVSA MOT results (about 5 GB) down to data/mot/<year>.json.
+#
+# DVSA publishes once a year, around June, so this runs on 1 July and by hand from the
+# Actions tab. It doesn't commit anything: the summary is uploaded as an artifact, to be
+# committed through a pull request like any other change. The weekly "Data and deploy"
+# workflow then joins it to DVLA's models.
+#
+# Azure DevOps equivalent: a separate scheduled pipeline that publishes a build artifact.
+
+name: MOT data
+
+on:
+  schedule:
+    - cron: '0 6 1 7 *' # 1 July, 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      year:
+        description: Year of MOT tests (default last year)
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  summarise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Download and summarise MOT results
+        run: npm run mot -- --year "${YEAR:-$(( $(date +%Y) - 1 ))}"
+        env:
+          YEAR: ${{ inputs.year }}
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mot-summary
+          path: data/mot/*.json
+          if-no-files-found: error

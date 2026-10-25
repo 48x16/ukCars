@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="From SAIC’s MGs to BYD, Omoda and Jaecoo: Chinese makes among Britain’s new cars, year by year, on an arrivals board." />
+    <title>The new arrivals – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html" aria-current="page">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero wuk-feature-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Feature</p>
+            <h1 class="govuk-heading-xl">The new arrivals</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT and DVLA, VEH0160</li>
+              <li><b>Covers</b> New cars, Great Britain</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">Ten years ago you could count them on one hand. Now Chinese makes are among Britain’s best sellers.</p>
+            <div id="hero-graphic"></div>
+          </div>
+        </div>
+        <section class="wuk-section wuk-split" aria-labelledby="rise-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="rise-title">Coming in to land</h2>
+            <p class="govuk-body" id="rise-summary"></p>
+            <p class="govuk-body-s">Chinese makes are those from China, plus SAIC’s MGs since 2011 and Geely’s Smart #1, #3 and #5. Earlier MGs were MG Rover’s, and count as British.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Chinese makes’ share of new cars</h3>
+            <div class="wuk-chart" id="rise-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="rise-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="board-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="board-title">Arrivals</h2>
+            <p class="govuk-body">Each make arrived in its first year with 100 or more new cars.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-board-wrap wuk-table-scroll" role="region" aria-label="Arrivals board (scrolls sideways)" tabindex="0">
+              <table class="wuk-board" id="board"></table>
+            </div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="models-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="models-title">Best sellers</h2>
+            <p class="govuk-body">The biggest-selling models from Chinese makes in <span data-latest-year>the latest year</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="models"></div>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Department for Transport and Driver and Vehicle Licensing Agency,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files"
+                >vehicle licensing statistics</a
+              >
+              (table VEH0160, cars registered for the first time, Great Britain), data to <span data-latest-quarter>the latest quarter</span>.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/feature-arrivals.js"></script>
+  </body>
+</html>
