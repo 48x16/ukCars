@@ -135,8 +135,9 @@ async function main() {
   let joined = null;
   if (mot) {
     joined = joinMot(mot, result.index);
-    // Busy times and mileage spreads are only for the tools, so they get their own files.
-    const { busy, ageMiles, ...site } = joined;
+    // Busy times and mileage spreads are only for the tools, so they get their own files; each
+    // make's spotlight goes in its own file, from pipeline/registrations.js.
+    const { busy, ageMiles, spotlight, ...site } = joined;
     await writeJson(join(OUT_DIR, 'mot.json'), site);
     if (busy) {
       const geo = JSON.parse(await readFile(join(ROOT, 'data', 'geo', 'gb.json'), 'utf8'));

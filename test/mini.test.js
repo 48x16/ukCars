@@ -147,7 +147,7 @@ describe('Minis at the MOT', () => {
       { area: 'BN', tests: 100, all: 1000 },
       { area: 'KT', tests: 150, all: 2000 },
     ]);
-    expect(mot.colours.minis).toEqual({ WHITE: 120, 'NOT STATED': 150, RED: 30 });
+    expect(mot.colours.make).toEqual({ WHITE: 120, 'NOT STATED': 150, RED: 30 });
     expect(mot.colours.allCars).toEqual({ SILVER: 900 });
     // 2020 has too few tests to count; colours not stated are left out of the shares.
     expect(mot.colours.byYear).toEqual({ 2010: { colour: 'WHITE', share: 100 / 130, tests: 130 } });

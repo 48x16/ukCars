@@ -24,3 +24,5 @@ export const loadHome = () => getJson('home.json');
 export const loadFuelPrices = () => getJson('fuel-prices.json');
 export const loadFeature = (name) => getJson(`features/${name}.json`);
 export const loadModel = (makeSlug, modelSlug) => getJson(`models/${makeSlug}/${modelSlug}.json`);
+export const loadMakeList = () => getJson('registrations/index.json');
+export const loadMakeStory = (makeSlug) => getJson(`registrations/${makeSlug}.json`);

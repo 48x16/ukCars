@@ -1,24 +1,14 @@
-// New Minis, year by year since 2004 -> public/data/features/mini.json.
-//
-//   npm run mini              download the DfT CSV
-//   npm run mini -- --cached  use the copy in .cache/
-//   npm run mini -- --fixture tiny test file, for CI (part of `npm run data:fixture`)
+// The Mini story -> public/data/features/mini.json, written by pipeline/registrations.js.
 //
 // Source: DfT and DVLA, VEH0160 (cars registered for the first time), Great Britain. The GB
 // file goes back to 2001; the UK one only to 2014. First registrations are the nearest public
 // figure to new cars sold. DVLA names the model but not the body, so convertibles, coupés and
 // the like are counted with their hatch (a Cooper convertible is a Cooper).
 
-import { existsSync } from 'node:fs';
-import { readdir, readFile, mkdir, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { SOURCE_PAGE_URL } from './sources.js';
-import { download, fetchText, findCsvUrl } from './fetch.js';
 import { splitCsv } from './mot.js';
 import { expandSeries } from '../src/series.js';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const CSV_FILE_NAME = 'df_VEH0160_GB.csv';
 export const START_YEAR = 2001;
 /** A model counts as on sale in a year with at least this many new cars (stragglers aside). */
@@ -41,6 +31,31 @@ export function groupOf(make, genModel) {
     label: name.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
   };
 }
+
+/**
+ * A model's launch and farewell: its first and last years with at least ON_SALE new cars. Not
+ * for one-off editions, nor a launch for a model already on sale when the data starts (`before`:
+ * its new cars in the file's first quarter), nor a farewell in the last two years (it may be
+ * between generations).
+ */
+export function lifecycle(values, years, { before = 0, lastYear = years.at(-1), special = false } = {}) {
+  const onSale = years.filter((_, i) => values[i] >= ON_SALE);
+  const first = onSale[0];
+  const last = onSale.at(-1);
+  return {
+    launched: special || first === undefined || before > 0 ? null : first,
+    ended: special || last === undefined || last >= lastYear - 1 ? null : last,
+  };
+}
+
+const sum = (values) => values.reduce((a, b) => a + b, 0);
+/** The first year a model was on sale; never (a few imports, say) sorts last. */
+const onSaleFrom = (m) => {
+  const i = m.values.findIndex((v) => v >= ON_SALE);
+  return i === -1 ? Infinity : i;
+};
+/** Oldest first, then biggest. */
+export const byLaunch = (a, b) => onSaleFrom(a) - onSaleFrom(b) || sum(b.values) - sum(a.values);
 
 /**
  * Sums VEH0160's quarterly columns into calendar years for each Mini model, from START_YEAR.
@@ -92,22 +107,14 @@ export function buildMini(text) {
   if (full.some((t) => t < 5_000 || t > 200_000)) throw new Error(`Implausible yearly Mini totals: ${full.join(', ')}`);
 
   const models = [...byModel.values()]
-    .map(({ group, values, before }) => {
-      const onSale = years.filter((_, i) => values[i] >= ON_SALE);
-      const special = group === SPECIAL;
-      const first = onSale[0];
-      const last = onSale.at(-1);
-      return {
-        id: group.id,
-        label: group.label,
-        values,
-        // Launches and farewells: not for one-off editions, nor for models already on sale when the data starts.
-        launched: special || first === undefined || before > 0 ? null : first,
-        ended: special || last === undefined || last >= lastYear - 1 ? null : last,
-      };
-    })
+    .map(({ group, values, before }) => ({
+      id: group.id,
+      label: group.label,
+      values,
+      ...lifecycle(values, years, { before, lastYear, special: group === SPECIAL }),
+    }))
     .filter((m) => m.values.some((v) => v > 0))
-    .sort((a, b) => a.values.findIndex((v) => v >= ON_SALE) - b.values.findIndex((v) => v >= ON_SALE) || b.values.reduce((s, v) => s + v) - a.values.reduce((s, v) => s + v));
+    .sort(byLaunch);
   const firstElectric = years.find((_, i) => electric[i] >= ON_SALE) ?? null;
 
   return {
@@ -127,12 +134,12 @@ export function buildMini(text) {
  * Licensed and declared off the road (SORN), quarter by quarter since 2014, from the per-model
  * files the main pipeline writes (VEH0120, UK). Grouped as on the road; suppressed counts as zero.
  */
-export function buildFleet(files) {
+export function buildFleet(files, groupFor = (file) => groupOf(file.make, file.genModel)) {
   if (!files.length) return null;
   const quarters = files[0].quarters;
   const groups = new Map();
   for (const file of files) {
-    const group = groupOf(file.make, file.genModel);
+    const group = groupFor(file);
     if (!group) continue;
     if (!groups.has(group.key)) groups.set(group.key, { id: group.id, label: group.label, licensed: quarters.map(() => 0), sorn: quarters.map(() => 0) });
     const g = groups.get(group.key);
@@ -148,16 +155,16 @@ export function buildFleet(files) {
   };
 }
 
-/** Minis need this many MOT tests from a first-use year for its favourite colour to count. */
+/** A make needs this many MOT tests from a first-use year for its favourite colour to count. */
 export const MIN_COLOUR_TESTS = 100;
 
 /**
- * Minis at the MOT, from the yearly summary (pipeline/mot.js): where they're tested, engine
+ * A make at the MOT, from the yearly summary (pipeline/mot.js): where it's tested, engine
  * sizes, colours (overall, against all cars, and the favourite of each year's survivors) and
- * mileage. Null if the summary has no Mini spotlight.
+ * mileage. `make` is DVSA's name. Null if the summary has no spotlight on it.
  */
-export function buildMot(summary) {
-  const spot = summary?.spotlight?.MINI;
+export function buildMot(summary, make = 'MINI') {
+  const spot = summary?.spotlight?.[make];
   if (!spot?.tests) return null;
   const sumColours = ({ series }) => Object.fromEntries(series.map((s) => [s.name, s.total]));
   const allTests = Object.fromEntries(summary.areas.map((a) => [a.area, a.tests]));
@@ -176,43 +183,12 @@ export function buildMot(summary) {
       .filter(([area]) => allTests[area])
       .map(([area, tests]) => ({ area, tests, all: allTests[area] })),
     engines: spot.engines,
-    colours: { minis: sumColours(spot.colours), allCars: sumColours(summary.colours), byYear },
+    colours: { make: sumColours(spot.colours), allCars: sumColours(summary.colours), byYear },
     mileage: spot.mileage,
   };
 }
 
-async function main() {
-  let text;
-  if (process.argv.includes('--fixture')) {
-    text = await readFile(join(ROOT, 'test', 'fixtures', 'mini_VEH0160_GB.csv'), 'utf8');
-  } else {
-    const path = join(ROOT, '.cache', CSV_FILE_NAME);
-    if (!process.argv.includes('--cached')) {
-      const url = findCsvUrl(await fetchText(SOURCE_PAGE_URL), CSV_FILE_NAME);
-      console.log(`Downloading ${url}`);
-      await download(url, path);
-    }
-    text = await readFile(path, 'utf8');
-  }
-  const mini = buildMini(text);
-  const models = join(ROOT, 'public', 'data', 'models');
-  const paths = [
-    ...(existsSync(join(models, 'mini')) ? (await readdir(join(models, 'mini'))).map((f) => join(models, 'mini', f)) : []),
-    join(models, 'rover', 'rover-mini.json'),
-  ].filter((p) => existsSync(p));
-  mini.fleet = buildFleet(await Promise.all(paths.map(async (p) => JSON.parse(await readFile(p, 'utf8')))));
-  const motDir = join(ROOT, 'data', 'mot');
-  const motFile = existsSync(motDir) ? (await readdir(motDir)).filter((f) => /^\d{4}\.json$/.test(f)).sort().at(-1) : undefined;
-  mini.mot = motFile ? buildMot(JSON.parse(await readFile(join(motDir, motFile), 'utf8'))) : null;
-  const out = join(ROOT, 'public', 'data', 'features', 'mini.json');
-  await mkdir(dirname(out), { recursive: true });
-  await writeFile(out, JSON.stringify(mini));
-  console.log(`Wrote ${out}: ${mini.years[0]} to ${mini.latestQuarter}, ${mini.models.length} models`);
-}
-
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  main().catch((err) => {
-    console.error(err);
-    process.exitCode = 1;
-  });
+/** The whole Mini story: new cars by year, plus the fleet (`modelFiles`: Mini and Rover Mini) and the MOT. */
+export function buildMiniStory(text, { modelFiles = [], motSummary = null } = {}) {
+  return { ...buildMini(text), fleet: buildFleet(modelFiles), mot: buildMot(motSummary) };
 }
