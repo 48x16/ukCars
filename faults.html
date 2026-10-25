@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="What fails at the MOT: lights, suspension, brakes and tyres, the commonest faults, how it changes with age and fuel, and model by model." />
+    <title>Why cars fail – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html" aria-current="page">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero wuk-feature-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Feature</p>
+            <h1 class="govuk-heading-xl">Why cars fail</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DVSA MOT failure items</li>
+              <li><b>Covers</b> Cars tested, Great Britain</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">Every failed MOT comes with a list. Here’s what’s on it, from <span data-tests>millions of</span> tests.</p>
+            <div id="hero-graphic"></div>
+          </div>
+        </div>
+        <section class="wuk-section wuk-split" aria-labelledby="parts-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="parts-title">What fails</h2>
+            <p class="govuk-body" id="parts-summary"></p>
+            <p class="govuk-body-s">Share of all MOTs in <span data-mot-year>the latest year</span> (not counting retests) failing on each part, counting each test once per part. Fails include cars repaired at the test and then passed.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">Share of MOTs failing, by part</h3>
+            <div id="parts-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="defects-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="defects-title">The usual suspects</h2>
+            <p class="govuk-body" id="defects-summary"></p>
+            <p class="govuk-body-s">The 15 commonest faults, in DVSA’s words: how many times each is found for every 100 MOTs (not counting retests). One car can have a fault more than once, two worn tyres say.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="defects-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="age-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="age-title">As cars age</h2>
+            <p class="govuk-body" id="age-summary"></p>
+            <p class="govuk-body-s">Darker cells: more cars failing on that part at that age.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-table-scroll" role="region" aria-label="Failures by part and age (scrolls sideways)" tabindex="0">
+              <table class="govuk-table wuk-heat-table" id="age-table"></table>
+            </div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="fuels-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="fuels-title">Petrol, diesel, electric</h2>
+            <p class="govuk-body" id="fuels-summary"></p>
+            <p class="govuk-body-s">The five commonest parts, for each fuel. Electric cars are mostly young, so they fail less overall: compare with care.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-columns" id="fuels"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="model-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="model-title">Model by model</h2>
+            <p class="govuk-body" id="model-summary"></p>
+            <p class="govuk-body-s">Compared at the same age (10 to 14 years where there are enough tests): older cars fail more, so comparing models of different ages would mostly measure age. The pink marker is all cars that age.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="model">Choose a model</label>
+              <select class="govuk-select" id="model" name="model"></select>
+            </div>
+            <div id="model-chart"></div>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results"
+                >anonymised MOT tests and results</a
+              >, <span data-mot-year>the latest year</span>. Models matched to DVLA's, from DfT vehicle licensing statistics. Failure reasons from DVSA's failure item extracts and lookup tables.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/feature-faults.js"></script>
+  </body>
+</html>

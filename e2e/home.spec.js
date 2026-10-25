@@ -13,7 +13,7 @@ test('shows the headline number and a door to every section', async ({ page }) =
     await expect(page.getByRole('heading', { name, level: 3, exact: true }).getByRole('link')).toBeVisible();
   }
   await expect(page.locator('#door-explore-value')).toHaveText(/\d/);
-  for (const name of ['The SUV takeover', 'Endangered species', 'Peak diesel', 'Mini, year by year', 'All 13 features', 'Top Trumps']) {
+  for (const name of ['The SUV takeover', 'Endangered species', 'Peak diesel', 'Mini, year by year', 'All 14 features', 'Top Trumps']) {
     await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
   }
 });

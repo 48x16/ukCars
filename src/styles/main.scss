@@ -3136,3 +3136,15 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 .wuk-line--motorway { stroke: var(--wuk-ink); }
 .wuk-line--aroad { stroke: var(--wuk-pink); stroke-width: 3; }
 .wuk-line--minor { stroke: var(--wuk-ink-2); stroke-dasharray: 7 4; stroke-linecap: butt; }
+
+// Why cars fail: a heat grid in the map's greys (.wuk-heat__cell, above).
+.wuk-heat-table .govuk-table__cell,
+.wuk-heat-table .govuk-table__header {
+  padding-right: govuk-spacing(2);
+  padding-left: govuk-spacing(2);
+}
+
+// Long fault descriptions get the room they need.
+.wuk-defects .wuk-road__model {
+  grid-template-columns: minmax(10em, 1.6fr) 1fr 3.5em;
+}
