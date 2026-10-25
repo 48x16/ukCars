@@ -13,6 +13,7 @@ import { $, fill } from './feature-page.js';
 import { el, formatChange, renderTable } from './insight-charts.js';
 import { paint } from './paint-chart.js';
 import { quarterEndDate } from './quarters.js';
+import { ON_SALE, onSaleBar } from './series.js';
 
 const count = new Intl.NumberFormat('en-GB');
 const pct0 = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionDigits: 0 });
@@ -20,8 +21,6 @@ const pct0 = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionD
 const SHOWN = 50;
 /** At most this many models a year on the road; the rest are "Other". */
 const MAX_ROWS = 8;
-/** A model is on sale in a year with at least this many new cars (as in the pipeline). */
-const ON_SALE = 100;
 const MONTHS = ['March', 'June', 'September'];
 const TOP_AREAS = 10;
 /** Colours and engine sizes under this share of the make's cars are folded into "Other". */
@@ -77,7 +76,8 @@ function facts(data) {
   const worst = rest.reduce((a, b) => (data.totals[b] < data.totals[a] ? b : a));
   const latest = full.at(-1);
   const favourite = [...data.models].sort((a, b) => sum(b.values) - sum(a.values))[0];
-  const onSale = data.years.map((_, i) => data.models.filter((m) => m.id !== 'special' && m.values[i] >= ON_SALE));
+  const threshold = new Map(data.models.map((m) => [m, onSaleBar(m.values)]));
+  const onSale = data.years.map((_, i) => data.models.filter((m) => m.id !== 'special' && m.values[i] >= threshold.get(m)));
   const peak = Math.max(...onSale.map((m) => m.length));
   return { best, worst, latest, favourite, onSale, peak, electricShare: data.electric[latest] / data.totals[latest] };
 }

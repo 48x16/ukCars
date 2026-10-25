@@ -2759,3 +2759,176 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 .wuk-peak__label--quiet {
   visibility: hidden;
 }
+
+// The SUV takeover: one 100% bar a year, the SUVs in pink.
+.wuk-fill--suv { color: #fff; background: var(--wuk-pink); }
+.wuk-fill--hatch { color: #fff; background: #111; }
+.wuk-fill--saloon { color: #fff; background: #6b6b6b; }
+.wuk-fill--mpv { color: #111; background: #b8b8b8; }
+.wuk-fill--sports { color: #111; background: #e2e2e2; }
+.wuk-fill--none { color: #111; background: #fff; }
+
+.wuk-lanes .wuk-stackrow {
+  grid-template-columns: 5.5em 1fr;
+  padding: 1px 0;
+}
+
+.wuk-lanes .wuk-stack {
+  height: 22px;
+  border: 1px solid var(--wuk-rule);
+  border-radius: 2px;
+}
+
+.wuk-lanes .wuk-stack__seg {
+  font-size: 12px;
+}
+
+.wuk-columns--wide {
+  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+}
+
+.wuk-leader-notes {
+  margin-top: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+}
+
+// Peak diesel: moments on the timeline.
+.wuk-moments {
+  margin: govuk-spacing(4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-moment {
+  display: grid;
+  grid-template-columns: 3.5em 1fr;
+  gap: 0 govuk-spacing(2);
+  padding: govuk-spacing(2) 0;
+  border-top: 1px solid var(--wuk-rule);
+  @include govuk-font($size: 16);
+}
+
+.wuk-moment__year {
+  grid-row: span 2;
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+}
+
+.wuk-moment__value {
+  color: var(--wuk-ink-2);
+}
+
+// Plate days: a column per quarter; the plate quarters in ink, the rest grey, the quietest pink.
+.wuk-saw-cols {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 220px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--wuk-ink);
+}
+
+.wuk-saw-col {
+  display: flex;
+  flex: 1 1 0;
+  align-items: flex-end;
+  min-width: 0;
+  height: 100%;
+}
+
+.wuk-saw-col__bar {
+  display: block;
+  width: 100%;
+  background: #b8b8b8;
+}
+
+.wuk-saw-col--plate .wuk-saw-col__bar {
+  background: var(--wuk-ink);
+}
+
+.wuk-saw-col--low .wuk-saw-col__bar {
+  background: var(--wuk-pink);
+}
+
+.wuk-saw-axis {
+  position: relative;
+  height: 1.5em;
+  margin-bottom: govuk-spacing(4);
+  font-family: var(--wuk-figure);
+  font-size: 12px;
+}
+
+.wuk-saw-axis__tick {
+  position: absolute;
+  top: 2px;
+}
+
+// Number plates: black on the white front plate, in the figure font.
+.wuk-plates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5em, 1fr));
+  gap: govuk-spacing(2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wuk-plate {
+  display: flex;
+  align-items: baseline;
+  gap: govuk-spacing(2);
+  @include govuk-font($size: 16);
+}
+
+.wuk-plate__id {
+  padding: 2px 8px;
+  border: 2px solid var(--wuk-ink);
+  border-radius: 4px;
+  font-family: var(--wuk-figure);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+// The arrivals board: white on black, like the one at the airport.
+.wuk-board {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111;
+  color: #fff;
+  font-family: var(--wuk-figure);
+  font-size: 16px;
+
+  th,
+  td {
+    padding: govuk-spacing(2) govuk-spacing(3);
+    border-bottom: 1px solid #333;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th {
+    color: #cfcfcf;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  tbody th {
+    font-weight: 600;
+  }
+}
+
+.wuk-board__num {
+  text-align: right;
+}
+
+.wuk-board th.wuk-board__num {
+  text-align: right;
+}
+
+.wuk-board__status--hot {
+  color: #ff8fc8; // the house pink, lightened to read on black (7.6:1)
+}

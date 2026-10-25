@@ -22,6 +22,8 @@ import { totalAt } from './series.js';
 
 const HEIGHT = 340;
 const NARROW = 520;
+/** Years from the first date to the last: longer charts get a year label every five years, not two. */
+const yearsShown = (dates) => (dates.at(-1) - dates[0]) / (365.25 * 24 * 3600 * 1000);
 const LABEL_GAP = 16;
 const count = new Intl.NumberFormat('en-GB');
 const tickCount = format('.3~s');
@@ -124,7 +126,7 @@ export function createChart(
       .call(
         formatX
           ? axisBottom(x).ticks(narrow ? 5 : 10).tickFormat(formatX).tickSizeOuter(0)
-          : axisBottom(x).ticks(utcYear.every(narrow ? 4 : 2)).tickFormat(year).tickSizeOuter(0),
+          : axisBottom(x).ticks(utcYear.every(narrow ? 4 : yearsShown(dates) > 16 ? 5 : 2)).tickFormat(year).tickSizeOuter(0),
       );
     svg
       .append('g')

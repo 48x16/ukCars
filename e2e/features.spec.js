@@ -11,6 +11,10 @@ const FEATURES = [
   { page: 'bavarian', title: 'The Bavarian battle', sections: ['The race', 'What they run on', 'The electric race', 'Best sellers'], ready: '.wuk-podium' },
   { page: 'origins', title: 'Where cars come from', sections: ['If Britain’s cars were 100', 'Then and now', 'Country by country'], ready: '.wuk-picto' },
   { page: 'colours', title: 'Silver to grey', sections: ['Colour of the year', 'Rise and fall', 'Which makes dare', 'Electric shades'], ready: '.wuk-chip' },
+  { page: 'suv', title: 'The SUV takeover', sections: ['Lane by lane', 'Winners and losers'], ready: '.wuk-lane' },
+  { page: 'diesel', title: 'Peak diesel', sections: ['Rise and fall'], ready: '.wuk-chart__svg' },
+  { page: 'plates', title: 'Plate days', sections: ['The sawtooth', 'Plate decoder'], ready: '.wuk-plate' },
+  { page: 'arrivals', title: 'The new arrivals', sections: ['Coming in to land', 'Arrivals', 'Best sellers'], ready: '.wuk-board tbody tr' },
   { page: 'mini', title: 'Mini, year by year', sections: ['The road so far', 'Peak Mini', 'Colours', 'Under the bonnet', 'Where Minis live'], ready: '.wuk-map__bubble' },
 ];
 

@@ -74,3 +74,15 @@ export function sornSeries(file, variantIndex = null) {
 export function totalAt(series, i) {
   return series.reduce((sum, s) => (sum === null || s.values[i] === null ? null : sum + s.values[i]), 0);
 }
+
+/** New cars a year for a model to count as on sale: launched, or not yet gone. */
+export const ON_SALE = 100;
+
+/**
+ * The bar for one model, given its new cars each year: ON_SALE, or a fifth of its best year if
+ * that's lower (but never under 10). A Ferrari selling 80 a year is still on sale; a Mini One
+ * selling a few dozen stragglers isn't.
+ */
+export function onSaleBar(values) {
+  return Math.min(ON_SALE, Math.max(10, Math.round(Math.max(0, ...values) * 0.2)));
+}

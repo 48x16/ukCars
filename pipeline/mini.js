@@ -7,12 +7,11 @@
 
 import { SOURCE_PAGE_URL } from './sources.js';
 import { splitCsv } from './mot.js';
-import { expandSeries } from '../src/series.js';
+import { expandSeries, ON_SALE, onSaleBar } from '../src/series.js';
 
 export const CSV_FILE_NAME = 'df_VEH0160_GB.csv';
 export const START_YEAR = 2001;
-/** A model counts as on sale in a year with at least this many new cars (stragglers aside). */
-export const ON_SALE = 100;
+export { ON_SALE };
 /** One-off editions, shown together. */
 const SPECIAL_EDITIONS = ['MINI CHALLENGE', 'MINI GT', 'MINI INSPIRED', 'MINI PADDY HOPKIRK'];
 const SPECIAL = { key: 'SPECIAL', id: 'special', label: 'Special editions' };
@@ -33,13 +32,14 @@ export function groupOf(make, genModel) {
 }
 
 /**
- * A model's launch and farewell: its first and last years with at least ON_SALE new cars. Not
+ * A model's launch and farewell: its first and last years on sale (see onSaleBar). Not
  * for one-off editions, nor a launch for a model already on sale when the data starts (`before`:
  * its new cars in the file's first quarter), nor a farewell in the last two years (it may be
  * between generations).
  */
 export function lifecycle(values, years, { before = 0, lastYear = years.at(-1), special = false } = {}) {
-  const onSale = years.filter((_, i) => values[i] >= ON_SALE);
+  const bar = onSaleBar(values);
+  const onSale = years.filter((_, i) => values[i] >= bar);
   const first = onSale[0];
   const last = onSale.at(-1);
   return {
@@ -51,7 +51,8 @@ export function lifecycle(values, years, { before = 0, lastYear = years.at(-1), 
 const sum = (values) => values.reduce((a, b) => a + b, 0);
 /** The first year a model was on sale; never (a few imports, say) sorts last. */
 const onSaleFrom = (m) => {
-  const i = m.values.findIndex((v) => v >= ON_SALE);
+  const bar = onSaleBar(m.values);
+  const i = m.values.findIndex((v) => v >= bar);
   return i === -1 ? Infinity : i;
 };
 /** Oldest first, then biggest. */
