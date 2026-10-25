@@ -11,7 +11,7 @@ const noViolations = async (page) => expect((await new AxeBuilder({ page }).with
 test('the Tools page and the home page link to every tool', async ({ page }) => {
   for (const path of ['./tools.html', './']) {
     await page.goto(path);
-    for (const name of ['Chargers near you', 'Quiet times for an MOT', 'Your car']) {
+    for (const name of ['Chargers near you', 'Quiet times for an MOT', 'Your car', 'Any make, year by year', 'Top Trumps']) {
       await expect(page.getByRole('link', { name, exact: true })).toBeVisible();
     }
   }
