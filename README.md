@@ -15,18 +15,22 @@ npm run electric      # plug-in cars and public chargers by council
 npm run fuel-prices   # DESNZ weekly pump prices
 npm run postcodes     # one small file per postcode district, for the tools
 npm run chargers      # Open Charge Map snapshot (needs OCM_API_KEY, see below)
+npm run registrations # new cars since 2001: the stories built on them, and each make year by year
+npm run traffic       # DfT road traffic since 1993
 npm run dev           # http://localhost:5173
 npm test
 ```
 
 Run them in that order: `npm run data` clears `public/data/` first. Each takes
-`--cached` to reuse the downloads in `.cache/`. `npm run data:fixture` builds everything
-from tiny test files instead, as CI does.
+`--cached` to reuse the downloads in `.cache/`, and `npm run data:cached` runs the lot
+that way, in order. `npm run data:fixture` builds everything from tiny test files instead,
+as CI does.
 
 The yearly MOT summary is separate, because DVSA's file is about 5 GB:
 
 ```sh
-npm run mot -- --year 2025   # streams the zip, writes data/mot/2025.json (commit it)
+npm run mot -- --year 2025         # streams the zip, writes data/mot/2025.json (commit it)
+npm run mot-faults -- --year 2025  # failure reasons (another 4.4 GB), writes data/mot/2025-faults.json (commit it)
 npm run geo                  # rebuilds the committed map files in data/geo/
 ```
 

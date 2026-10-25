@@ -6,12 +6,13 @@
 //
 // Set PREVIOUS_META_URL (the deployed meta.json) in CI so an older publication can't replace newer data.
 
-import { createReadStream } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { download, fetchText, findCsvUrl } from './fetch.js';
+import { buildFaults } from './faults.js';
 import { buildFeatures, home } from './features.js';
 import { buildInsights } from './insights.js';
 import { joinMot } from './mot-join.js';
@@ -153,6 +154,9 @@ async function main() {
   }
 
   const features = buildFeatures({ files: result.files, insights, mot: joined });
+  // Why cars fail: the failure-reason summary for the same MOT year, if it's been built.
+  const faultsPath = mot && join(MOT_DIR, `${mot.year}-faults.json`);
+  if (faultsPath && existsSync(faultsPath)) features.faults = buildFaults(JSON.parse(await readFile(faultsPath, 'utf8')), joined, result.index);
   for (const [name, data] of Object.entries(features)) await writeJson(join(OUT_DIR, 'features', `${name}.json`), data);
   await writeJson(
     join(OUT_DIR, 'home.json'),
