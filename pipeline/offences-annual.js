@@ -11,7 +11,6 @@
 // - Ministry of Justice, Criminal justice statistics: outcomes by offence (prosecutions and
 //   convictions for drink and drug driving), when --moj is given.
 
-import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -118,7 +117,13 @@ async function main() {
   const breath = breathTests(await readWorkbook(join(dir, FILES.breath)));
   const offences = motoringOffences(await readWorkbook(join(dir, FILES.fpn)));
   const out = join(ROOT, 'data', 'offences', 'annual.json');
-  const previous = existsSync(out) ? JSON.parse(await readFile(out, 'utf8')) : {};
+  // The last summary, if any, keeps its court figures when --moj isn't given.
+  let previous = {};
+  try {
+    previous = JSON.parse(await readFile(out, 'utf8'));
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+  }
   const mojArg = process.argv.indexOf('--moj');
   let courts = previous.courts ?? null;
   if (mojArg !== -1) {
