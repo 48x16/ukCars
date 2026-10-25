@@ -4,7 +4,7 @@
 import { Car } from 'lucide';
 import { displayName, hidden, icon } from './feature-charts.js';
 import { $, fill, startFeature } from './feature-page.js';
-import { el, modelLink } from './insight-charts.js';
+import { el, emptyNote, modelLink } from './insight-charts.js';
 
 const count = new Intl.NumberFormat('en-GB');
 const pct0 = new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionDigits: 0 });
@@ -41,7 +41,13 @@ startFeature('endangered', (data) => {
   const [start, latest] = data.quarters;
   fill('latest-quarter', latest);
   fill('first-quarter', start);
+  const list = (models) => (models.length ? models.map((m) => card(m, start)) : [emptyNote('li')]);
+  $('icons').replaceChildren(...list(data.icons));
+  $('nearly').replaceChildren(...list(data.nearlyGone));
+  const nearly = data.nearlyGone[0];
+  if (nearly) $('nearly-summary').textContent = `The ${displayName(nearly.name)} had ${count.format(nearly.peak)} licensed in ${nearly.peakQuarter}. Now there are ${count.format(nearly.latest)}.`;
   const top = data.icons[0];
+  if (!top) return;
   const quickest = [...data.icons].sort((a, b) => b.perDay - a.perDay)[0];
   const tiles = el('ul', 'wuk-tiles');
   tiles.append(
@@ -49,15 +55,8 @@ startFeature('endangered', (data) => {
     tile(count.format(top.latest), `left of the ${displayName(top.name)}, from ${count.format(top.peak)} in ${top.peakQuarter}`),
   );
   $('hero-graphic').replaceChildren(tiles);
-  $('icons').replaceChildren(...data.icons.map((m) => card(m, start)));
-  $('nearly').replaceChildren(...data.nearlyGone.map((m) => card(m, start)));
   const lostAll = data.icons.reduce((n, m) => n + m.peak - m.latest, 0);
-  const fastest = [...data.icons].sort((a, b) => b.perDay - a.perDay)[0];
   $('icons-summary').textContent =
     `These ${data.icons.length} once-everywhere models have lost ${count.format(lostAll)} cars between them since ${start}. ` +
-    `The ${displayName(top.name)} has lost the most, ${count.format(top.peak - top.latest)}; the ${displayName(fastest.name)} is going fastest now, ${count.format(fastest.perDay)} a day.`;
-  const nearly = data.nearlyGone[0];
-  $('nearly-summary').textContent = nearly
-    ? `The ${displayName(nearly.name)} had ${count.format(nearly.peak)} licensed in ${nearly.peakQuarter}. Now there are ${count.format(nearly.latest)}.`
-    : '';
+    `The ${displayName(top.name)} has lost the most, ${count.format(top.peak - top.latest)}; the ${displayName(quickest.name)} is going fastest now, ${count.format(quickest.perDay)} a day.`;
 });

@@ -3,7 +3,7 @@
 
 import { displayName } from './feature-charts.js';
 import { $, fill, startFeature } from './feature-page.js';
-import { el, modelLink } from './insight-charts.js';
+import { el, emptyNote, modelLink } from './insight-charts.js';
 import { bars } from './make-story.js';
 
 const count = new Intl.NumberFormat('en-GB');
@@ -17,6 +17,7 @@ function tile(value, label) {
 
 /** Ranked models as bars of their pass rate, each name linking to Explore, with the average marked. */
 function ranked(list, rows, national) {
+  if (!rows.length) return list.replaceChildren(emptyNote());
   const ol = bars(
     rows.map((m) => ({ label: displayName(m.name), value: m.rate, text: pct0.format(m.rate) })),
     1,
@@ -42,21 +43,19 @@ startFeature('built-to-last', (data) => {
   const best = data.everyday[0];
   const worst = data.worst[0];
   const tiles = el('ul', 'wuk-tiles');
-  tiles.append(
-    tile(pct0.format(data.national), `of cars ${data.band} old passed their MOT first time in ${data.year}`),
-    tile(pct0.format(best.rate), `for the ${displayName(best.name)}, the best of the everyday cars`),
-    tile(pct0.format(worst.rate), `for the ${displayName(worst.name)}, the lowest`),
-  );
+  tiles.append(tile(pct0.format(data.national), `of cars ${data.band} old passed their MOT first time in ${data.year}`));
+  if (best) tiles.append(tile(pct0.format(best.rate), `for the ${displayName(best.name)}, the best of the everyday cars`));
+  if (worst) tiles.append(tile(pct0.format(worst.rate), `for the ${displayName(worst.name)}, the lowest`));
   $('hero-graphic').replaceChildren(tiles);
 
   ranked($('everyday'), data.everyday, data.national);
   ranked($('best'), data.best, data.national);
   ranked($('worst'), data.worst, data.national);
-  $('everyday-summary').textContent =
+  if (best) $('everyday-summary').textContent =
     `Of the cars still common at ${data.band}, the ${displayName(best.name)} passes first time most often: ${pct0.format(best.rate)}, from ${count.format(best.tests)} tests. ` +
     `Then ${data.everyday.slice(1, 4).map((m) => `the ${displayName(m.name)} (${pct0.format(m.rate)})`).join(', ')}.`;
-  $('best-summary').textContent =
+  if (data.best.length) $('best-summary').textContent =
     `The very best are cherished cars: the ${displayName(data.best[0].name)} passes ${pct0.format(data.best[0].rate)} of the time. Few are left, and they're looked after.`;
-  $('worst-summary').textContent =
+  if (worst) $('worst-summary').textContent =
     `The ${displayName(worst.name)} passes first time ${pct0.format(worst.rate)} of the time at ${data.band}, against ${pct0.format(data.national)} for all cars that age.`;
 });

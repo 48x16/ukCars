@@ -3,7 +3,7 @@
 
 import { displayName } from './feature-charts.js';
 import { $, fill, startFeature } from './feature-page.js';
-import { el, modelLink } from './insight-charts.js';
+import { el, emptyNote, modelLink } from './insight-charts.js';
 import { bars } from './make-story.js';
 
 const count = new Intl.NumberFormat('en-GB');
@@ -19,6 +19,7 @@ function odometer(miles) {
 
 /** Ranked models as bars, each name linking to Explore. */
 function ranked(list, rows, scale) {
+  if (!rows.length) return list.replaceChildren(emptyNote());
   const ol = bars(
     rows.map((m) => ({ label: displayName(m.name), value: m.milesPerYear, text: count.format(m.milesPerYear) })),
     scale,
@@ -39,21 +40,29 @@ startFeature('workhorses', (data) => {
   const top = data.top[0];
   const hero = el('div', 'wuk-odo-hero');
   hero.append(
-    odometer(top.milesPerYear),
-    el('p', 'wuk-bignum__label', `miles a year: the ${displayName(top.name)}, the hardest-working car at the MOT in ${data.year}. The average car does ${count.format(data.national)}.`),
+    odometer(top?.milesPerYear ?? data.national),
+    el(
+      'p',
+      'wuk-bignum__label',
+      top
+        ? `miles a year: the ${displayName(top.name)}, the hardest-working car at the MOT in ${data.year}. The average car does ${count.format(data.national)}.`
+        : `miles a year: the average car at the MOT in ${data.year}.`,
+    ),
   );
   $('hero-graphic').replaceChildren(hero);
 
-  const scale = data.top[0].milesPerYear;
+  const scale = top?.milesPerYear ?? 1;
   ranked($('high'), data.top, scale);
   ranked($('bottom'), data.bottom, scale);
-  const times = top.milesPerYear / data.national;
-  $('high-summary').textContent =
-    `The ${displayName(top.name)} averages ${count.format(top.milesPerYear)} miles a year, ${times >= 2 ? 'more than twice' : `${times.toFixed(1)} times`} the ${count.format(data.national)} of the average car. ` +
-    `Next: ${data.top.slice(1, 4).map((m) => displayName(m.name)).join(', ')}. Many will be taxis and private hire cars.`;
-  const low = data.bottom[0];
-  $('bottom-summary').textContent =
-    `At the other end, the ${displayName(low.name)} averages ${count.format(low.milesPerYear)} miles a year. Classics, sports cars and second cars come out for high days and holidays.`;
+  if (top) {
+    const times = top.milesPerYear / data.national;
+    $('high-summary').textContent =
+      `The ${displayName(top.name)} averages ${count.format(top.milesPerYear)} miles a year, ${times >= 2 ? 'more than twice' : `${times.toFixed(1)} times`} the ${count.format(data.national)} of the average car.` +
+      (data.top.length > 1 ? ` Next: ${data.top.slice(1, 4).map((m) => displayName(m.name)).join(', ')}. Many will be taxis and private hire cars.` : '');
+    const low = data.bottom[0];
+    $('bottom-summary').textContent =
+      `At the other end, the ${displayName(low.name)} averages ${count.format(low.milesPerYear)} miles a year. Classics, sports cars and second cars come out for high days and holidays.`;
+  }
 
   // Each fuel's average mileage at each age.
   const rows = data.ageBands.map((label, b) => ({ label, fuels: Object.entries(data.fuels).filter(([, v]) => v[b] !== null).map(([id, v]) => ({ id, miles: v[b] })) }));

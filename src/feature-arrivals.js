@@ -4,7 +4,7 @@
 import { format } from 'd3';
 import { createChart } from './chart.js';
 import { $, fill, startFeature } from './feature-page.js';
-import { el, renderTable } from './insight-charts.js';
+import { el, emptyNote, renderTable } from './insight-charts.js';
 import { bars } from './make-story.js';
 
 const count = new Intl.NumberFormat('en-GB');
@@ -23,13 +23,12 @@ startFeature('arrivals', (data) => {
   const y = (i) => data.years[i];
   const full = data.years.map((_, i) => i).filter((i) => y(i) !== data.partial?.year);
   const latest = full.at(-1);
-  const share = (i) => data.chinese[i] / data.totals[i];
-  const oneIn = Math.round(1 / share(latest));
+  const share = (i) => (data.totals[i] ? data.chinese[i] / data.totals[i] : 0);
   const onSale = data.makes.filter((m) => m.values[latest] >= 100);
 
   const tiles = el('ul', 'wuk-tiles');
   tiles.append(
-    tile(pct1.format(share(latest)), `of new cars in ${y(latest)} were from Chinese makes: about 1 in ${oneIn}`),
+    tile(pct1.format(share(latest)), `of new cars in ${y(latest)} were from Chinese makes` + (share(latest) ? `: about 1 in ${Math.round(1 / share(latest))}` : '')),
     tile(count.format(data.chinese[latest]), `new cars in ${y(latest)}, from ${count.format(data.chinese[latest - 5] ?? 0)} five years before`),
     tile(String(onSale.length), `Chinese makes with 100 or more new cars in ${y(latest)}`),
   );
@@ -40,7 +39,7 @@ startFeature('arrivals', (data) => {
   const small = (v) => (v < 0.0005 ? 'under 0.1%' : pct1.format(v));
   $('rise-summary').textContent =
     `Chinese makes went from ${small(share(start))} of new cars in ${y(start)} to ${pct1.format(share(latest))} in ${y(latest)}. ` +
-    `${leader.label} sold the most in ${y(latest)}: ${count.format(leader.values[latest])}.` +
+    (leader ? `${leader.label} sold the most in ${y(latest)}: ${count.format(leader.values[latest])}.` : '') +
     (data.partial ? ` So far in ${data.partial.year}, they're ${pct1.format(share(data.years.length - 1))}.` : '');
   createChart($('rise-chart'), { formatValue: pct1.format, formatTick: format('.0%'), totalLabel: null }).update({
     quarters: data.years.slice(start).map((year) => (year === data.partial?.year ? `${year} so far` : String(year))),
@@ -77,10 +76,17 @@ startFeature('arrivals', (data) => {
     tr.append(name, el('td', '', String(m.first)), el('td', 'wuk-board__num', count.format(m.values[latest])), el('td', `wuk-board__status${/fast|landed/i.test(st) ? ' wuk-board__status--hot' : ''}`, st));
     body.append(tr);
   }
+  if (!data.makes.length) {
+    const tr = el('tr');
+    const td = el('td', '', 'No Chinese makes in this data yet.');
+    td.colSpan = 4;
+    tr.append(td);
+    body.append(tr);
+  }
   board.replaceChildren(el('caption', 'govuk-visually-hidden', 'Chinese makes: when each arrived, new cars in the latest year and how it is doing'), head, body);
 
   const models = data.models.map((m) => ({ label: m.label, value: m.values[latest] })).filter((m) => m.value > 0);
-  $('models').replaceChildren(bars(models, Math.max(...models.map((m) => m.value))));
+  $('models').replaceChildren(models.length ? bars(models, Math.max(...models.map((m) => m.value))) : emptyNote());
   fill('latest-year', String(y(latest)));
 
   renderTable($('rise-table'), {

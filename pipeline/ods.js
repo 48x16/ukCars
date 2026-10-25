@@ -17,15 +17,26 @@ const attr = (tag, name) => {
   return m ? decode(m[1]) : undefined;
 };
 
+/** Drops every tag, again and again until none is left (one pass can leave "<<b>x>" as "<x>"). */
+function stripTags(s) {
+  let before;
+  do {
+    before = s;
+    s = s.replace(/<[^>]*>/g, '');
+  } while (s !== before);
+  return s;
+}
+
 /** A cell's text: paragraphs joined by newlines, <text:s/> as spaces, other markup dropped. */
 function cellText(inner) {
   return decode(
-    inner
-      .replace(/<text:s(?: text:c="(\d+)")?\s*\/>/g, (_, n) => ' '.repeat(Number(n ?? 1)))
-      .replace(/<text:tab\s*\/>/g, '\t')
-      .replace(/<text:line-break\s*\/>/g, '\n')
-      .replace(/<\/text:p>\s*<text:p[^>]*>/g, '\n')
-      .replace(/<[^>]+>/g, ''),
+    stripTags(
+      inner
+        .replace(/<text:s(?: text:c="(\d+)")?\s*\/>/g, (_, n) => ' '.repeat(Number(n ?? 1)))
+        .replace(/<text:tab\s*\/>/g, '\t')
+        .replace(/<text:line-break\s*\/>/g, '\n')
+        .replace(/<\/text:p>\s*<text:p[^>]*>/g, '\n'),
+    ),
   );
 }
 

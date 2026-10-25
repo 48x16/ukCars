@@ -45,7 +45,9 @@ function sparkline(values, { width = 200, height = 56 } = {}) {
   return { svg: svg.node(), end: { x: x(values.length - 1) / width, y: y(values.at(-1)) / height } };
 }
 
-const emptyItem = () => el('li', 'wuk-empty govuk-body', 'No models meet the criteria in this data.');
+/** Says so when a list has nothing in it (the CI fixture data, or a quiet quarter). */
+export const emptyNote = (tag = 'p', text = 'No models meet the criteria in this data.') => el(tag, 'wuk-empty govuk-body', text);
+const emptyItem = () => emptyNote('li');
 
 /**
  * Ranked cards: name, a headline figure (the change, unless `headline` says otherwise),

@@ -101,15 +101,19 @@ async function start() {
     show();
   });
 
-  const [ma, ka, mb, kb] = location.hash.slice(1).split('/');
+  // A link to a game (or the back button) plays it, on load or on a change of #.
   const find = (makeSlug, modelSlug) => entries.find((e) => e.kind === 'model' && e.makeSlug === makeSlug && e.modelSlug === modelSlug);
-  if (find(ma, ka) && find(mb, kb)) {
+  const fromHash = () => {
+    const [ma, ka, mb, kb] = location.hash.slice(1).split('/');
+    if (!find(ma, ka) || !find(mb, kb)) return;
     chosen.a = find(ma, ka);
     chosen.b = find(mb, kb);
     $('car-a').value = chosen.a.label;
     $('car-b').value = chosen.b.label;
     show();
-  }
+  };
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
 }
 
 start();
