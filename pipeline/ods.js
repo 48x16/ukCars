@@ -1,4 +1,4 @@
-// Reads one sheet of an OpenDocument spreadsheet (.ods) as rows of strings. Some DfT tables
+// Reads sheets of an OpenDocument spreadsheet (.ods) as rows of strings. Some DfT tables
 // are only published as ODS. An .ods file is a zip holding content.xml, and the tables we read
 // are plain grids, so a small reader does: no styles, formulas or merged-cell layout.
 
@@ -65,11 +65,20 @@ export function parseSheet(xml, sheetName) {
   return rows;
 }
 
-/** Reads a sheet from an .ods file on disk. */
-export async function readSheet(path, sheetName) {
+/**
+ * Opens an .ods file once, for reading several sheets: `names` lists its sheets, in order, and
+ * `sheet(name)` parses one.
+ */
+export async function readWorkbook(path) {
   const entry = (await listEntries(path)).find((e) => e.name === 'content.xml');
   if (!entry) throw new Error(`${path} is not an OpenDocument spreadsheet`);
   let xml = '';
   for await (const chunk of (await openEntry(path, entry)).setEncoding('utf8')) xml += chunk;
-  return parseSheet(xml, sheetName);
+  const names = [...xml.matchAll(/<table:table table:name="([^"]*)"/g)].map((m) => decode(m[1]));
+  return { names, sheet: (name) => parseSheet(xml, name) };
+}
+
+/** Reads a sheet from an .ods file on disk. */
+export async function readSheet(path, sheetName) {
+  return (await readWorkbook(path)).sheet(sheetName);
 }

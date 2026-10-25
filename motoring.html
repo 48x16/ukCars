@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="How England took to the car since 1951: households with a car, who holds a licence, miles driven, driving alone, the car itself, and where it sleeps." />
+    <title>Life with the car – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html" aria-current="page">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero wuk-feature-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Feature</p>
+            <h1 class="govuk-heading-xl">Life with the car</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> National Travel Survey</li>
+              <li><b>Covers</b> England, since 1951</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">In 1951 most households in England had no car. Seventy years on, here’s how the car moved in, and how we use it now.</p>
+            <div id="hero-graphic"></div>
+          </div>
+        </div>
+        <section class="wuk-section wuk-split" aria-labelledby="households-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="households-title">The car comes home</h2>
+            <p class="govuk-body" id="households-summary"></p>
+            <p class="govuk-body-s">Share of households with no car or van, one, and two or more.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="households-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="households-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="licences-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="licences-title">Learning later</h2>
+            <p class="govuk-body" id="licences-summary"></p>
+            <p class="govuk-body-s">Share of people holding a full car licence, by age.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="licences-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="licences-table"></table>
+              </div>
+            </details>
+            <h3 class="govuk-heading-s" id="reasons-title">Why 17 to 20-year-olds don’t learn: the main reason</h3>
+            <div id="reasons-chart"></div>
+            <p class="govuk-body-s" id="reasons-summary"></p>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="miles-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="miles-title">Fewer miles</h2>
+            <p class="govuk-body" id="miles-summary"></p>
+            <p class="govuk-body-s">Average miles a car is driven in a year, by its fuel where there are enough in the survey.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="miles-chart"></div>
+            <h3 class="govuk-heading-s">Miles a year by fuel, <span data-latest>the latest year</span></h3>
+            <div id="fuel-miles"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="alone-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="alone-title">Alone at the wheel</h2>
+            <p class="govuk-body" id="alone-summary"></p>
+            <p class="govuk-body-s">Share of car or van journeys with only the driver aboard, by purpose. The pink marker is <span data-first-lone>the first year</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="alone-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="car-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="car-title">The car itself</h2>
+            <p class="govuk-body" id="car-summary"></p>
+            <p class="govuk-body-s">Share of households’ cars by fuel. The pink marker is <span data-first-fuel>the first year</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="fuel-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="parking-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="parking-title">Where it sleeps</h2>
+            <p class="govuk-body" id="parking-summary"></p>
+            <p class="govuk-body-s">Where households’ cars are kept overnight. The pink marker is <span data-first-parking>the first year</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="parking-chart"></div>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Department for Transport,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/collections/national-travel-survey-statistics"
+                >National Travel Survey</a
+              >
+              (tables NTS0101, 0201, 0203, 0205, 0303, 0901, 0904, 0905, 0908, 0909), England, to <span data-latest-quarter>the latest year</span>.
+              Survey estimates: some early years cover Great Britain, and 2020 to 2022 were affected by the pandemic.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/feature-motoring.js"></script>
+  </body>
+</html>

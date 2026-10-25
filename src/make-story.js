@@ -55,6 +55,23 @@ export function bars(rows, scale, className = 'wuk-road__models') {
   return ol;
 }
 
+/**
+ * `bars`, plus a pink marker on each row at `mark` (a comparison: another year, the national
+ * figure), said in hidden text as "(<markLabel> <markText>)". Rows without a mark get none.
+ */
+export function markedBars(rows, scale, markLabel, className) {
+  const list = bars(rows, scale, className);
+  [...list.children].forEach((li, i) => {
+    const { mark, markText } = rows[i];
+    if (mark === null || mark === undefined) return;
+    const pin = el('span', 'wuk-road__average');
+    pin.style.left = `${Math.min(mark / scale, 1) * 100}%`;
+    li.querySelector('.wuk-road__track').append(pin);
+    li.querySelector('.wuk-road__value').append(el('span', 'govuk-visually-hidden', ` (${markLabel} ${markText})`));
+  });
+  return list;
+}
+
 /** The years from the make's first on sale: a brand new to Britain doesn't start with empty road. */
 function fromFirstYear(data) {
   const start = Math.max(0, data.totals.findIndex((t) => t >= ON_SALE));

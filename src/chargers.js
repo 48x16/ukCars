@@ -14,6 +14,7 @@ import {
 import { hidden } from './feature-charts.js';
 import { el } from './insight-charts.js';
 import { wgs84ToGrid } from './osgb.js';
+import { parsePostcode } from './postcode.js';
 
 const DATA = `${import.meta.env.BASE_URL}data/`;
 const $ = (id) => document.getElementById(id);
@@ -31,12 +32,6 @@ async function getJson(path) {
   if (res.status === 404 || (res.ok && !res.headers.get('content-type')?.includes('json'))) return null;
   if (!res.ok) throw new Error(`Could not load ${path} (${res.status})`);
   return res.json();
-}
-
-/** "sw1a1aa" -> { district: "SW1A", inward: "1AA", display: "SW1A 1AA" }, or null. */
-function parsePostcode(text) {
-  const m = /^([A-Z]{1,2}[0-9][A-Z0-9]?)([0-9][A-Z]{2})$/.exec(text.toUpperCase().replace(/[^A-Z0-9]/g, ''));
-  return m ? { district: m[1], inward: m[2], display: `${m[1]} ${m[2]}` } : null;
 }
 
 async function locatePostcode(postcode) {

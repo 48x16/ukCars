@@ -13,7 +13,7 @@
 // is, often a leasing firm's head office, so they'd pile up in a handful of places.
 
 import { createReadStream } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
@@ -21,6 +21,7 @@ import { download, fetchText, findCsvUrl } from './fetch.js';
 import { readSheet } from './ods.js';
 import { SOURCE_PAGE_URL } from './sources.js';
 import { listEntries, openEntry } from './zip.js';
+import { neighbourhoodFiles, plugInsByArea, postcodesByDistrict } from './neighbourhoods.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE = join(ROOT, '.cache');
@@ -229,6 +230,18 @@ async function main() {
     `Wrote ${out}: ${electric.councils.length} councils, plug-ins to ${electric.plugInQuarter}, ` +
       `chargers at ${electric.chargersDate}, ${electric.unplacedPlugIns} plug-ins not placed in a council`,
   );
+
+  // Plug-ins near you: a second pass over both files, for the neighbourhood-by-postcode files.
+  const { index, files } = neighbourhoodFiles(
+    await plugInsByArea(csvRows(createReadStream(paths.veh0145))),
+    await postcodesByDistrict(csvRows(await openLookup(paths.lookup), { columns: true })),
+  );
+  const dir = join(ROOT, 'public', 'data', 'plugins');
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  await writeFile(join(dir, 'index.json'), JSON.stringify(index));
+  for (const [district, data] of files) await writeFile(join(dir, `${district}.json`), JSON.stringify(data));
+  console.log(`Wrote plug-ins near you: ${files.size} district files, to ${index.quarters.at(-1)}`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

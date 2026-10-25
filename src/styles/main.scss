@@ -3116,3 +3116,54 @@ $wuk-map-steps: (0: #ececec, 1: #c2c2c2, 2: #949494, 3: #5e5e5e, 4: #1f1f1f);
 .wuk-trump__row--won {
   border-left-color: var(--wuk-pink);
 }
+
+// Plug-ins near you: your own neighbourhood among its neighbours.
+.wuk-road__model--mine .wuk-road__fill {
+  background: var(--wuk-pink);
+}
+
+.wuk-road__model--mine .wuk-road__name {
+  font-weight: 700;
+}
+
+// How Britain drives: one line per vehicle (vans, the story, in pink) and per road type.
+.wuk-line--cars { stroke: var(--wuk-ink); }
+.wuk-line--vans { stroke: var(--wuk-pink); stroke-width: 3; }
+.wuk-line--lorries { stroke: var(--wuk-ink); stroke-dasharray: 7 4; stroke-linecap: butt; }
+.wuk-line--buses { stroke: var(--wuk-ink-2); }
+.wuk-line--motorbikes { stroke: var(--wuk-ink-2); stroke-dasharray: 0.1 5; stroke-width: 3; }
+.wuk-line--cycles { stroke: var(--wuk-ink-3); stroke-dasharray: 12 3 2 3; stroke-linecap: butt; }
+.wuk-line--motorway { stroke: var(--wuk-ink); }
+.wuk-line--aroad { stroke: var(--wuk-pink); stroke-width: 3; }
+.wuk-line--minor { stroke: var(--wuk-ink-2); stroke-dasharray: 7 4; stroke-linecap: butt; }
+
+// Why cars fail: a heat grid in the map's greys (.wuk-heat__cell, above).
+.wuk-heat-table .govuk-table__cell,
+.wuk-heat-table .govuk-table__header {
+  padding-right: govuk-spacing(2);
+  padding-left: govuk-spacing(2);
+}
+
+// Long fault descriptions get the room they need.
+.wuk-defects .wuk-road__model {
+  grid-template-columns: minmax(10em, 1.6fr) 1fr 3.5em;
+}
+
+// Learning to drive: the top ten faults, each with its place the year before.
+.wuk-faults {
+  margin: 0 0 govuk-spacing(4);
+  padding-left: 1.75em;
+
+  li {
+    padding: govuk-spacing(1) 0;
+    border-bottom: 1px solid var(--wuk-rule);
+  }
+}
+
+
+.wuk-faults__move {
+  margin-left: govuk-spacing(2);
+  color: var(--wuk-ink-2);
+  font-size: 14px;
+  white-space: nowrap;
+}

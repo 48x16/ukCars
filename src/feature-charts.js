@@ -17,6 +17,9 @@ export const icon = (shape, className) => {
   return node;
 };
 
+/** Region names mid-sentence: "the West Midlands", but "London" and "Yorkshire and the Humber". */
+export const theRegion = (name) => (/^(North|South|East|West)\b/.test(name) ? `the ${name}` : name);
+
 export const hidden = (text) => el('span', 'govuk-visually-hidden', text);
 
 /** Figures shown as shorthand ("42% → 58%"), read out in words instead. */

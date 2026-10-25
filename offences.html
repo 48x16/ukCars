@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Drink-driving since 1979, breath tests, drink and drug driving in court, and the motoring offences police deal with: speeding, phones, seat belts." />
+    <title>Caught out – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html" aria-current="page">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero wuk-feature-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Feature</p>
+            <h1 class="govuk-heading-xl">Caught out</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DfT, Home Office, Ministry of Justice</li>
+              <li><b>Covers</b> Great Britain; England and Wales</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">Drink-driving, drug driving, speeding and phones at the wheel: how often drivers are caught, and what’s changed.</p>
+            <div id="hero-graphic"></div>
+          </div>
+        </div>
+        <section class="wuk-section wuk-split" aria-labelledby="drink-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="drink-title">Fewer drink-drive crashes</h2>
+            <p class="govuk-body" id="drink-summary"></p>
+            <p class="govuk-body-s">Reported collisions involving a driver over the legal alcohol limit, Great Britain. DfT’s estimates, rounded to the nearest 10.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="drink-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="drink-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="when-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="when-title">When it happens</h2>
+            <p class="govuk-body" id="when-summary"></p>
+            <p class="govuk-body-s">Drink-drive collisions by hour and by month, added up over <span data-span>ten years</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <h3 class="govuk-heading-s">By hour of the day</h3>
+            <div id="hours-chart"></div>
+            <h3 class="govuk-heading-s">By month</h3>
+            <div id="months-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="breath-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="breath-title">Breathalysed</h2>
+            <p class="govuk-body" id="breath-summary"></p>
+            <p class="govuk-body-s">Roadside screening breath tests by the police, England and Wales. A positive includes refusing the test. <span id="breath-note"></span></p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="breath-chart"></div>
+            <h3 class="govuk-heading-s">Tests by month, <span data-breath-year>the latest year</span></h3>
+            <div id="breath-months"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="where-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="where-title">Region by region</h2>
+            <p class="govuk-body" id="where-summary"></p>
+            <p class="govuk-body-s">Drink-drive collisions over <span data-region-span>ten years</span> for every billion vehicle miles driven in each region in those years.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="regions-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="regions-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="courts-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="courts-title">Drink and drugs in court</h2>
+            <p class="govuk-body" id="courts-summary"></p>
+            <p class="govuk-body-s">People found guilty in court, England and Wales, by year.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="courts-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="courts-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="offences-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="offences-title">Speeding, phones and seat belts</h2>
+            <p class="govuk-body" id="offences-summary"></p>
+            <p class="govuk-body-s">Motoring offences dealt with by a fixed penalty, a course or court, England and Wales. The pink marker is <span data-first-offences>the first year</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="offences-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="offences-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Sources: Department for Transport,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/road-safety-statistics-data-tables">road safety statistics</a>
+              (drink-drive collisions, Great Britain; breath tests); Home Office,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistics/police-powers-and-procedures-roads-policing-to-december-2024">police powers and procedures: roads policing</a>
+              (England and Wales); Ministry of Justice,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/collections/criminal-justice-statistics">criminal justice statistics</a>
+              (England and Wales). Traffic from DfT road traffic statistics.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/feature-offences.js"></script>
+  </body>
+</html>

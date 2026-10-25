@@ -26,3 +26,5 @@ export const loadFeature = (name) => getJson(`features/${name}.json`);
 export const loadModel = (makeSlug, modelSlug) => getJson(`models/${makeSlug}/${modelSlug}.json`);
 export const loadMakeList = () => getJson('registrations/index.json');
 export const loadMakeStory = (makeSlug) => getJson(`registrations/${makeSlug}.json`);
+export const loadTestCentres = () => getJson('test-centres/index.json');
+export const loadTestCentre = (slug) => getJson(`test-centres/${slug}.json`);

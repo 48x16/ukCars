@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en-GB" class="govuk-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="The car driving test in Great Britain: pass rates since 2007, by age, manual or automatic, the wait for a test, the usual faults, and centre by centre." />
+    <title>Learning to drive – Rev Counter</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body class="govuk-template__body">
+    <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <header class="wuk-header" id="top">
+      <div class="govuk-width-container wuk-header__inner">
+        <a href="./" class="wuk-header__wordmark">Rev Counter</a>
+        <nav class="wuk-nav" id="nav" aria-label="Pages">
+          <a class="wuk-nav__link" href="./">Home</a>
+          <a class="wuk-nav__link" href="./explore.html">Explore</a>
+          <a class="wuk-nav__link" href="./insights.html">Insights</a>
+          <a class="wuk-nav__link" href="./electric.html">Electric</a>
+          <a class="wuk-nav__link" href="./petrol-diesel.html">Petrol &amp; diesel</a>
+          <a class="wuk-nav__link" href="./mot.html">MOT</a>
+          <a class="wuk-nav__link" href="./features.html" aria-current="page">Features</a>
+          <a class="wuk-nav__link" href="./tools.html">Tools</a>
+        </nav>
+        <p class="wuk-offline" id="offline" role="status" hidden>
+          <span class="wuk-offline__icon"></span>Offline: showing saved data
+        </p>
+      </div>
+    </header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="wuk-split wuk-hero wuk-feature-hero">
+          <div class="wuk-split__side">
+            <p class="wuk-kicker">Feature</p>
+            <h1 class="govuk-heading-xl">Learning to drive</h1>
+            <ul class="wuk-credits">
+              <li><b>Data</b> DVSA driving test statistics</li>
+              <li><b>Covers</b> Car tests, Great Britain</li>
+              <li><b>Updated</b> <span data-latest-quarter>the latest quarter</span></li>
+            </ul>
+          </div>
+          <div class="wuk-split__main">
+            <p class="wuk-standfirst">Two million car tests a year, and about half pass. Who does, where, and how long you wait for the chance.</p>
+            <div id="hero-graphic"></div>
+          </div>
+        </div>
+        <section class="wuk-section wuk-split" aria-labelledby="years-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="years-title">Half of tests pass</h2>
+            <p class="govuk-body" id="years-summary"></p>
+            <p class="govuk-body-s">Pass rate of practical car tests by financial year (April to March).</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="years-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="years-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="age-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="age-title">The younger, the likelier</h2>
+            <p class="govuk-body" id="age-summary"></p>
+            <p class="govuk-body-s">Pass rate by age of the learner, <span data-year>the latest year</span>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="age-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="age-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="gearbox-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="gearbox-title">Manual or automatic</h2>
+            <p class="govuk-body" id="gearbox-summary"></p>
+            <p class="govuk-body-s">An automatic pass licenses you for automatics only.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div id="gearbox-chart"></div>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="wait-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="wait-title">The wait</h2>
+            <p class="govuk-body" id="wait-summary"></p>
+            <p class="govuk-body-s">Median weeks between booking a test and taking it, for tests taken that month. Regions: the latest month.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-chart" id="wait-chart"></div>
+            <h3 class="govuk-heading-s">Median wait by region</h3>
+            <div id="regions-chart"></div>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Show the data as a table</span>
+              </summary>
+              <div class="govuk-details__text wuk-table-scroll" role="region" aria-label="The data as a table (scrolls sideways)" tabindex="0">
+                <table class="govuk-table" id="regions-table"></table>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="faults-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="faults-title">The usual faults</h2>
+            <p class="govuk-body" id="faults-summary"></p>
+            <p class="govuk-body-s">The ten faults examiners record most often, in DVSA’s words, with each one’s place the year before.</p>
+          </div>
+          <div class="wuk-split__main">
+            <ol class="wuk-faults" id="faults-list"></ol>
+          </div>
+        </section>
+        <section class="wuk-section wuk-split" aria-labelledby="centres-title">
+          <div class="wuk-split__side">
+            <h2 class="govuk-heading-l" id="centres-title">Centre to centre</h2>
+            <p class="govuk-body" id="centres-summary"></p>
+            <p class="govuk-body-s">Centres with at least <span data-min-tests>500</span> tests in the year. Pass rates differ with who tests where, not only how hard a centre is. <a class="govuk-link" href="./test-centre.html">Look up any centre</a>.</p>
+          </div>
+          <div class="wuk-split__main">
+            <div class="wuk-columns">
+              <div><h3 class="govuk-heading-s">Highest pass rates</h3><div id="highest"></div></div>
+              <div><h3 class="govuk-heading-s">Lowest pass rates</h3><div id="lowest"></div></div>
+              <div><h3 class="govuk-heading-s">Longest waits</h3><div id="longest"></div></div>
+              <div><h3 class="govuk-heading-s">Shortest waits</h3><div id="shortest"></div></div>
+            </div>
+          </div>
+        </section>
+        <div class="govuk-error-summary" id="error" hidden>
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">This page's data could not be loaded</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body" id="error-message"></p>
+            </div>
+          </div>
+        </div>
+        <div class="wuk-back-to-top">
+          <a class="wuk-back-to-top__link" href="#top"><span class="wuk-back-to-top__icon"></span><span class="govuk-visually-hidden">Back to top</span></a>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer wuk-footer">
+      <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+          <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+            <h2 class="govuk-visually-hidden">About the data</h2>
+            <p class="govuk-body-s">
+              Source: Driver and Vehicle Standards Agency,
+              <a class="govuk-footer__link" href="https://www.gov.uk/government/statistical-data-sets/driving-test-and-theory-test-data-cars"
+                >driving test and theory test data: cars</a
+              >
+              (tables DRT121 and DRT122), Great Britain, to <span data-latest-quarter>the latest month</span>. Centres where only one examiner tested are left out by DVSA.
+            </p>
+            <p class="govuk-body-s">
+              Contains public sector information licensed under the
+              <a class="govuk-footer__link" href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license"
+                >Open Government Licence v3.0</a
+              >. © Crown copyright.
+            </p>
+            <p class="govuk-body-s">
+              This site is not affiliated with or endorsed by DfT, DVLA or DVSA, or any car maker. Make and model names are
+              DVLA's, all variants combined. Groupings are our own choices, explained on each page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/feature-driving.js"></script>
+  </body>
+</html>
