@@ -18,6 +18,7 @@ const FEATURES = [
   { page: 'workhorses', title: 'The workhorses', sections: ['High milers', 'Garage queens', 'Diesel did the miles'], ready: '.wuk-odo' },
   { page: 'built-to-last', title: 'Built to last', sections: ['Everyday champions', 'Cherished classics', 'Feeling their age'], ready: '#hero-graphic .wuk-tile' },
   { page: 'endangered', title: 'Endangered species', sections: ['Icons in decline', 'Nearly gone'], ready: '#icons > li' },
+  { page: 'traffic', title: 'How Britain drives', sections: ['The van boom', 'Which roads', 'Busiest and quietest'], ready: '.wuk-chart__svg' },
   { page: 'mini', title: 'Mini, year by year', sections: ['The road so far', 'Peak Mini', 'Colours', 'Under the bonnet', 'Where Minis live'], ready: '.wuk-map__bubble' },
 ];
 

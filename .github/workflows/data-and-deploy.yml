@@ -62,6 +62,9 @@ jobs:
       - name: New cars since 2001, the stories built on them, and each make year by year (VEH0160)
         run: npm run registrations
 
+      - name: Road traffic since 1993 (DfT)
+        run: npm run traffic
+
       - name: Postcodes for the finder tools
         run: npm run postcodes
 
