@@ -17,6 +17,7 @@ npm run postcodes     # one small file per postcode district, for the tools
 npm run chargers      # Open Charge Map snapshot (needs OCM_API_KEY, see below)
 npm run registrations # new cars since 2001: the stories built on them, and each make year by year
 npm run traffic       # DfT road traffic since 1993
+npm run driving-tests # DVSA driving tests: pass rates and waits by test centre
 npm run dev           # http://localhost:5173
 npm test
 ```
@@ -104,7 +105,7 @@ data, car paint, names every colour in text too.
 ## Data sources and licences
 
 - Department for Transport and DVLA, [vehicle licensing statistics](https://www.gov.uk/government/statistical-data-sets/vehicle-licensing-statistics-data-files) (VEH0120, VEH0145) and [EV charging statistics](https://www.gov.uk/government/statistical-data-sets/electric-vehicle-charging-infrastructure-statistics-data-tables-evci) (EVCI0102)
-- Driver and Vehicle Standards Agency, [anonymised MOT tests and results](https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results)
+- Driver and Vehicle Standards Agency, [anonymised MOT tests and results](https://www.data.gov.uk/dataset/c63fca52-ae4c-4b75-bab5-8b4735e1a4c9/anonymised-mot-tests-and-results), and [driving test data: cars](https://www.gov.uk/government/statistical-data-sets/driving-test-and-theory-test-data-cars)
 - Department for Energy Security and Net Zero, [weekly road fuel prices](https://www.gov.uk/government/statistics/weekly-road-fuel-prices)
 - Office for National Statistics, postcode lookup and boundaries; OS Code-Point Open
 - [Open Charge Map](https://openchargemap.org), openly licensed providers only, each credited on the page

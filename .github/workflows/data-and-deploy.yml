@@ -65,6 +65,9 @@ jobs:
       - name: Road traffic since 1993 (DfT)
         run: npm run traffic
 
+      - name: Driving tests, pass rates and waits by test centre (DVSA)
+        run: npm run driving-tests
+
       - name: Postcodes for the finder tools
         run: npm run postcodes
 

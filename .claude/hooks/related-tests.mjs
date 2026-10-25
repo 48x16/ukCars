@@ -6,7 +6,9 @@ import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 
-const root = resolve(import.meta.dirname, '..', '..');
+// Upper-case the Windows drive letter: the harness can pass "c:/...", and vitest loaded under
+// both "c:" and "C:" runs two copies of its runner and fails every suite.
+const root = resolve(import.meta.dirname, '..', '..').replace(/^[a-z]:/, (d) => d.toUpperCase());
 let input = '';
 for await (const chunk of process.stdin) input += chunk;
 
